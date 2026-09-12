@@ -132,6 +132,7 @@ body.tour-active .configbar{position:relative;z-index:905}
  <button id="export_settings" class="configbtn" type="button">匯出試算設定</button>
  <button id="import_settings" class="configbtn" type="button">匯入試算設定</button>
  <button id="start_tour" class="configbtn tour-start-btn" type="button">使用說明導覽</button>
+ <button id="start_scenario_tour" class="configbtn tour-start-btn" type="button">情境導覽</button>
  <input id="import_settings_file" type="file" accept=".json,application/json" class="hidden">
  <span id="config_status" class="configstatus">設定檔格式：JSON</span>
 </div>
@@ -312,16 +313,17 @@ body.tour-active .configbar{position:relative;z-index:905}
    <div id="tour_text" class="tour-text"></div>
    <div id="tour_path" class="tour-path"></div>
   </div>
-  <div id="tour_step" class="tour-step">1 / 4</div>
+   <div id="tour_step" class="tour-step">1 / 17</div>
  </div>
  <div id="tour_demo" class="tour-demo"></div>
  <div class="tour-actions">
   <div class="tour-actions-left">
    <button id="tour_skip" class="tour-btn skip" type="button">跳過導覽</button>
   </div>
-  <div class="tour-actions-right">
-   <button id="tour_prev" class="tour-btn" type="button">上一步</button>
-   <button id="tour_next" class="tour-btn primary" type="button">下一步</button>
+   <div class="tour-actions-right">
+    <button id="tour_prev" class="tour-btn" type="button">上一步</button>
+    <button id="tour_scenario" class="tour-btn hidden" type="button">情境導覽</button>
+    <button id="tour_next" class="tour-btn primary" type="button">下一步</button>
   </div>
  </div>
 </div>
@@ -588,6 +590,14 @@ function mortgage_rate_stage_index(elapsed){
 
 const SETTINGS_SCHEMA="asset-timeline-calculator";
 const SETTINGS_VERSION=7;
+const DEFAULT_SETTINGS={
+ schema:SETTINGS_SCHEMA,version:SETTINGS_VERSION,
+ settings:{timeline_start_year:"2026",timeline_years:"60",birth_year:"1994",initial_cash_assets:"1500000",initial_investment_assets:"10000000",compound_enabled:true,return_rate:"5",mortgage_enabled:true,mortgage_start_year:"2030",purchase_type:"direct",house_price:"15000000",additional_cost:"500000",down_rate:"20",construction_rate:"10",construction_years:"3",loan_years:"40",grace_years:"0",income_enabled:true,income_start_year:"2026",salary:"1500000",salary_growth:"3",income_years:"10",work_mode:"emergency_reserve",work_percent_value:"50",work_fixed_value:"1000000",retirement_enabled:true,retire_rate:"4",retire_years:"60",retire_mode:"emergency_reserve",retire_percent_value:"0",retire_fixed_value:"0"},
+ expense_stages:[{year:2026,amount:600000}],
+ reserve_stages:[{year:2026,amount:2000000},{year:2027,amount:2500000},{year:2028,amount:3000000},{year:2029,amount:3500000},{year:2030,amount:4000000},{year:2031,amount:500000}],
+ compound_stages:[{year:2026,years:60}],
+ mortgage_rate_stages:[{rate:2.6,years:0}]
+};
 
 function collect_settings(){
   const values={};
@@ -961,7 +971,7 @@ function render_formula(i){
 
 5) 支出（全部只扣現金）
 固定年支出 = ${money(r.fixed_expense)}
- 額外購屋支出 = ${money(r.additional_cost||0)}
+額外購屋支出 = ${money(r.additional_cost||0)}
  購屋 / 房貸 = ${money(r.housing)}
 其中房貸利息 = ${money(r.interest)}
 年末房貸餘額 = ${money(r.balance)}
@@ -992,6 +1002,7 @@ function render_formula(i){
 const tour={
   active:false,
   step:0,
+  steps:null,
   snapshot:null,
   folded:null,
   animToken:0
@@ -1206,10 +1217,53 @@ const tourSteps=[
     title:"10. 之後隨時可以重新開啟導覽",
     path:"頁面工具列 › 使用說明導覽",
     text:"到這裡已經走完整個操作流程。之後忘記某個區塊的用途，可以再次點這個「使用說明導覽」按鈕重播。",
-    demo:"按「完成導覽」後，導覽期間使用的示範數值會被丟棄，並還原你進入導覽前的原始試算設定。",
-    prepare(){return []}
+     demo:"按「完成導覽」後，導覽期間使用的示範數值會被丟棄，並還原你進入導覽前的原始試算設定；也可以按旁邊的「情境導覽」查看預設 FIRE 情境。",
+     prepare(){return []}
+   }
+ ];
+
+const scenarioSteps=[
+  {
+    target:".group-income", subtarget:"#work_mode", targets:["#income_years","#reserve_stages"], body:"income_body",
+    title:"情境 1｜工作期間先準備購屋與備用金",
+    path:"預設情境 › 2026～2029 工作期間",
+    text:"預設設定從 2026 年開始工作，收入先完成當年度的固定支出與緊急備用金目標；超過目標的現金再投入投資。到 2030 年前，備用金目標逐步累積到 350 萬，讓購屋前已有一筆可用現金緩衝。",
+    demo:"重點欄位：工作收入年數、工作期間投入方式、緊急備用金目標表。"
+  },
+  {
+    target:".group-mortgage", subtarget:"#mortgage_start_year", targets:["#house_price","#additional_cost","#down_rate","#loan_years"], body:"mortgage_body",
+    title:"情境 2｜2030 年購屋並開始房貸",
+    path:"預設情境 › 2030 購屋年",
+    text:"2030 年同時發生頭期款、裝潢設計家具等額外支出，以及房貸開始後的還款。因為前幾年已先建立緊急備用金，且 2030 年仍在工作，收入仍能支應固定支出、房貸與持續投資。",
+    demo:"重點欄位：購屋插入年份、房屋總價、額外支出、頭期款與房貸年限。",
+    prepare(){return [["mortgage_start_year",2030]]}
+  },
+  {
+    target:".group-income", subtarget:"#retirement_guide_box", targets:["#retire_rate","#formula_year","#detail"], body:"income_body",
+    title:"情境 3｜2036 年退休後現金流轉負",
+    path:"預設情境 › 2036 退休至 2055",
+    text:"預設設定工作 10 年，2036 年開始以 4% 提領。此時投資資產的提領金額還不足以同時支撐固定支出與房貸，因此現金流逐年承壓，2041 年末現金轉為負數。這代表現金流需要調度，不代表投資資產已經消失或一定會爆掉；實務上仍可賣出部分投資資產補足現金。",
+    demo:"查看 2041 年公式明細：負現金資產是現金流缺口的警示。持續此計畫，約 2055 年現金才由負轉正。",
+    after(){scenarioSelectYear(2041)}
+  },
+  {
+    target:".group-income", subtarget:"#income_years", targets:["#retire_rate","#formula_year","#detail"], body:"income_body",
+    title:"情境 4｜工作多一年，退休現金流改善",
+    path:"預設情境 › 工作 11 年、2037 退休",
+    text:"把工作收入年數從 10 年調整為 11 年，退休延後到 2037 年。多累積一年的收入與投資，套用同樣的 4% 提領計畫後，現金流只會短暫出現約兩年負數，後期已能由投資資產支撐支出，逐步達到財富自由。",
+    demo:"示範會把工作收入年數改成 11 年，並查看 2055 年；按「完成導覽」會還原導覽前設定。",
+    prepare(){return [["income_years",11]]},
+    after(){scenarioSelectYear(2055)}
   }
 ];
+
+function scenarioSelectYear(year){
+  const i=state.rows.findIndex(r=>r.year===year);
+  if(i<0)return;
+  $("formula_year").value=String(i);
+  render_formula(i);
+  tourPulse("#formula_year,#detail");
+}
 
 function tourCaptureFolded(){
   const ids=["timeline_body","compound_body","mortgage_body","income_body"];
@@ -1335,9 +1389,10 @@ function tourFocusStep(step){
 }
 function tourShowStep(index){
   if(!tour.active)return;
+  const steps=tour.steps||tourSteps;
   tour.animToken++;
-  tour.step=Math.max(0,Math.min(tourSteps.length-1,index));
-  const step=tourSteps[tour.step];
+  tour.step=Math.max(0,Math.min(steps.length-1,index));
+  const step=steps[tour.step];
 
   state.selected=null;state.hover=null;hide_tip();
   tourFocusStep(step);
@@ -1346,9 +1401,10 @@ function tourShowStep(index){
   $("tour_text").textContent=step.text;
   $("tour_path").textContent=step.path||"";
   $("tour_demo").textContent=step.demo;
-  $("tour_step").textContent=`${tour.step+1} / ${tourSteps.length}`;
+  $("tour_step").textContent=`${tour.step+1} / ${steps.length}`;
   $("tour_prev").disabled=tour.step===0;
-  $("tour_next").textContent=tour.step===tourSteps.length-1?"完成導覽":"下一步";
+  $("tour_next").textContent=tour.step===steps.length-1?"完成導覽":"下一步";
+  $("tour_scenario").classList.toggle("hidden",steps!==tourSteps||tour.step!==steps.length-1);
   $("tour_panel").classList.toggle("top",step.panel==="top");
 
   const animations=step.prepare?step.prepare():[];
@@ -1360,13 +1416,30 @@ function tourShowStep(index){
 function start_tour(){
   if(tour.active)return;
   tour.active=true;
+  tour.steps=tourSteps;
   tour.snapshot=collect_settings();
   tour.folded=tourCaptureFolded();
+  tour.step=0;
+  $("tour_kicker").textContent="使用說明導覽";
+  document.body.classList.add("tour-active");
+  $("tour_backdrop").classList.add("on");
+  $("tour_panel").classList.add("on");
+  $("tour_backdrop").setAttribute("aria-hidden","false");
+  tourShowStep(0);
+}
+function start_scenario_tour(){
+  if(tour.active)return;
+  tour.active=true;
+  tour.steps=scenarioSteps;
+  tour.snapshot=collect_settings();
+  tour.folded=tourCaptureFolded();
+  apply_settings(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
   tour.step=0;
   document.body.classList.add("tour-active");
   $("tour_backdrop").classList.add("on");
   $("tour_panel").classList.add("on");
   $("tour_backdrop").setAttribute("aria-hidden","false");
+  $("tour_kicker").textContent="情境導覽";
   tourShowStep(0);
 }
 function end_tour(restore=true){
@@ -1386,8 +1459,11 @@ function end_tour(restore=true){
   tourRestoreFolded();
   tour.snapshot=null;
   tour.folded=null;
+  tour.steps=null;
 }
 $("start_tour").onclick=start_tour;
+$("start_scenario_tour").onclick=start_scenario_tour;
+$("tour_scenario").onclick=()=>{end_tour(true);start_scenario_tour()};
 $("tour_skip").onclick=()=>end_tour(true);
 $("tour_prev").onclick=()=>tourShowStep(tour.step-1);
 $("tour_next").onclick=()=>{
@@ -1430,13 +1506,6 @@ $("export_settings").onclick=export_settings;
 $("import_settings").onclick=()=>$("import_settings_file").click();
 $("import_settings_file").onchange=ev=>import_settings_file(ev.target.files&&ev.target.files[0]);
 
-expenseStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:600000}];
-reserveStages=[{year:2026,amount:1500000},{year:2027,amount:2000000},{year:2028,amount:2500000},{year:2029,amount:3000000},{year:2030,amount:3500000},{year:2031,amount:500000}];
-compoundStages=[{year:Math.round(num(e.timeline_start_year,2026)),years:Math.max(1,Math.round(num(e.timeline_years,40)))}];
-mortgageRateStages=[{rate:2.6,years:0}];
-render_expense_stages();render_reserve_stages();render_compound_stages();render_mortgage_rate_stages();
-$("presale").classList.toggle("hidden",e.purchase_type.value!=="presale");
-$("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);
-mode_ui("work",e.work_mode.value);mode_ui("retire",e.retire_mode.value);calc();
+apply_settings(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
 </script>
 </body></html>
