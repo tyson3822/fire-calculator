@@ -75,7 +75,7 @@ tbody tr:hover td.col-mortgage{background:rgba(var(--mortgage-rgb),.11)}
 tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 .pos{color:var(--g)}.neg{color:var(--r)}.warn{color:var(--o)}
 .formulas{margin-top:15px;background:var(--p);border:1px solid var(--b);border-radius:12px;padding:17px}.formulas h2{font-size:17px;margin:0 0 6px}.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.fi{background:var(--p2);border:1px solid var(--b);border-radius:8px;padding:11px}.fi b{font-size:12px}.fi code{display:block;white-space:pre-wrap;margin-top:6px;color:#c9d1d9;font-size:11px;line-height:1.55}
-.verify{border-top:1px solid var(--b);margin-top:13px;padding-top:13px}.verify select{width:auto;margin-left:5px}#detail{margin-top:9px;background:#0d1117;border:1px solid var(--b);border-radius:8px;padding:12px;white-space:pre-wrap;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9d1d9}
+.verify{border-top:1px solid var(--b);margin-top:13px;padding-top:13px}.verify select{width:auto;margin-left:5px}#detail{margin-top:9px;background:#0d1117;border:1px solid var(--b);border-radius:8px;padding:12px;white-space:pre-wrap;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9d1d9}.site-footer{margin:24px 0 4px;padding:14px 0 2px;border-top:1px solid var(--b);color:var(--m);font-size:11px;text-align:center}.site-footer a{color:var(--a);text-decoration:none}.site-footer a:hover{text-decoration:underline}
 
 /* Guided tour */
 .tour-start-btn{border-color:rgba(var(--a),.55);background:rgba(var(--initial-rgb),.09)}
@@ -296,6 +296,7 @@ body.tour-active .configbar{position:relative;z-index:905}
  <div id="verify_guide_box" class="verify"><label>查看實際代入：</label><select id="formula_year"></select><div id="detail"></div></div>
 </section>
 </main>
+<footer class="site-footer">© 2026 tyson3822 · <a href="LICENSE">MIT License</a> · <a href="https://github.com/tyson3822/fire-calculator" target="_blank" rel="noopener noreferrer">GitHub Repository</a></footer>
 </div></div>
 
 <div id="tour_backdrop" class="tour-backdrop" aria-hidden="true"></div>
@@ -325,7 +326,7 @@ body.tour-active .configbar{position:relative;z-index:905}
 const $=id=>document.getElementById(id);
 const ids=["timeline_start_year","timeline_years","birth_year","initial_cash_assets","initial_investment_assets",
 "compound_enabled","return_rate",
-"mortgage_enabled","mortgage_start_year","purchase_type","house_price","down_rate","mortgage_rate","construction_rate","construction_years","loan_years","grace_years",
+"mortgage_enabled","mortgage_start_year","purchase_type","house_price","down_rate","construction_rate","construction_years","loan_years","grace_years",
 "income_enabled","income_start_year","salary","salary_growth","income_years","work_mode","work_percent_value","work_fixed_value",
 "retirement_enabled","retire_rate","retire_years","retire_mode","retire_percent_value","retire_fixed_value"];
 const e=Object.fromEntries(ids.map(id=>[id,$(id)]));
