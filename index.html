@@ -221,19 +221,21 @@ body.tour-active .configbar{position:relative;z-index:1905}
 <section class="card group-mortgage">
  <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="mortgage_body">−</button><div class="title">房貸試算組</div></div><label class="tog"><input id="mortgage_enabled" type="checkbox" checked>加入試算</label></div>
  <div id="mortgage_body">
+  <div id="mortgage_purchase_guide_box">
   <div class="field"><label>購屋試算插入年份</label><input id="mortgage_start_year" type="number" value="2030" min="1900" max="2200"></div>
   <div class="field"><label>購屋類型</label><select id="purchase_type"><option value="direct">直接購入</option><option value="presale">預售屋</option></select></div>
   <div class="field"><label>房屋總價（NT$）</label><input id="house_price" type="number" value="15000000" step="100000"></div>
   <div class="field"><label>額外支出（裝潢、設計、家具等，NT$）</label><input id="additional_cost" type="number" value="0" min="0" step="10000"></div>
   <div class="note">直接購入會在購入年列入；預售屋會在工程期結束、交屋年列入。</div>
   <div class="field"><label>頭期款（%）</label><input id="down_rate" type="number" value="20" min="0" max="100"></div>
+  </div>
+  <div id="presale" class="hidden"><div class="row2"><div class="field"><label>工程期分款（總價 %）</label><input id="construction_rate" type="number" value="10"></div><div class="field"><label>工程期（年）</label><input id="construction_years" type="number" value="3"></div></div></div>
   <div id="mortgage_rate_guide_box" class="expense_box">
    <div class="expense_head"><b>房貸利率階段</b><button id="add_mortgage_rate_stage" class="addstage" type="button">＋ 多一個利率階段</button></div>
    <div id="mortgage_rate_stages"></div>
    <div id="mortgage_rate_stage_error" class="stage_error"></div>
    <div class="note">可模擬購屋補助、銀行優惠期或分段式房貸。每個階段依序接續；最後一階段的持續年數設為 0 代表一路套用到房貸結束。利率切換時會依當下剩餘本金與剩餘期限重新計算月付。</div>
   </div>
-  <div id="presale" class="hidden"><div class="row2"><div class="field"><label>工程期分款（總價 %）</label><input id="construction_rate" type="number" value="10"></div><div class="field"><label>工程期（年）</label><input id="construction_years" type="number" value="3"></div></div></div>
   <div id="mortgage_terms_guide_box" class="row2"><div class="field"><label>房貸年限（年）</label><input id="loan_years" type="number" value="40"></div><div class="field"><label>寬限期（年）</label><input id="grace_years" type="number" value="0"></div></div>
   <div class="note">房貸、頭期款與工程款均為現金支出；不足時現金餘額會呈負值，不會自動賣投資資產補洞。</div>
  </div>
@@ -1022,7 +1024,7 @@ const tour={
 
 const tourSteps=[
   {
-    target:"#initial_settings_guide_box", body:"timeline_body",
+    target:".group-initial", subtarget:"#initial_settings_guide_box", body:"timeline_body",
     title:"1. 建立時間軸與初始資產",
     path:"時間軸 / 初始設定",
     text:"先從最小可用模型開始。只設定時間範圍、出生年、初始現金、初始投資資產與投資年化報酬率；其他試算組先全部關閉。即使不開複利，投資資產仍會產生收益，只是收益進入現金。",
@@ -1064,20 +1066,20 @@ const tourSteps=[
     after(){tourPulse("#reserve_stages input")}
   },
   {
-    target:"#income_basics_guide_box", body:"income_body",
+    target:".group-income", subtarget:"#income_basics_guide_box", body:"income_body",
     title:"2. 加入工作收入與每年投資",
     path:"經常收入試算組",
-    text:"這裡設定工作收入何時開始、薪資成長與工作年數，再決定每年有多少收入轉進投資。可選百分比、固定金額、扣除支出後全投資，或只保留緊急備用金。",
-    demo:"示範：2026 年起年薪 250 萬、每年成長 3%、工作 10 年，先將收入的 50% 投入投資。",
+    text:"這裡先設定工作收入何時開始、目前年薪、薪資成長與工作年數。收入如何轉進投資會留到下一步單獨說明，避免把兩種設定混在一起。",
+    demo:"示範：2026 年起年薪 250 萬、每年成長 3%、工作 10 年。這一步只標示收入基本欄位。",
     prepare(){
       e.income_enabled.checked=true;
       e.retirement_enabled.checked=false;
       $("retirement_body").classList.add("hidden");
-      e.work_mode.value="percent";
-      mode_ui("work","percent");
+      e.work_mode.value="emergency_reserve";
+      mode_ui("work","emergency_reserve");
       update_table_column_visibility();
       return [["income_start_year",2026],["salary",2500000],["salary_growth",3],
-              ["income_years",10],["work_percent_value",50]];
+              ["income_years",10]];
     }
   },
   {
@@ -1087,12 +1089,11 @@ const tourSteps=[
     text:"工作收入不一定要用固定比例投入。這裡有四種資金配置方法，適合不同的人生階段；退休收入的再投入也使用同一套概念。",
     demo:"① 百分比：收入 × 指定比例投入投資。\n② 固定金額：每年最多投入指定金額。\n③ 支出餘額：先保留當年固定支出，其餘投入投資。\n④ 僅保留緊急備用金：年度所有現金流結算後，只留下備用金目標，超額現金全部投入。",
     prepare(){
-      e.work_mode.value="percent";
-      mode_ui("work","percent");
+      e.work_mode.value="emergency_reserve";
+      mode_ui("work","emergency_reserve");
       calc();
       return [];
-    },
-    after(){tourCycleAllocationModes()}
+    }
   },
   {
     target:".group-income", subtarget:"#retirement_guide_box", body:"income_body",
@@ -1111,7 +1112,7 @@ const tourSteps=[
     after(){tourPulse("#retirement_guide_box input,#retirement_guide_box select")}
   },
   {
-    target:"#compound_guide_box", body:"compound_body",
+    target:".group-compound", subtarget:"#compound_guide_box", body:"compound_body",
     title:"3. 決定哪些年份要複利再投入",
     path:"複利計算試算組",
     text:"年化報酬率已在初始設定中，所以投資收益每年都會計算。這個試算組只控制『收益是否回到投資本金』。在複利階段內，收益再投入；階段外，收益流入現金。",
@@ -1126,24 +1127,25 @@ const tourSteps=[
     after(){tourPulse("#compound_stages input")}
   },
   {
-    target:".group-mortgage", subtarget:"#purchase_type", body:"mortgage_body",
-    title:"4. 購屋類型會改變資金發生時間",
-    path:"房貸試算組 › 購屋類型",
-    text:"直接購入與預售屋的現金流時間不同。直接購入會在購屋年份支付頭期並開始房貸；預售屋則會先支付頭期與工程期分款，完工後才建立房貸本金。",
-    demo:"導覽會先示範「直接購入」，再切成「預售屋」讓工程款與工程期欄位出現，最後切回直接購入。",
+    target:".group-mortgage", subtarget:"#mortgage_purchase_guide_box", body:"mortgage_body",
+    title:"4. 直接購入：購屋年立即開始房貸",
+    path:"房貸試算組 › 直接購入",
+    text:"直接購入會在購屋試算插入年份支付頭期款與裝潢、設計、家具等額外支出，並在同一年建立房貸、開始還款。房屋總價與頭期款比例決定貸款本金；額外支出只從現金扣除，不會併入貸款本金。",
+    demo:"目前畫面固定為「直接購入」供你閱讀：2028 年購入、總價 2,000 萬、頭期 20%、額外支出 50 萬。按下一步後才會切換到預售屋。",
     prepare(){
-      e.mortgage_enabled.checked=true;e.mortgage_start_year.value=2028;e.house_price.value=20000000;e.down_rate.value=20;e.loan_years.value=40;e.grace_years.value=0;
-      e.purchase_type.value="direct";purchase_ui();calc();return [];
-    },
-    after(){tourCyclePurchaseTypes()}
+      e.mortgage_enabled.checked=true;e.mortgage_start_year.value=2028;e.house_price.value=20000000;e.additional_cost.value=500000;e.down_rate.value=20;e.loan_years.value=40;e.grace_years.value=0;
+      e.purchase_type.value="direct";purchase_ui();return [];
+    }
   },
   {
-    target:".group-mortgage", subtarget:"#house_price", targets:["#additional_cost","#down_rate"], body:"mortgage_body",
-    title:"4-1. 房屋總價、頭期與額外支出",
-    path:"房貸試算組 › 購屋資金",
-    text:"購屋年除了頭期款，還可以加入裝潢、設計、家具等額外支出。直接購入會在購入年一次列入；預售屋則會在交屋年列入，這些金額都會反映在當年現金流。",
-    demo:"示範：把額外支出設為 50 萬，觀察購屋或交屋年度的年度淨現金流變化。",
-    prepare(){return [["house_price",15000000],["additional_cost",500000],["down_rate",20]]}
+    target:".group-mortgage", subtarget:"#presale", body:"mortgage_body",
+    title:"4-1. 預售屋：工程期與交屋年分開計算",
+    path:"房貸試算組 › 預售屋",
+    text:"預售屋會在購屋插入年份先支付頭期款，並於工程期間按年平均支付工程期分款。工程期結束後的交屋年，才列入裝潢、設計與家具等額外支出、建立房貸本金並開始還款。",
+    demo:"目前畫面固定為「預售屋」：工程期分款為總價 10%、工程期 3 年。請先看完這兩個欄位，再進入後續的房貸利率說明。",
+    prepare(){
+      e.purchase_type.value="presale";e.construction_rate.value=10;e.construction_years.value=3;purchase_ui();return [];
+    }
   },
   {
     target:".group-mortgage", subtarget:"#mortgage_rate_guide_box", body:"mortgage_body",
@@ -1155,7 +1157,7 @@ const tourSteps=[
     after(){tourPulse("#mortgage_rate_stages input")}
   },
   {
-    target:"#mortgage_terms_guide_box", body:"mortgage_body",
+    target:".group-mortgage", subtarget:"#mortgage_terms_guide_box", body:"mortgage_body",
     title:"4-3. 房貸年限與寬限期",
     path:"房貸試算組 › 房貸條件",
     text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
@@ -1163,7 +1165,7 @@ const tourSteps=[
     prepare(){return [["loan_years",40],["grace_years",0]]}
   },
   {
-    target:"#legend",
+    target:"#chart_guide_box", subtarget:"#legend",
     title:"5. 圖表：快速看資產路徑與單一年份",
     path:"結果區 › 互動圖表",
     text:"圖表用來先看整體趨勢。把滑鼠移到任一年份會出現垂直指示線與詳細資訊；點一下年份可以固定，再移動滑鼠也不會消失。右上角圖例可個別隱藏曲線。",
@@ -1201,7 +1203,7 @@ const tourSteps=[
     after(){tourPulse("#table_view_all,#table_toggle_initial,#table_toggle_compound,#table_toggle_income,#table_toggle_mortgage")}
   },
   {
-    target:"#formula_guide_box .fi:first-child",
+    target:"#formula_guide_box",
     title:"7. 公式區：確認模型到底怎麼算",
     path:"年度計算公式 / 驗收區 › 計算規則",
     text:"如果結果和直覺不同，先看這裡。公式區列出投資收益、工作收入投入、退休提領、現金支出與投資資產累積的實際計算順序，方便確認模型語意。",
@@ -1380,33 +1382,12 @@ async function tourRunAnimations(items,step){
   }
   if(tour.active&&step.after)setTimeout(()=>step.after(),120);
 }
-function tourCyclePurchaseTypes(){
-  const token=tour.animToken,modes=["direct","presale","direct"];let i=0;
-  const run=()=>{if(!tour.active||token!==tour.animToken)return;e.purchase_type.value=modes[i];purchase_ui();calc();tourPulse("#purchase_type,#presale input");i++;if(i<modes.length)setTimeout(run,950)};
-  run();
-}
-function tourCycleAllocationModes(){
-  const token=tour.animToken;
-  const modes=["percent","fixed","expense_balance","emergency_reserve"];
-  let i=0;
-  const run=()=>{
-    if(!tour.active||token!==tour.animToken)return;
-    const mode=modes[i%modes.length];
-    e.work_mode.value=mode;
-    mode_ui("work",mode);
-    calc();
-    tourPulse("#work_mode,#work_allocation_guide_box .field:not(.hidden) input");
-    i++;
-    if(i<modes.length)setTimeout(run,900);
-  };
-  run();
-}
 function tourFocusStep(step){
   tourClearFocus();
   tourOpenBody(step.body);
 
   let mainTarget=step.target?document.querySelector(step.target):null;
-  if(mainTarget&&!step.subtarget){
+  if(mainTarget){
     if(mainTarget.classList.contains("card"))mainTarget.classList.add("tour-focus");
     else mainTarget.classList.add("tour-focus-target");
   }
