@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>FIRE 計算機</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
 :root{--bg:#0d1117;--p:#161b22;--p2:#21262d;--b:#30363d;--t:#e6edf3;--m:#8b949e;--a:#58a6ff;--g:#3fb950;--r:#f85149;--o:#d29922;--v:#bc8cff;--c:#39c5cf;
 --initial-rgb:88,166,255;--compound-rgb:188,140,255;--mortgage-rgb:210,153,34;--income-rgb:63,185,80}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:Inter,"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
 .app{max-width:1500px;margin:auto;padding:26px}h1{margin:0 0 8px;font-size:27px}.sub{color:var(--m);font-size:13px;line-height:1.55;margin-bottom:20px}
 .configbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-6px 0 18px}
-.configbtn{width:auto;border:1px solid var(--b);border-radius:8px;background:var(--p2);color:var(--t);padding:8px 12px;font-size:12px;cursor:pointer}
+.configbtn{width:auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--b);border-radius:8px;background:var(--p2);color:var(--t);padding:8px 12px;font-size:12px;cursor:pointer}.configbtn svg{width:15px;height:15px;flex:none;stroke:currentColor}
 .configbtn:hover{border-color:var(--a)}
 .configstatus{color:var(--m);font-size:11px;margin-left:3px}
 .layout{display:grid;grid-template-columns:410px 1fr;gap:18px;align-items:start}.side{display:grid;gap:14px}.card{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:16px}
@@ -39,7 +40,7 @@ input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var
 .mortgage-rate-stage{display:grid;grid-template-columns:1fr 1fr 30px;gap:7px;align-items:end;margin-bottom:7px}.mortgage-rate-stage .field{margin:0}.mortgage-rate-stage .remove-stage{width:30px;height:35px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--r);cursor:pointer}
 .stage_error{color:var(--r);font-size:11px;min-height:16px;margin-top:3px}
 .retbox{margin-top:9px;border:1px solid var(--b);border-radius:9px;padding:11px;background:rgba(33,38,45,.5)}.retbox .rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:650}.retbox .rhead input{width:17px;height:17px;accent-color:var(--a)}.rbody{border-top:1px solid var(--b);margin-top:10px;padding-top:11px}
-.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:13px}.metric{min-width:0;background:var(--p);border:1px solid var(--b);border-radius:11px;padding:14px}.metric .k{color:var(--m);font-size:11px}.metric .v{font-size:21px;font-weight:750;margin-top:5px}.metric .d{color:var(--m);font-size:10px;margin-top:5px}.metric-label{color:var(--m);font-size:10px;margin-top:10px}.metric-pairs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.metric-pair{min-width:0;border-top:1px solid var(--b);padding-top:8px}.metric-pair span{display:block;color:var(--m);font-size:10px}.metric-pair b{display:block;margin-top:3px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.health-card{--health:#3fb950;background:linear-gradient(135deg,color-mix(in srgb,var(--health) 13%,transparent),transparent 72%),var(--p);border-color:color-mix(in srgb,var(--health) 55%,var(--b))}.health-card .health-value{color:var(--health)}.health-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:7px 9px;border:1px solid color-mix(in srgb,var(--health) 50%,var(--b));border-radius:8px;background:color-mix(in srgb,var(--health) 13%,transparent);font-size:11px}.health-status b{color:var(--health)}.health-safe{--health:#3fb950}.health-slight{--health:#d29922}.health-medium{--health:#f0883e}.health-high{--health:#f85149}.health-extreme{--health:#ff7b72}.health-neutral{--health:#8b949e}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:13px}.metric{min-width:0;background:var(--p);border:1px solid var(--b);border-radius:11px;padding:14px}.metric .k{color:var(--m);font-size:11px}.metric .v{font-size:21px;font-weight:750;margin-top:5px}.metric .d{color:var(--m);font-size:10px;margin-top:5px}.metric-label{color:var(--m);font-size:10px;margin-top:10px}.metric-pairs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.metric-pair{min-width:0;border-top:1px solid var(--b);padding-top:8px}.metric-pair span{display:block;color:var(--m);font-size:10px}.metric-pair b{display:block;margin-top:3px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.health-card{--health:#3fb950;background:linear-gradient(135deg,color-mix(in srgb,var(--health) 13%,transparent),transparent 72%),var(--p);border-color:color-mix(in srgb,var(--health) 55%,var(--b))}.health-card .health-value{color:var(--health)}.health-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:7px 9px;border:1px solid color-mix(in srgb,var(--health) 50%,var(--b));border-radius:8px;background:color-mix(in srgb,var(--health) 13%,transparent);font-size:11px}.health-status b{color:var(--health)}.health-safe{--health:#3fb950}.health-risk{--health:#f85149}.health-neutral{--health:#8b949e}
 .chart{height:440px;position:relative;background:var(--p);border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:12px}canvas{width:100%;height:100%;display:block}.legend{position:absolute;right:13px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:82%}.legend button{display:flex;align-items:center;gap:6px;background:rgba(22,27,34,.95);border:1px solid var(--b);border-radius:7px;color:var(--t);padding:5px 8px;font-size:11px;cursor:pointer}.legend button.off{opacity:.35;text-decoration:line-through}.sw{width:16px;height:3px;border-radius:2px}
 .tip{display:none;position:absolute;z-index:4;pointer-events:none;min-width:270px;background:rgba(22,27,34,.98);border:1px solid var(--b);border-radius:8px;padding:9px 11px;font-size:11px}.tip.on{display:block}.tr{display:flex;justify-content:space-between;gap:20px;color:var(--m);line-height:1.55}.tr b{color:var(--t)}
 .tr.initial span,.tr.initial b{color:rgb(var(--initial-rgb))}
@@ -131,10 +132,11 @@ body.tour-active{overflow-x:hidden}
 <h1>FIRE 計算機</h1>
 <div class="sub">加入全域時間軸：指定開始年份、試算年數與出生年。每個試算組再指定「插入年份」，只有進入該年份後才開始作用；表格與圖表同步顯示年份與試算人年齡。</div>
 <div class="configbar">
- <button id="export_settings" class="configbtn" type="button">匯出試算設定</button>
- <button id="import_settings" class="configbtn" type="button">匯入試算設定</button>
- <button id="start_tour" class="configbtn tour-start-btn" type="button">使用說明導覽</button>
- <button id="start_scenario_tour" class="configbtn tour-start-btn" type="button">情境導覽</button>
+ <button id="restore_defaults" class="configbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>恢復預設值</span></button>
+ <button id="export_settings" class="configbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 14v5h14v-5"/></svg><span>匯出試算設定</span></button>
+ <button id="import_settings" class="configbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 14v5h14v-5"/></svg><span>匯入試算設定</span></button>
+ <button id="start_tour" class="configbtn tour-start-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg><span>使用說明導覽</span></button>
+ <button id="start_scenario_tour" class="configbtn tour-start-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Z"/><path d="M9 3v15M15 6v15"/></svg><span>情境導覽</span></button>
  <input id="import_settings_file" type="file" accept=".json,application/json" class="hidden">
  <span id="config_status" class="configstatus">設定檔格式：JSON</span>
 </div>
@@ -305,17 +307,11 @@ body.tour-active{overflow-x:hidden}
 各試算組只有在「插入年份」後才生效。</code></div>
   <div class="fi full"><b>⑦ 月配額與風險健康度</b><code>月平均配額 = 全試算期間固定支出總額 ÷（試算年數 × 12）
 
-每年備用金比例[t] = 年末現金資產[t] ÷ 當年緊急備用金目標[t]
+當年年末現金資產 &lt; 0 且 當年年度淨現金流 &lt; 0：有風險
+其餘情況：無風險
 
-整段試算取最高風險級別：
-備用金比例 &lt; 0%：極有風險
-0% ～ 25%（含）：較有風險
-25%（不含）～ 50%（含）：中等風險
-50%（不含）～ 75%（不含）：稍微風險
-備用金比例 ≥ 75%：無風險
-
-風險年份 = 首次進入最高風險級別的年份
-未設定緊急備用金目標的年份不納入健康度判定。</code></div>
+整段試算只要任一年符合上述雙重負值條件，即判定為有風險。
+風險年份 = 首次同時出現雙重負值的年份。</code></div>
  </div>
  <div id="verify_guide_box" class="verify"><label>查看實際代入：</label><select id="formula_year"></select><div id="detail"></div></div>
 </section>
@@ -364,21 +360,10 @@ function moneyValue(v){const n=Number.isFinite(v)?v:0;return Math.abs(n)<0.5?0:n
 function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",maximumFractionDigits:0}).format(moneyValue(v))}
 function moneyNegative(v){return moneyValue(v)<0}
 function cashHealth(rows){
-  const checks=rows.filter(r=>r.reserve_target>0).map(r=>{
-    const ratio=r.cash_assets/r.reserve_target;
-    const rank=ratio<0?4:ratio<=0.25?3:ratio<=0.5?2:ratio<0.75?1:0;
-    return {year:r.year,rank};
-  });
-  if(!checks.length)return {key:"neutral",label:"未設定備用金目標",year:null};
-  const worst=Math.max(...checks.map(r=>r.rank));
-  const meta=[
-    {key:"safe",label:"無風險"},
-    {key:"slight",label:"稍微風險"},
-    {key:"medium",label:"中等風險"},
-    {key:"high",label:"較有風險"},
-    {key:"extreme",label:"極有風險"}
-  ][worst];
-  return {...meta,year:worst?checks.find(r=>r.rank===worst).year:null};
+  const firstRisk=rows.find(r=>r.cash_assets<0&&r.net_cash_flow<0);
+  return firstRisk
+    ?{key:"risk",label:"有風險",year:firstRisk.year}
+    :{key:"safe",label:"無風險",year:null};
 }
 function alloc(src,mode,p,f,expense){if(src<=0)return 0;if(mode==="percent")return src*Math.max(0,Math.min(100,p))/100;if(mode==="fixed")return Math.min(src,Math.max(0,f));return Math.max(0,src-Math.max(0,expense))}
 function loan_pmt(P,ar,years){if(P<=0)return 0;const n=Math.max(1,Math.round(years*12)),r=ar/12;if(!r)return P/n;return P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
@@ -631,7 +616,17 @@ const SETTINGS_SCHEMA="asset-timeline-calculator";
 const SETTINGS_VERSION=7;
 const DEFAULT_SETTINGS={
  schema:SETTINGS_SCHEMA,version:SETTINGS_VERSION,
- settings:{timeline_start_year:"2026",timeline_years:"60",birth_year:"1994",initial_cash_assets:"1500000",initial_investment_assets:"10000000",compound_enabled:true,return_rate:"5",mortgage_enabled:true,mortgage_start_year:"2030",purchase_type:"direct",house_price:"15000000",additional_cost:"500000",down_rate:"20",construction_rate:"10",construction_years:"3",loan_years:"40",grace_years:"0",income_enabled:true,income_start_year:"2026",salary:"1500000",salary_growth:"3",income_years:"10",work_mode:"emergency_reserve",work_percent_value:"50",work_fixed_value:"1000000",retirement_enabled:true,retire_rate:"4",retire_years:"60",retire_mode:"emergency_reserve",retire_percent_value:"0",retire_fixed_value:"0"},
+ settings:{timeline_start_year:"2026",timeline_years:"60",birth_year:"1994",initial_cash_assets:"1500000",initial_investment_assets:"10000000",compound_enabled:true,return_rate:"5",mortgage_enabled:true,mortgage_start_year:"2030",purchase_type:"direct",house_price:"15000000",additional_cost:"500000",down_rate:"20",construction_rate:"10",construction_years:"3",loan_years:"40",grace_years:"0",income_enabled:true,income_start_year:"2026",salary:"1500000",salary_growth:"3",income_years:"11",work_mode:"emergency_reserve",work_percent_value:"50",work_fixed_value:"1000000",retirement_enabled:true,retire_rate:"4",retire_years:"60",retire_mode:"emergency_reserve",retire_percent_value:"0",retire_fixed_value:"0"},
+ expense_stages:[{year:2026,amount:620000}],
+ reserve_stages:[{year:2026,amount:2000000},{year:2027,amount:2500000},{year:2028,amount:3000000},{year:2029,amount:3500000},{year:2030,amount:500000}],
+ compound_stages:[{year:2026,years:60}],
+ mortgage_rate_stages:[{rate:2.6,years:0}]
+};
+
+// Keep the established walkthrough scenario independent from the site's editable defaults.
+const SCENARIO_SETTINGS={
+ schema:SETTINGS_SCHEMA,version:SETTINGS_VERSION,
+ settings:{...DEFAULT_SETTINGS.settings,income_years:"10"},
  expense_stages:[{year:2026,amount:600000}],
  reserve_stages:[{year:2026,amount:2000000},{year:2027,amount:2500000},{year:2028,amount:3000000},{year:2029,amount:3500000},{year:2030,amount:4000000},{year:2031,amount:500000}],
  compound_stages:[{year:2026,years:60}],
@@ -681,6 +676,11 @@ function export_settings(){
     try{const a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(json);a.download=filename;a.style.display="none";document.body.appendChild(a);a.click();a.remove();$("config_status").textContent=`已匯出：${filename}`;}
     catch(err2){$("config_status").textContent=`匯出失敗：${err2.message}`;alert(`匯出試算設定失敗：\n${err2.message}`);}
   }
+}
+
+function restore_default_settings(){
+  apply_settings(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
+  $("config_status").textContent="已恢復預設值";
 }
 
 function apply_settings(payload){
@@ -1256,13 +1256,13 @@ const tourSteps=[
     }
   },
   {
-    targets:["#export_settings","#import_settings"],
-    title:"9. 匯出與匯入試算設定",
+    targets:["#restore_defaults","#export_settings","#import_settings"],
+    title:"9. 恢復、匯出與匯入試算設定",
     path:"頁面工具列 › 設定檔",
-    text:"調好情境後可匯出 JSON 保存。之後再用匯入功能還原；設定檔採向後相容設計，新版會忽略未知欄位並遷移已知舊欄位。",
-    demo:"匯出檔名包含日期與分鐘，例如 asset-simulation-20260911-2344.json。匯出的是設定，不是試算結果表。",
+    text:"「恢復預設值」可回到網站內建的參考情境；調好自己的情境後則可匯出 JSON 保存，之後再用匯入功能還原。設定檔採向後相容設計，新版會忽略未知欄位並遷移已知舊欄位。",
+    demo:"恢復預設值會直接套用內建參考情境；若要保留目前調整，請先匯出。匯出的是設定，不是試算結果表；檔名會包含日期與分鐘。",
     prepare(){return []},
-    after(){tourPulse("#export_settings,#import_settings")}
+    after(){tourPulse("#restore_defaults,#export_settings,#import_settings")}
   },
   {
     target:"#start_tour",
@@ -1530,7 +1530,7 @@ function start_scenario_tour(){
   tour.snapshot=collect_settings();
   tour.rowsPerPage=$("rows_per_page").value;
   tour.folded=tourCaptureFolded();
-  apply_settings(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
+  apply_settings(JSON.parse(JSON.stringify(SCENARIO_SETTINGS)));
   $("rows_per_page").value="all";page=1;render_table();
   tour.step=0;
   document.body.classList.add("tour-active");
@@ -1604,6 +1604,7 @@ $("add_expense_stage").onclick=add_expense_stage;
 $("add_reserve_stage").onclick=add_reserve_stage;
 $("add_compound_stage").onclick=add_compound_stage;
 $("add_mortgage_rate_stage").onclick=add_mortgage_rate_stage;
+$("restore_defaults").onclick=restore_default_settings;
 $("export_settings").onclick=export_settings;
 $("import_settings").onclick=()=>$("import_settings_file").click();
 $("import_settings_file").onchange=ev=>import_settings_file(ev.target.files&&ev.target.files[0]);
