@@ -120,10 +120,7 @@ tbody tr.tour-focus-target td:last-child{box-shadow:inset -2px 0 #58a6ff,inset 0
 .tour-panel.top{top:20px;bottom:auto}
 .tour-panel .tour-path{margin-top:5px;color:#8b949e;font-size:10px;letter-spacing:.02em}
 .tour-panel .tour-hint{color:#79c0ff}
-.tour-field-pulse{position:relative;z-index:1904!important}
-
 body.tour-active{overflow-x:hidden}
-body.tour-active .configbar{position:relative;z-index:1905}
 @media(max-width:700px){.tour-panel{bottom:6px;padding:10px 12px}.tour-text{line-height:1.5}.tour-demo{margin-top:6px;padding:7px 9px;line-height:1.45}.tour-actions{align-items:flex-end;margin-top:8px}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
 
 @media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.chart{height:390px}}
@@ -1019,7 +1016,8 @@ const tour={
   snapshot:null,
   rowsPerPage:null,
   folded:null,
-  animToken:0
+  animToken:0,
+  timers:new Set()
 };
 
 const tourSteps=[
@@ -1249,8 +1247,8 @@ const scenarioSteps=[
     subtarget:'#tbody tr[data-year="2026"]', targets:['#tbody tr[data-year="2027"]','#tbody tr[data-year="2028"]','#tbody tr[data-year="2029"]'], body:null,
     title:"情境 1｜工作期間先準備購屋與備用金",
     path:"預設情境 › 2026～2029 工作期間",
-    text:"預設設定從 2026 年開始工作，收入先完成當年度的固定支出與緊急備用金目標；超過目標的現金再投入投資。到 2030 年前，備用金目標逐步累積到 350 萬，讓購屋前已有一筆可用現金緩衝。",
-    demo:"表格第 1～4 列會顯示工作期間的年度淨現金流與年末現金；備用金目標逐年提高，超過目標的現金才投入投資。",
+    text:"預設計畫在 2030 年購入 1,500 萬的房子，20% 頭期款為 300 萬，因此購屋前要先準備約 300～400 萬的頭期款與緊急備用金。工作期間的收入會先完成當年度固定支出與備用金目標，超過目標的現金再投入投資。",
+    demo:"表格第 1～4 列顯示 2026～2029 工作期間：備用金目標逐年提高，2029 年達 350 萬，為 2030 年購屋預留頭期款與現金緩衝。",
     prepare(){e.income_years.value="10";return []}
   },
   {
@@ -1263,9 +1261,9 @@ const scenarioSteps=[
   },
   {
     subtarget:'#tbody tr[data-year="2041"]', body:null,
-    title:"情境 3｜2041 年末現金轉為負數",
+    title:"情境 3｜較差計畫：2041 年末現金轉為負數",
     path:"預設情境 › 2036 退休後至 2041",
-    text:"預設設定工作 10 年，2036 年開始以 4% 提領。此時投資資產的提領金額還不足以同時支撐固定支出與房貸，因此現金流逐年承壓，2041 年末現金轉為負數。這代表現金流需要調度，不代表投資資產已經消失或一定會爆掉；實務上仍可賣出部分投資資產補足現金。",
+    text:"這是計畫比較差的情況：預設設定工作 10 年，2036 年開始以 4% 提領。此時投資資產的提領金額還不足以同時支撐固定支出與房貸，因此現金流逐年承壓，2041 年末現金轉為負數。這代表現金流需要調度，不代表投資資產已經消失或一定會爆掉；實務上仍可賣出部分投資資產補足現金。",
     demo:"現在只高亮 2041 年這一列，方便直接對照年度淨現金流、年末現金與仍然存在的投資資產。",
     prepare(){e.income_years.value="10";return []},
     after(){scenarioSelectYear(2041)}
@@ -1281,7 +1279,7 @@ const scenarioSteps=[
   },
   {
     target:".group-income", subtarget:"#income_years", body:"income_body",
-    title:"情境 4｜工作多一年，退休現金流改善",
+    title:"情境 4｜工作多一年，退休現金流改善 (工作收入年數從 10 年改為 11 年)",
     path:"預設情境 › 工作 11 年、2037 退休",
     text:"把工作收入年數從 10 年調整為 11 年，退休延後到 2037 年。多累積一年的收入與投資，套用同樣的 4% 提領計畫後，現金流只會短暫出現約兩年負數，後期已能由投資資產支撐支出，逐步達到財富自由。",
     demo:"這一步只短暫停在「經常收入試算組」，把工作收入年數從 10 改成 11；按下一步就立刻回到表格看差異。",
@@ -1331,14 +1329,28 @@ function tourOpenBody(id){
     btn.closest(".head").classList.remove("collapsed");
   }
 }
+function tourDelay(fn,delay){
+  const timer=setTimeout(()=>{
+    tour.timers.delete(timer);
+    fn();
+  },delay);
+  tour.timers.add(timer);
+  return timer;
+}
+function tourClearTimers(){
+  tour.timers.forEach(timer=>clearTimeout(timer));
+  tour.timers.clear();
+}
 function tourClearFocus(){
+  tourClearTimers();
   document.querySelectorAll(".tour-focus").forEach(el=>el.classList.remove("tour-focus"));
   document.querySelectorAll(".tour-focus-target").forEach(el=>el.classList.remove("tour-focus-target"));
+  document.querySelectorAll(".tour-field-pulse").forEach(el=>el.classList.remove("tour-field-pulse"));
   $("table_guide_box").classList.remove("tour-context-raised");
 }
 function tourPulse(selector){
   document.querySelectorAll(selector).forEach((el,i)=>{
-    setTimeout(()=>{
+    tourDelay(()=>{
       el.classList.remove("tour-field-pulse");
       void el.offsetWidth;
       el.classList.add("tour-field-pulse");
@@ -1374,13 +1386,13 @@ function tourAnimateNumber(id,to,duration=560){
     requestAnimationFrame(frame);
   });
 }
-async function tourRunAnimations(items,step){
+async function tourRunAnimations(items,step,token){
   for(const [id,value] of items){
-    if(!tour.active)return;
+    if(!tour.active||token!==tour.animToken)return;
     await tourAnimateNumber(id,value,520);
     await new Promise(r=>setTimeout(r,65));
   }
-  if(tour.active&&step.after)setTimeout(()=>step.after(),120);
+  if(tour.active&&token===tour.animToken&&step.after)tourDelay(()=>step.after(),120);
 }
 function tourFocusStep(step){
   tourClearFocus();
@@ -1405,7 +1417,7 @@ function tourFocusStep(step){
     (mainTarget||(step.targets&&step.targets.length?document.querySelector(step.targets[0]):null));
   if(scrollTarget&&scrollTarget.tagName==="TR")$("table_guide_box").classList.add("tour-context-raised");
 
-  if(scrollTarget){setTimeout(()=>tourLayoutStep(step),50);setTimeout(()=>tourLayoutStep(step),420)}
+  if(scrollTarget){tourDelay(()=>tourLayoutStep(step),50);tourDelay(()=>tourLayoutStep(step),420)}
 }
 function tourTargetForStep(step){
   const selector=step.subtarget||(step.targets&&step.targets[0])||step.target;
@@ -1439,6 +1451,8 @@ function tourShowStep(index){
   if(!tour.active)return;
   const steps=tour.steps||tourSteps;
   tour.animToken++;
+  tourClearTimers();
+  const token=tour.animToken;
   tour.step=Math.max(0,Math.min(steps.length-1,index));
   const step=steps[tour.step];
 
@@ -1455,12 +1469,12 @@ function tourShowStep(index){
   const animations=step.prepare?step.prepare():[];
   calc();
   tourFocusStep(step);
-  setTimeout(()=>tourLayoutStep(step),0);
-  setTimeout(()=>tourLayoutStep(step),260);
-  setTimeout(()=>tourLayoutStep(step),700);
+  tourDelay(()=>tourLayoutStep(step),0);
+  tourDelay(()=>tourLayoutStep(step),260);
+  tourDelay(()=>tourLayoutStep(step),700);
 
-  if(animations.length)setTimeout(()=>tourRunAnimations(animations,step),230);
-  else if(step.after)setTimeout(()=>step.after(),300);
+  if(animations.length)tourDelay(()=>tourRunAnimations(animations,step,token),230);
+  else if(step.after)tourDelay(()=>step.after(),300);
 }
 function start_tour(){
   if(tour.active)return;
