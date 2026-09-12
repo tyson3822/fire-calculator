@@ -80,16 +80,16 @@ tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 
 /* Guided tour */
 .tour-start-btn{border-color:rgba(var(--a),.55);background:rgba(var(--initial-rgb),.09)}
-.tour-backdrop{position:fixed;inset:0;background:rgba(3,7,12,.80);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.tour-backdrop{position:fixed;inset:0;background:rgba(3,7,12,.80);z-index:1900;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .tour-backdrop.on{opacity:1;pointer-events:auto}
-.card.tour-focus{position:relative;z-index:902;box-shadow:0 0 0 2px rgba(255,255,255,.08),0 0 0 5px var(--tour-color,var(--a)),0 22px 70px rgba(0,0,0,.58);transform:translateZ(0)}
+.card.tour-focus{position:relative;z-index:1902;box-shadow:0 0 0 2px rgba(255,255,255,.08),0 0 0 5px var(--tour-color,var(--a)),0 22px 70px rgba(0,0,0,.58);transform:translateZ(0)}
 .card.tour-focus::after{content:"";position:absolute;inset:-6px;border:1px solid var(--tour-color,var(--a));border-radius:16px;pointer-events:none;animation:tourHalo 1.7s ease-in-out infinite}
 .card.group-initial.tour-focus{--tour-color:rgb(var(--initial-rgb))}
 .card.group-compound.tour-focus{--tour-color:rgb(var(--compound-rgb))}
 .card.group-mortgage.tour-focus{--tour-color:rgb(var(--mortgage-rgb))}
 .card.group-income.tour-focus{--tour-color:rgb(var(--income-rgb))}
 @keyframes tourHalo{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.006)}}
-.tour-panel{position:fixed;z-index:904;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);width:min(720px,calc(100vw - 28px));background:rgba(22,27,34,.985);border:1px solid #484f58;border-radius:14px;padding:15px 16px;box-shadow:0 20px 70px rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.tour-panel{position:fixed;z-index:2000;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);width:min(720px,calc(100vw - 28px));max-height:calc(100vh - 32px);overflow:auto;background:rgba(22,27,34,.985);border:1px solid #484f58;border-radius:14px;padding:15px 16px;box-shadow:0 20px 70px rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
 .tour-panel.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
 .tour-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
 .tour-kicker{color:var(--m);font-size:11px;margin-bottom:3px}
@@ -106,7 +106,7 @@ tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 .tour-field-pulse{animation:tourFieldPulse .9s ease}
 @keyframes tourFieldPulse{0%{box-shadow:0 0 0 0 rgba(88,166,255,0)}35%{box-shadow:0 0 0 3px rgba(88,166,255,.42)}100%{box-shadow:0 0 0 0 rgba(88,166,255,0)}}
 
-.tour-focus-target{position:relative;z-index:903!important;box-shadow:0 0 0 3px var(--tour-color,var(--a)),0 18px 55px rgba(0,0,0,.55)!important;border-radius:12px;animation:tourTargetHalo 1.6s ease-in-out infinite}
+.tour-focus-target{position:relative;z-index:1903!important;box-shadow:0 0 0 3px var(--tour-color,var(--a)),0 18px 55px rgba(0,0,0,.55)!important;border-radius:12px;animation:tourTargetHalo 1.6s ease-in-out infinite}
 .group-initial .tour-focus-target{--tour-color:rgb(var(--initial-rgb))}
 .group-compound .tour-focus-target{--tour-color:rgb(var(--compound-rgb))}
 .group-mortgage .tour-focus-target{--tour-color:rgb(var(--mortgage-rgb))}
@@ -115,10 +115,10 @@ tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 .tour-panel.top{top:20px;bottom:auto}
 .tour-panel .tour-path{margin-top:5px;color:#8b949e;font-size:10px;letter-spacing:.02em}
 .tour-panel .tour-hint{color:#79c0ff}
-.tour-field-pulse{position:relative;z-index:906!important}
+.tour-field-pulse{position:relative;z-index:1904!important}
 
 body.tour-active{overflow-x:hidden}
-body.tour-active .configbar{position:relative;z-index:905}
+body.tour-active .configbar{position:relative;z-index:1905}
 @media(max-width:700px){.tour-panel{bottom:10px}.tour-actions{align-items:flex-end}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
 
 @media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.chart{height:390px}}
@@ -1004,6 +1004,7 @@ const tour={
   step:0,
   steps:null,
   snapshot:null,
+  rowsPerPage:null,
   folded:null,
   animToken:0
 };
@@ -1126,8 +1127,16 @@ const tourSteps=[
     after(){tourCyclePurchaseTypes()}
   },
   {
+    target:".group-mortgage", subtarget:"#house_price", targets:["#additional_cost","#down_rate"], body:"mortgage_body",
+    title:"4-1. 房屋總價、頭期與額外支出",
+    path:"房貸試算組 › 購屋資金",
+    text:"購屋年除了頭期款，還可以加入裝潢、設計、家具等額外支出。直接購入會在購入年一次列入；預售屋則會在交屋年列入，這些金額都會反映在當年現金流。",
+    demo:"示範：把額外支出設為 50 萬，觀察購屋或交屋年度的年度淨現金流變化。",
+    prepare(){return [["house_price",15000000],["additional_cost",500000],["down_rate",20]]}
+  },
+  {
     target:".group-mortgage", subtarget:"#mortgage_rate_guide_box", body:"mortgage_body",
-    title:"4-1. 優惠或補貼房貸可以用分段利率",
+    title:"4-2. 優惠或補貼房貸可以用分段利率",
     path:"房貸試算組 › 房貸利率階段",
     text:"房貸不一定整段都是同一利率。你可以把政府補貼、銀行優惠期與後續一般利率拆成多個階段；利率切換時，試算器會依剩餘本金與剩餘年限重新計算月付。",
     demo:"示範：前 5 年 1.77%，之後剩餘年限 2.60%。最後一階段的持續年數設為 0，代表一路套用到房貸結束。",
@@ -1136,7 +1145,7 @@ const tourSteps=[
   },
   {
     target:".group-mortgage", body:"mortgage_body",
-    title:"4-2. 房貸年限與寬限期",
+    title:"4-3. 房貸年限與寬限期",
     path:"房貸試算組 › 房貸條件",
     text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
     demo:"例如 40 年房貸、前 5 年 1.77%、其後 2.60%，也可以再搭配寬限期比較退休前現金流。",
@@ -1224,36 +1233,36 @@ const tourSteps=[
 
 const scenarioSteps=[
   {
-    target:".group-income", subtarget:"#work_mode", targets:["#income_years","#reserve_stages"], body:"income_body",
+    target:"#table_guide_box", subtarget:"#tbody tr:nth-child(1)", targets:["#tbody tr:nth-child(2)","#tbody tr:nth-child(3)","#tbody tr:nth-child(4)"], body:null,
     title:"情境 1｜工作期間先準備購屋與備用金",
     path:"預設情境 › 2026～2029 工作期間",
     text:"預設設定從 2026 年開始工作，收入先完成當年度的固定支出與緊急備用金目標；超過目標的現金再投入投資。到 2030 年前，備用金目標逐步累積到 350 萬，讓購屋前已有一筆可用現金緩衝。",
-    demo:"重點欄位：工作收入年數、工作期間投入方式、緊急備用金目標表。"
+    demo:"表格第 1～4 列會顯示工作期間的年度淨現金流與年末現金；備用金目標逐年提高，超過目標的現金才投入投資。"
   },
   {
-    target:".group-mortgage", subtarget:"#mortgage_start_year", targets:["#house_price","#additional_cost","#down_rate","#loan_years"], body:"mortgage_body",
+    target:"#table_guide_box", subtarget:"#tbody tr:nth-child(5)", body:null,
     title:"情境 2｜2030 年購屋並開始房貸",
     path:"預設情境 › 2030 購屋年",
     text:"2030 年同時發生頭期款、裝潢設計家具等額外支出，以及房貸開始後的還款。因為前幾年已先建立緊急備用金，且 2030 年仍在工作，收入仍能支應固定支出、房貸與持續投資。",
-    demo:"重點欄位：購屋插入年份、房屋總價、額外支出、頭期款與房貸年限。",
+    demo:"表格第 5 列是 2030 年：同一列可看到購屋、額外支出與房貸造成的現金流轉折。",
     prepare(){return [["mortgage_start_year",2030]]}
   },
   {
-    target:".group-income", subtarget:"#retirement_guide_box", targets:["#retire_rate","#formula_year","#detail"], body:"income_body",
+    target:"#table_guide_box", subtarget:"#tbody tr:nth-child(16)", targets:["#tbody tr:nth-child(30)"], body:null,
     title:"情境 3｜2036 年退休後現金流轉負",
     path:"預設情境 › 2036 退休至 2055",
     text:"預設設定工作 10 年，2036 年開始以 4% 提領。此時投資資產的提領金額還不足以同時支撐固定支出與房貸，因此現金流逐年承壓，2041 年末現金轉為負數。這代表現金流需要調度，不代表投資資產已經消失或一定會爆掉；實務上仍可賣出部分投資資產補足現金。",
-    demo:"查看 2041 年公式明細：負現金資產是現金流缺口的警示。持續此計畫，約 2055 年現金才由負轉正。",
+    demo:"表格第 16 列是 2041 年，年末現金轉負；第 30 列是 2055 年，現金由負轉正。",
     after(){scenarioSelectYear(2041)}
   },
   {
-    target:".group-income", subtarget:"#income_years", targets:["#retire_rate","#formula_year","#detail"], body:"income_body",
+    target:".group-income", subtarget:"#income_years", body:"income_body",
     title:"情境 4｜工作多一年，退休現金流改善",
     path:"預設情境 › 工作 11 年、2037 退休",
     text:"把工作收入年數從 10 年調整為 11 年，退休延後到 2037 年。多累積一年的收入與投資，套用同樣的 4% 提領計畫後，現金流只會短暫出現約兩年負數，後期已能由投資資產支撐支出，逐步達到財富自由。",
-    demo:"示範會把工作收入年數改成 11 年，並查看 2055 年；按「完成導覽」會還原導覽前設定。",
+    demo:"這一步只會短暫把「工作收入年數」從 10 改成 11；接著回到表格查看 2055 年的結果。",
     prepare(){return [["income_years",11]]},
-    after(){scenarioSelectYear(2055)}
+    after(){scenarioFocusTableRows(["#tbody tr:nth-child(30)","#tbody tr:nth-child(16)"]);scenarioSelectYear(2055)}
   }
 ];
 
@@ -1263,6 +1272,17 @@ function scenarioSelectYear(year){
   $("formula_year").value=String(i);
   render_formula(i);
   tourPulse("#formula_year,#detail");
+}
+function scenarioFocusTableRows(selectors){
+  tourClearFocus();
+  const table=$("table_guide_box");
+  if(table)table.classList.add("tour-focus-target");
+  selectors.forEach(selector=>{
+    const row=document.querySelector(selector);
+    if(row)row.classList.add("tour-focus-target");
+  });
+  const first=document.querySelector(selectors[0]);
+  if(first){setTimeout(()=>tourScrollElement(first),50);setTimeout(()=>tourScrollElement(first),420)}
 }
 
 function tourCaptureFolded(){
@@ -1385,7 +1405,34 @@ function tourFocusStep(step){
 
   const scrollTarget=step.subtarget?document.querySelector(step.subtarget):
     (mainTarget||(step.targets&&step.targets.length?document.querySelector(step.targets[0]):null));
-  if(scrollTarget)setTimeout(()=>scrollTarget.scrollIntoView({behavior:"smooth",block:"center"}),50);
+  if(scrollTarget){setTimeout(()=>tourScrollElement(scrollTarget),50);setTimeout(()=>tourScrollElement(scrollTarget),420)}
+}
+function tourScrollElement(element){
+  if(!element)return;
+  const rect=element.getBoundingClientRect(),targetTop=window.scrollY+rect.top-Math.max(90,(window.innerHeight-rect.height)/2);
+  element.scrollIntoView({block:"center",behavior:"smooth"});
+  document.documentElement.scrollTop=Math.max(0,targetTop);
+  document.body.scrollTop=Math.max(0,targetTop);
+  window.scrollTo({top:Math.max(0,targetTop),behavior:"smooth"});
+}
+function tourPositionPanel(step){
+  const panel=$("tour_panel");
+  if(!panel||!tour.active)return;
+  const selector=step.subtarget||(step.targets&&step.targets[0])||step.target;
+  const target=selector?document.querySelector(selector):null;
+  const gap=18,panelHeight=panel.offsetHeight,vh=window.innerHeight;
+  panel.classList.remove("top");
+  panel.style.top="auto";panel.style.bottom="auto";
+  if(step.panel==="top"){
+    panel.style.top="16px";
+    return;
+  }
+  if(!target){panel.style.bottom="20px";return}
+  const rect=target.getBoundingClientRect(),topRoom=Math.max(0,rect.top-gap),bottomRoom=Math.max(0,vh-rect.bottom-gap);
+  const targetIsLower=rect.top+rect.height/2>vh/2;
+  if((targetIsLower&&topRoom>=panelHeight)||(bottomRoom<panelHeight&&topRoom>=panelHeight))panel.style.top="16px";
+  else if(bottomRoom>=panelHeight)panel.style.bottom="20px";
+  else panel.style.top="16px";
 }
 function tourShowStep(index){
   if(!tour.active)return;
@@ -1406,6 +1453,9 @@ function tourShowStep(index){
   $("tour_next").textContent=tour.step===steps.length-1?"完成導覽":"下一步";
   $("tour_scenario").classList.toggle("hidden",steps!==tourSteps||tour.step!==steps.length-1);
   $("tour_panel").classList.toggle("top",step.panel==="top");
+  setTimeout(()=>tourPositionPanel(step),0);
+  setTimeout(()=>tourPositionPanel(step),260);
+  setTimeout(()=>tourPositionPanel(step),700);
 
   const animations=step.prepare?step.prepare():[];
   calc();
@@ -1418,6 +1468,7 @@ function start_tour(){
   tour.active=true;
   tour.steps=tourSteps;
   tour.snapshot=collect_settings();
+  tour.rowsPerPage=$("rows_per_page").value;
   tour.folded=tourCaptureFolded();
   tour.step=0;
   $("tour_kicker").textContent="使用說明導覽";
@@ -1432,8 +1483,10 @@ function start_scenario_tour(){
   tour.active=true;
   tour.steps=scenarioSteps;
   tour.snapshot=collect_settings();
+  tour.rowsPerPage=$("rows_per_page").value;
   tour.folded=tourCaptureFolded();
   apply_settings(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
+  $("rows_per_page").value="all";page=1;render_table();
   tour.step=0;
   document.body.classList.add("tour-active");
   $("tour_backdrop").classList.add("on");
@@ -1453,11 +1506,14 @@ function end_tour(restore=true){
   $("tour_backdrop").setAttribute("aria-hidden","true");
   document.body.classList.remove("tour-active");
 
+  const restoreRows=tour.rowsPerPage;
   if(restore&&tour.snapshot){
     apply_settings(JSON.parse(JSON.stringify(tour.snapshot)));
   }
+  if(restoreRows!==null){$("rows_per_page").value=restoreRows;page=1;render_table()}
   tourRestoreFolded();
   tour.snapshot=null;
+  tour.rowsPerPage=null;
   tour.folded=null;
   tour.steps=null;
 }
