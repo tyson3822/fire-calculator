@@ -107,6 +107,11 @@ tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 @keyframes tourFieldPulse{0%{box-shadow:0 0 0 0 rgba(88,166,255,0)}35%{box-shadow:0 0 0 3px rgba(88,166,255,.42)}100%{box-shadow:0 0 0 0 rgba(88,166,255,0)}}
 
 .tour-focus-target{position:relative;z-index:1903!important;box-shadow:0 0 0 3px var(--tour-color,var(--a)),0 18px 55px rgba(0,0,0,.55)!important;border-radius:12px;animation:tourTargetHalo 1.6s ease-in-out infinite}
+#table_guide_box.tour-context-raised{position:relative;z-index:1901}
+tbody tr.tour-focus-target{outline:3px solid var(--tour-color,var(--a));outline-offset:-2px;box-shadow:0 10px 28px rgba(0,0,0,.58)!important}
+tbody tr.tour-focus-target td{position:relative;background:#1f3554!important;box-shadow:inset 0 2px #58a6ff,inset 0 -2px #58a6ff;filter:none!important}
+tbody tr.tour-focus-target td:first-child{box-shadow:inset 2px 0 #58a6ff,inset 0 2px #58a6ff,inset 0 -2px #58a6ff}
+tbody tr.tour-focus-target td:last-child{box-shadow:inset -2px 0 #58a6ff,inset 0 2px #58a6ff,inset 0 -2px #58a6ff}
 .group-initial .tour-focus-target{--tour-color:rgb(var(--initial-rgb))}
 .group-compound .tour-focus-target{--tour-color:rgb(var(--compound-rgb))}
 .group-mortgage .tour-focus-target{--tour-color:rgb(var(--mortgage-rgb))}
@@ -119,7 +124,7 @@ tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 
 body.tour-active{overflow-x:hidden}
 body.tour-active .configbar{position:relative;z-index:1905}
-@media(max-width:700px){.tour-panel{bottom:10px}.tour-actions{align-items:flex-end}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
+@media(max-width:700px){.tour-panel{bottom:6px;padding:10px 12px}.tour-text{line-height:1.5}.tour-demo{margin-top:6px;padding:7px 9px;line-height:1.45}.tour-actions{align-items:flex-end;margin-top:8px}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
 
 @media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.chart{height:390px}}
 </style>
@@ -142,6 +147,7 @@ body.tour-active .configbar{position:relative;z-index:1905}
 <section class="card group-initial">
  <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="timeline_body">−</button><div class="title">時間軸 / 初始設定</div></div></div>
  <div id="timeline_body">
+  <div id="initial_settings_guide_box">
   <div class="row2">
    <div class="field"><label>開始試算年份</label><input id="timeline_start_year" type="number" value="2026" min="1900" max="2200"></div>
     <div class="field"><label>試算年數</label><input id="timeline_years" type="number" value="60" min="1" max="100"></div>
@@ -153,6 +159,7 @@ body.tour-active .configbar{position:relative;z-index:1905}
    <div class="field"><label>投資年化報酬率（%）</label><input id="return_rate" type="number" value="5" step="0.1"></div>
   </div>
   <div class="note">現金資產與投資資產都從試算第一年開始存在，並逐年累積。所有支出只從現金資產扣除，不會自動賣出投資資產補足。</div>
+  </div>
 
   <div id="expense_guide_box" class="expense_box">
    <div class="expense_head"><b>動態固定支出表</b><button id="add_expense_stage" class="addstage" type="button">＋ 多一個固定支出階段</button></div>
@@ -172,9 +179,11 @@ body.tour-active .configbar{position:relative;z-index:1905}
 <section class="card group-income">
  <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="income_body">−</button><div class="title">經常收入試算組</div></div><label class="tog"><input id="income_enabled" type="checkbox" checked>加入試算</label></div>
  <div id="income_body">
+  <div id="income_basics_guide_box">
   <div class="field"><label>工作收入插入年份</label><input id="income_start_year" type="number" value="2026" min="1900" max="2200"></div>
   <div class="field"><label>目前年薪（NT$）</label><input id="salary" type="number" value="1500000" step="100000"></div>
   <div class="row2"><div class="field"><label>每年調薪率（%）</label><input id="salary_growth" type="number" value="3" step="0.1"></div><div class="field"><label>工作收入年數</label><input id="income_years" type="number" value="10"></div></div>
+  </div>
   <div id="work_allocation_guide_box" class="allocation-guide-box">
    <div class="field"><label>工作期間：每年投入投資方式</label><select id="work_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
    <div id="work_percent" class="field"><label>投入收入比例（%）</label><input id="work_percent_value" type="number" value="50" min="0" max="100"></div>
@@ -199,7 +208,7 @@ body.tour-active .configbar{position:relative;z-index:1905}
 <section class="card group-compound">
  <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="compound_body">−</button><div class="title">複利計算試算組</div></div><label class="tog"><input id="compound_enabled" type="checkbox" checked>加入試算</label></div>
  <div id="compound_body">
-  <div class="expense_box">
+  <div id="compound_guide_box" class="expense_box">
    <div class="expense_head"><b>複利再投入階段</b><button id="add_compound_stage" class="addstage" type="button">＋ 多一個複利階段</button></div>
    <div id="compound_stages"></div>
    <div id="compound_stage_error" class="stage_error"></div>
@@ -225,7 +234,7 @@ body.tour-active .configbar{position:relative;z-index:1905}
    <div class="note">可模擬購屋補助、銀行優惠期或分段式房貸。每個階段依序接續；最後一階段的持續年數設為 0 代表一路套用到房貸結束。利率切換時會依當下剩餘本金與剩餘期限重新計算月付。</div>
   </div>
   <div id="presale" class="hidden"><div class="row2"><div class="field"><label>工程期分款（總價 %）</label><input id="construction_rate" type="number" value="10"></div><div class="field"><label>工程期（年）</label><input id="construction_years" type="number" value="3"></div></div></div>
-  <div class="row2"><div class="field"><label>房貸年限（年）</label><input id="loan_years" type="number" value="40"></div><div class="field"><label>寬限期（年）</label><input id="grace_years" type="number" value="0"></div></div>
+  <div id="mortgage_terms_guide_box" class="row2"><div class="field"><label>房貸年限（年）</label><input id="loan_years" type="number" value="40"></div><div class="field"><label>寬限期（年）</label><input id="grace_years" type="number" value="0"></div></div>
   <div class="note">房貸、頭期款與工程款均為現金支出；不足時現金餘額會呈負值，不會自動賣投資資產補洞。</div>
  </div>
 </section>
@@ -243,7 +252,7 @@ body.tour-active .configbar{position:relative;z-index:1905}
 
 <div id="chart_guide_box" class="chart"><canvas id="chart"></canvas><div id="legend" class="legend"></div><div id="tip" class="tip"></div></div>
 
-<div class="toolbar table-toolbar">
+<div id="table_toolbar_guide_box" class="toolbar table-toolbar">
  <div class="table-view-controls">
   <span>欄位</span>
   <button id="table_view_compact" class="table-view-btn active" type="button">精簡</button>
@@ -313,7 +322,7 @@ body.tour-active .configbar{position:relative;z-index:1905}
    <div id="tour_text" class="tour-text"></div>
    <div id="tour_path" class="tour-path"></div>
   </div>
-   <div id="tour_step" class="tour-step">1 / 17</div>
+    <div id="tour_step" class="tour-step">1 / 18</div>
  </div>
  <div id="tour_demo" class="tour-demo"></div>
  <div class="tour-actions">
@@ -345,6 +354,7 @@ function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currenc
 function alloc(src,mode,p,f,expense){if(src<=0)return 0;if(mode==="percent")return src*Math.max(0,Math.min(100,p))/100;if(mode==="fixed")return Math.min(src,Math.max(0,f));return Math.max(0,src-Math.max(0,expense))}
 function loan_pmt(P,ar,years){if(P<=0)return 0;const n=Math.max(1,Math.round(years*12)),r=ar/12;if(!r)return P/n;return P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
 function mode_ui(prefix,mode){$(prefix+"_percent").classList.toggle("hidden",mode!=="percent");$(prefix+"_fixed").classList.toggle("hidden",mode!=="fixed");$(prefix+"_expense").classList.toggle("hidden",mode!=="expense_balance");$(prefix+"_emergency").classList.toggle("hidden",mode!=="emergency_reserve")}
+function purchase_ui(){$("presale").classList.toggle("hidden",e.purchase_type.value!=="presale")}
 
 let expenseStages=[
   {year:2026, amount:600000}
@@ -909,6 +919,7 @@ function render_table(){
  page=Math.min(page,pages);const a=(page-1)*per,b=Math.min(total,a+per);tbody.innerHTML="";
  state.rows.slice(a,b).forEach(r=>{
    const tr=document.createElement("tr");
+   tr.dataset.year=String(r.year);
    tr.innerHTML=`<td class="table-core">${r.idx+1}</td><td class="col-initial table-core">${r.year}</td><td class="col-initial table-detail detail-initial">${r.age}</td><td class="table-core">${r.phase}</td>
    <td class="col-initial table-detail detail-initial">${money(r.cash_start)}</td><td class="col-initial table-detail detail-initial">${money(r.investment_start)}</td><td class="pos col-initial table-detail detail-initial">${money(r.gross_investment_return)}</td><td class="pos col-compound table-detail detail-compound">${money(r.investment_return_reinvest)}</td>
    <td class="pos col-income table-detail detail-income">${money(r.work_income)}</td><td class="pos col-income table-detail detail-income">${money(r.work_inv)}</td><td class="warn col-income table-detail detail-income">${money(r.ret_income)}</td>
@@ -1011,7 +1022,7 @@ const tour={
 
 const tourSteps=[
   {
-    target:".group-initial", body:"timeline_body",
+    target:"#initial_settings_guide_box", body:"timeline_body",
     title:"1. 建立時間軸與初始資產",
     path:"時間軸 / 初始設定",
     text:"先從最小可用模型開始。只設定時間範圍、出生年、初始現金、初始投資資產與投資年化報酬率；其他試算組先全部關閉。即使不開複利，投資資產仍會產生收益，只是收益進入現金。",
@@ -1053,7 +1064,7 @@ const tourSteps=[
     after(){tourPulse("#reserve_stages input")}
   },
   {
-    target:".group-income", body:"income_body",
+    target:"#income_basics_guide_box", body:"income_body",
     title:"2. 加入工作收入與每年投資",
     path:"經常收入試算組",
     text:"這裡設定工作收入何時開始、薪資成長與工作年數，再決定每年有多少收入轉進投資。可選百分比、固定金額、扣除支出後全投資，或只保留緊急備用金。",
@@ -1100,7 +1111,7 @@ const tourSteps=[
     after(){tourPulse("#retirement_guide_box input,#retirement_guide_box select")}
   },
   {
-    target:".group-compound", body:"compound_body",
+    target:"#compound_guide_box", body:"compound_body",
     title:"3. 決定哪些年份要複利再投入",
     path:"複利計算試算組",
     text:"年化報酬率已在初始設定中，所以投資收益每年都會計算。這個試算組只控制『收益是否回到投資本金』。在複利階段內，收益再投入；階段外，收益流入現金。",
@@ -1144,7 +1155,7 @@ const tourSteps=[
     after(){tourPulse("#mortgage_rate_stages input")}
   },
   {
-    target:".group-mortgage", body:"mortgage_body",
+    target:"#mortgage_terms_guide_box", body:"mortgage_body",
     title:"4-3. 房貸年限與寬限期",
     path:"房貸試算組 › 房貸條件",
     text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
@@ -1152,7 +1163,7 @@ const tourSteps=[
     prepare(){return [["loan_years",40],["grace_years",0]]}
   },
   {
-    target:"#chart_guide_box", panel:"top",
+    target:"#legend",
     title:"5. 圖表：快速看資產路徑與單一年份",
     path:"結果區 › 互動圖表",
     text:"圖表用來先看整體趨勢。把滑鼠移到任一年份會出現垂直指示線與詳細資訊；點一下年份可以固定，再移動滑鼠也不會消失。右上角圖例可個別隱藏曲線。",
@@ -1165,7 +1176,7 @@ const tourSteps=[
     }
   },
   {
-    target:"#table_guide_box", panel:"top",
+    target:"#table_toolbar_guide_box",
     title:"6. 表格：先用精簡模式掌握結果",
     path:"結果區 › 年度明細表 › 精簡",
     text:"圖表適合看趨勢，表格則用來逐年核對。為避免 20 多個欄位把畫面拉得太寬，表格預設先收成核心欄位，手機也比較容易閱讀。",
@@ -1178,7 +1189,7 @@ const tourSteps=[
     after(){tourPulse("#table_view_compact")}
   },
   {
-    target:"#table_guide_box", panel:"top",
+    target:"#table_toolbar_guide_box",
     title:"6-1. 需要驗算時再展開詳細欄位",
     path:"結果區 › 年度明細表 › 全部展開",
     text:"需要追查某一年為什麼變化時，再展開詳細欄位。可以一次全部展開，也可以只打開「基礎、複利、收入 / 退休、房貸」其中一組。",
@@ -1190,7 +1201,7 @@ const tourSteps=[
     after(){tourPulse("#table_view_all,#table_toggle_initial,#table_toggle_compound,#table_toggle_income,#table_toggle_mortgage")}
   },
   {
-    target:"#formula_guide_box", panel:"top",
+    target:"#formula_guide_box .fi:first-child",
     title:"7. 公式區：確認模型到底怎麼算",
     path:"年度計算公式 / 驗收區 › 計算規則",
     text:"如果結果和直覺不同，先看這裡。公式區列出投資收益、工作收入投入、退休提領、現金支出與投資資產累積的實際計算順序，方便確認模型語意。",
@@ -1198,7 +1209,7 @@ const tourSteps=[
     prepare(){table_compact();return []}
   },
   {
-    target:"#verify_guide_box", panel:"top",
+    target:"#verify_guide_box",
     title:"8. 年份驗收：把公式代入實際數字",
     path:"年度計算公式 / 驗收區 › 查看實際代入",
     text:"除了看抽象公式，也可以指定某一年，把該年的實際數值完整代入。這適合驗證房貸開始年、退休第一年、支出切換年等邊界條件。",
@@ -1233,36 +1244,54 @@ const tourSteps=[
 
 const scenarioSteps=[
   {
-    target:"#table_guide_box", subtarget:"#tbody tr:nth-child(1)", targets:["#tbody tr:nth-child(2)","#tbody tr:nth-child(3)","#tbody tr:nth-child(4)"], body:null,
+    subtarget:'#tbody tr[data-year="2026"]', targets:['#tbody tr[data-year="2027"]','#tbody tr[data-year="2028"]','#tbody tr[data-year="2029"]'], body:null,
     title:"情境 1｜工作期間先準備購屋與備用金",
     path:"預設情境 › 2026～2029 工作期間",
     text:"預設設定從 2026 年開始工作，收入先完成當年度的固定支出與緊急備用金目標；超過目標的現金再投入投資。到 2030 年前，備用金目標逐步累積到 350 萬，讓購屋前已有一筆可用現金緩衝。",
-    demo:"表格第 1～4 列會顯示工作期間的年度淨現金流與年末現金；備用金目標逐年提高，超過目標的現金才投入投資。"
+    demo:"表格第 1～4 列會顯示工作期間的年度淨現金流與年末現金；備用金目標逐年提高，超過目標的現金才投入投資。",
+    prepare(){e.income_years.value="10";return []}
   },
   {
-    target:"#table_guide_box", subtarget:"#tbody tr:nth-child(5)", body:null,
+    subtarget:'#tbody tr[data-year="2030"]', body:null,
     title:"情境 2｜2030 年購屋並開始房貸",
     path:"預設情境 › 2030 購屋年",
     text:"2030 年同時發生頭期款、裝潢設計家具等額外支出，以及房貸開始後的還款。因為前幾年已先建立緊急備用金，且 2030 年仍在工作，收入仍能支應固定支出、房貸與持續投資。",
     demo:"表格第 5 列是 2030 年：同一列可看到購屋、額外支出與房貸造成的現金流轉折。",
-    prepare(){return [["mortgage_start_year",2030]]}
+    prepare(){e.income_years.value="10";return []}
   },
   {
-    target:"#table_guide_box", subtarget:"#tbody tr:nth-child(16)", targets:["#tbody tr:nth-child(30)"], body:null,
-    title:"情境 3｜2036 年退休後現金流轉負",
-    path:"預設情境 › 2036 退休至 2055",
+    subtarget:'#tbody tr[data-year="2041"]', body:null,
+    title:"情境 3｜2041 年末現金轉為負數",
+    path:"預設情境 › 2036 退休後至 2041",
     text:"預設設定工作 10 年，2036 年開始以 4% 提領。此時投資資產的提領金額還不足以同時支撐固定支出與房貸，因此現金流逐年承壓，2041 年末現金轉為負數。這代表現金流需要調度，不代表投資資產已經消失或一定會爆掉；實務上仍可賣出部分投資資產補足現金。",
-    demo:"表格第 16 列是 2041 年，年末現金轉負；第 30 列是 2055 年，現金由負轉正。",
+    demo:"現在只高亮 2041 年這一列，方便直接對照年度淨現金流、年末現金與仍然存在的投資資產。",
+    prepare(){e.income_years.value="10";return []},
     after(){scenarioSelectYear(2041)}
+  },
+  {
+    subtarget:'#tbody tr[data-year="2055"]', targets:['#tbody tr[data-year="2056"]'], body:null,
+    title:"情境 3-1｜2055 年接近、2056 年正式轉正",
+    path:"預設情境 › 2055～2056 現金轉折",
+    text:"依這份預設設定的實際試算，2055 年末現金仍約為負 2.5 萬；到了 2056 年末才正式轉正。這時 4% 提領已足以支撐固定支出與房貸，現金部位開始回升。",
+    demo:"現在高亮 2055 與 2056 兩列，直接呈現接近零與正式轉正的交界，避免把 2055 年誤寫成已經轉正。",
+    prepare(){e.income_years.value="10";return []},
+    after(){scenarioSelectYear(2056)}
   },
   {
     target:".group-income", subtarget:"#income_years", body:"income_body",
     title:"情境 4｜工作多一年，退休現金流改善",
     path:"預設情境 › 工作 11 年、2037 退休",
     text:"把工作收入年數從 10 年調整為 11 年，退休延後到 2037 年。多累積一年的收入與投資，套用同樣的 4% 提領計畫後，現金流只會短暫出現約兩年負數，後期已能由投資資產支撐支出，逐步達到財富自由。",
-    demo:"這一步只會短暫把「工作收入年數」從 10 改成 11；接著回到表格查看 2055 年的結果。",
-    prepare(){return [["income_years",11]]},
-    after(){scenarioFocusTableRows(["#tbody tr:nth-child(30)","#tbody tr:nth-child(16)"]);scenarioSelectYear(2055)}
+    demo:"這一步只短暫停在「經常收入試算組」，把工作收入年數從 10 改成 11；按下一步就立刻回到表格看差異。",
+    prepare(){return [["income_years",11]]}
+  },
+  {
+    subtarget:'#tbody tr[data-year="2037"]', targets:['#tbody tr[data-year="2038"]','#tbody tr[data-year="2039"]'], body:null,
+    title:"情境 4-1｜回到表格確認改善結果",
+    path:"預設情境 › 2037～2039 年度明細",
+    text:"延後一年退休後，2037 與 2038 年的年度淨現金流仍短暫為負，但 2039 年已恢復為正；之後投資資產的 4% 提領即可支撐固定支出與房貸。",
+    demo:"表格高亮 2037～2039 三列：前兩列是短暫缺口，第三列顯示現金流轉正。情境導覽的焦點已回到表格。",
+    after(){scenarioSelectYear(2039)}
   }
 ];
 
@@ -1273,18 +1302,6 @@ function scenarioSelectYear(year){
   render_formula(i);
   tourPulse("#formula_year,#detail");
 }
-function scenarioFocusTableRows(selectors){
-  tourClearFocus();
-  const table=$("table_guide_box");
-  if(table)table.classList.add("tour-focus-target");
-  selectors.forEach(selector=>{
-    const row=document.querySelector(selector);
-    if(row)row.classList.add("tour-focus-target");
-  });
-  const first=document.querySelector(selectors[0]);
-  if(first){setTimeout(()=>tourScrollElement(first),50);setTimeout(()=>tourScrollElement(first),420)}
-}
-
 function tourCaptureFolded(){
   const ids=["timeline_body","compound_body","mortgage_body","income_body"];
   return Object.fromEntries(ids.map(id=>[id,$(id).classList.contains("hidden")]));
@@ -1315,6 +1332,7 @@ function tourOpenBody(id){
 function tourClearFocus(){
   document.querySelectorAll(".tour-focus").forEach(el=>el.classList.remove("tour-focus"));
   document.querySelectorAll(".tour-focus-target").forEach(el=>el.classList.remove("tour-focus-target"));
+  $("table_guide_box").classList.remove("tour-context-raised");
 }
 function tourPulse(selector){
   document.querySelectorAll(selector).forEach((el,i)=>{
@@ -1388,7 +1406,7 @@ function tourFocusStep(step){
   tourOpenBody(step.body);
 
   let mainTarget=step.target?document.querySelector(step.target):null;
-  if(mainTarget){
+  if(mainTarget&&!step.subtarget){
     if(mainTarget.classList.contains("card"))mainTarget.classList.add("tour-focus");
     else mainTarget.classList.add("tour-focus-target");
   }
@@ -1402,37 +1420,39 @@ function tourFocusStep(step){
     const sub=document.querySelector(step.subtarget);
     if(sub)sub.classList.add("tour-focus-target");
   }
-
   const scrollTarget=step.subtarget?document.querySelector(step.subtarget):
     (mainTarget||(step.targets&&step.targets.length?document.querySelector(step.targets[0]):null));
-  if(scrollTarget){setTimeout(()=>tourScrollElement(scrollTarget),50);setTimeout(()=>tourScrollElement(scrollTarget),420)}
+  if(scrollTarget&&scrollTarget.tagName==="TR")$("table_guide_box").classList.add("tour-context-raised");
+
+  if(scrollTarget){setTimeout(()=>tourLayoutStep(step),50);setTimeout(()=>tourLayoutStep(step),420)}
 }
-function tourScrollElement(element){
-  if(!element)return;
-  const rect=element.getBoundingClientRect(),targetTop=window.scrollY+rect.top-Math.max(90,(window.innerHeight-rect.height)/2);
-  element.scrollIntoView({block:"center",behavior:"smooth"});
-  document.documentElement.scrollTop=Math.max(0,targetTop);
-  document.body.scrollTop=Math.max(0,targetTop);
-  window.scrollTo({top:Math.max(0,targetTop),behavior:"smooth"});
+function tourTargetForStep(step){
+  const selector=step.subtarget||(step.targets&&step.targets[0])||step.target;
+  return selector?document.querySelector(selector):null;
 }
-function tourPositionPanel(step){
+function tourLayoutStep(step){
   const panel=$("tour_panel");
   if(!panel||!tour.active)return;
-  const selector=step.subtarget||(step.targets&&step.targets[0])||step.target;
-  const target=selector?document.querySelector(selector):null;
-  const gap=18,panelHeight=panel.offsetHeight,vh=window.innerHeight;
+  const target=tourTargetForStep(step),gap=16,edge=12,vh=window.innerHeight;
   panel.classList.remove("top");
   panel.style.top="auto";panel.style.bottom="auto";
-  if(step.panel==="top"){
-    panel.style.top="16px";
-    return;
-  }
-  if(!target){panel.style.bottom="20px";return}
-  const rect=target.getBoundingClientRect(),topRoom=Math.max(0,rect.top-gap),bottomRoom=Math.max(0,vh-rect.bottom-gap);
-  const targetIsLower=rect.top+rect.height/2>vh/2;
-  if((targetIsLower&&topRoom>=panelHeight)||(bottomRoom<panelHeight&&topRoom>=panelHeight))panel.style.top="16px";
-  else if(bottomRoom>=panelHeight)panel.style.bottom="20px";
-  else panel.style.top="16px";
+  if(!target){panel.style.bottom=edge+"px";return}
+
+  target.scrollIntoView({block:"center",behavior:"auto"});
+  let rect=target.getBoundingClientRect();
+  const panelHeight=panel.offsetHeight;
+  const topRoom=Math.max(0,rect.top-gap),bottomRoom=Math.max(0,vh-rect.bottom-gap);
+  const panelAtBottom=bottomRoom>=panelHeight||(bottomRoom>=topRoom&&topRoom<panelHeight);
+  if(panelAtBottom)panel.style.bottom=edge+"px";
+  else panel.style.top=edge+"px";
+
+  rect=target.getBoundingClientRect();
+  const safeTop=panelAtBottom?edge:edge+panelHeight+gap;
+  const safeBottom=panelAtBottom?vh-edge-panelHeight-gap:vh-edge;
+  let delta=0;
+  if(rect.top<safeTop)delta=rect.top-safeTop;
+  else if(rect.bottom>safeBottom)delta=rect.bottom-safeBottom;
+  if(delta)window.scrollBy({top:delta,behavior:"auto"});
 }
 function tourShowStep(index){
   if(!tour.active)return;
@@ -1442,8 +1462,6 @@ function tourShowStep(index){
   const step=steps[tour.step];
 
   state.selected=null;state.hover=null;hide_tip();
-  tourFocusStep(step);
-
   $("tour_title").textContent=step.title;
   $("tour_text").textContent=step.text;
   $("tour_path").textContent=step.path||"";
@@ -1453,12 +1471,12 @@ function tourShowStep(index){
   $("tour_next").textContent=tour.step===steps.length-1?"完成導覽":"下一步";
   $("tour_scenario").classList.toggle("hidden",steps!==tourSteps||tour.step!==steps.length-1);
   $("tour_panel").classList.toggle("top",step.panel==="top");
-  setTimeout(()=>tourPositionPanel(step),0);
-  setTimeout(()=>tourPositionPanel(step),260);
-  setTimeout(()=>tourPositionPanel(step),700);
-
   const animations=step.prepare?step.prepare():[];
   calc();
+  tourFocusStep(step);
+  setTimeout(()=>tourLayoutStep(step),0);
+  setTimeout(()=>tourLayoutStep(step),260);
+  setTimeout(()=>tourLayoutStep(step),700);
 
   if(animations.length)setTimeout(()=>tourRunAnimations(animations,step),230);
   else if(step.after)setTimeout(()=>step.after(),300);
@@ -1523,7 +1541,8 @@ $("tour_scenario").onclick=()=>{end_tour(true);start_scenario_tour()};
 $("tour_skip").onclick=()=>end_tour(true);
 $("tour_prev").onclick=()=>tourShowStep(tour.step-1);
 $("tour_next").onclick=()=>{
-  if(tour.step>=tourSteps.length-1)end_tour(true);
+  const steps=tour.steps||tourSteps;
+  if(tour.step>=steps.length-1)end_tour(true);
   else tourShowStep(tour.step+1);
 };
 $("tour_backdrop").onclick=()=>end_tour(true);
@@ -1536,7 +1555,7 @@ document.addEventListener("keydown",ev=>{
 
 canvas.onmousemove=ev=>{state.hover=near(ev.clientX);draw();show_tip(state.hover)};canvas.onmouseleave=()=>{state.hover=null;draw();state.selected!==null?show_tip(state.selected):hide_tip()};canvas.onclick=ev=>{const i=near(ev.clientX);state.selected=state.selected===i?null:i;state.hover=null;draw();state.selected!==null?show_tip(state.selected):hide_tip()};
 document.querySelectorAll(".fold").forEach(b=>b.onclick=()=>{const body=$(b.dataset.target),c=!body.classList.contains("hidden");body.classList.toggle("hidden",c);b.textContent=c?"+":"−";b.closest(".head").classList.toggle("collapsed",c)});
-e.purchase_type.onchange=()=>{$("presale").classList.toggle("hidden",e.purchase_type.value!=="presale");calc()};
+e.purchase_type.onchange=()=>{purchase_ui();calc()};
 e.work_mode.onchange=()=>{mode_ui("work",e.work_mode.value);calc()};e.retire_mode.onchange=()=>{mode_ui("retire",e.retire_mode.value);calc()};
 e.retirement_enabled.onchange=()=>{$("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);calc()};
 ids.forEach(id=>{if(["purchase_type","work_mode","retire_mode","retirement_enabled"].includes(id))return;e[id].addEventListener("input",calc);e[id].addEventListener("change",calc)});
