@@ -168,6 +168,33 @@ body.tour-active .configbar{position:relative;z-index:905}
  </div>
 </section>
 
+<section class="card group-income">
+ <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="income_body">−</button><div class="title">經常收入試算組</div></div><label class="tog"><input id="income_enabled" type="checkbox" checked>加入試算</label></div>
+ <div id="income_body">
+  <div class="field"><label>工作收入插入年份</label><input id="income_start_year" type="number" value="2026" min="1900" max="2200"></div>
+  <div class="field"><label>目前年薪（NT$）</label><input id="salary" type="number" value="1500000" step="100000"></div>
+  <div class="row2"><div class="field"><label>每年調薪率（%）</label><input id="salary_growth" type="number" value="3" step="0.1"></div><div class="field"><label>工作收入年數</label><input id="income_years" type="number" value="10"></div></div>
+  <div id="work_allocation_guide_box" class="allocation-guide-box">
+   <div class="field"><label>工作期間：每年投入投資方式</label><select id="work_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
+   <div id="work_percent" class="field"><label>投入收入比例（%）</label><input id="work_percent_value" type="number" value="50" min="0" max="100"></div>
+   <div id="work_fixed" class="field hidden"><label>每年固定投入投資（NT$）</label><input id="work_fixed_value" type="number" value="1000000"></div>
+   <div id="work_expense" class="field hidden"><div class="note">「支出餘額」會使用上方動態固定支出表中該年度的支出額：投入投資 = max(0, 工作收入 − 當年固定支出)。</div></div>
+   <div id="work_emergency" class="field hidden"><div class="note">先結算當年所有現金流，再把超過當年「緊急備用金目標」的現金全部轉入投資。</div></div>
+  </div>
+
+  <div id="retirement_guide_box" class="retbox">
+   <div class="rhead"><label for="retirement_enabled">工作結束後立即銜接百分比提領</label><input id="retirement_enabled" type="checkbox" checked></div>
+   <div id="retirement_body" class="rbody">
+    <div class="row2"><div class="field"><label>每年提領投資資產（%）</label><input id="retire_rate" type="number" value="4" step="0.1"></div><div class="field"><label>退休提領年數</label><input id="retire_years" type="number" value="60"></div></div>
+    <div class="field"><label>退休收入：每年投入投資方式</label><select id="retire_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
+    <div id="retire_percent" class="field"><label>退休收入再投入比例（%）</label><input id="retire_percent_value" type="number" value="0" min="0" max="100"></div>
+    <div id="retire_fixed" class="field hidden"><label>每年固定再投入（NT$）</label><input id="retire_fixed_value" type="number" value="0"></div>
+    <div id="retire_expense" class="field hidden"><div class="note">「支出餘額」同樣使用動態固定支出表：退休再投入 = max(0, 退休提領收入 − 當年固定支出)。</div></div><div id="retire_emergency" class="field hidden"><div class="note">退休提領先進入現金，扣除固定支出與房貸後，只保留當年緊急備用金目標，其餘再投入投資。</div></div>
+   </div>
+  </div>
+ </div>
+</section>
+
 <section class="card group-compound">
  <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="compound_body">−</button><div class="title">複利計算試算組</div></div><label class="tog"><input id="compound_enabled" type="checkbox" checked>加入試算</label></div>
  <div id="compound_body">
@@ -200,32 +227,6 @@ body.tour-active .configbar{position:relative;z-index:905}
  </div>
 </section>
 
-<section class="card group-income">
- <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="income_body">−</button><div class="title">經常收入試算組</div></div><label class="tog"><input id="income_enabled" type="checkbox" checked>加入試算</label></div>
- <div id="income_body">
-  <div class="field"><label>工作收入插入年份</label><input id="income_start_year" type="number" value="2026" min="1900" max="2200"></div>
-   <div class="field"><label>目前年薪（NT$）</label><input id="salary" type="number" value="1500000" step="100000"></div>
-  <div class="row2"><div class="field"><label>每年調薪率（%）</label><input id="salary_growth" type="number" value="3" step="0.1"></div><div class="field"><label>工作收入年數</label><input id="income_years" type="number" value="10"></div></div>
-  <div id="work_allocation_guide_box" class="allocation-guide-box">
-   <div class="field"><label>工作期間：每年投入投資方式</label><select id="work_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
-   <div id="work_percent" class="field"><label>投入收入比例（%）</label><input id="work_percent_value" type="number" value="50" min="0" max="100"></div>
-   <div id="work_fixed" class="field hidden"><label>每年固定投入投資（NT$）</label><input id="work_fixed_value" type="number" value="1000000"></div>
-   <div id="work_expense" class="field hidden"><div class="note">「支出餘額」會使用上方動態固定支出表中該年度的支出額：投入投資 = max(0, 工作收入 − 當年固定支出)。</div></div>
-   <div id="work_emergency" class="field hidden"><div class="note">先結算當年所有現金流，再把超過當年「緊急備用金目標」的現金全部轉入投資。</div></div>
-  </div>
-
-  <div id="retirement_guide_box" class="retbox">
-   <div class="rhead"><label for="retirement_enabled">工作結束後立即銜接百分比提領</label><input id="retirement_enabled" type="checkbox" checked></div>
-   <div id="retirement_body" class="rbody">
-    <div class="row2"><div class="field"><label>每年提領投資資產（%）</label><input id="retire_rate" type="number" value="4" step="0.1"></div><div class="field"><label>退休提領年數</label><input id="retire_years" type="number" value="60"></div></div>
-    <div class="field"><label>退休收入：每年投入投資方式</label><select id="retire_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
-    <div id="retire_percent" class="field"><label>退休收入再投入比例（%）</label><input id="retire_percent_value" type="number" value="0" min="0" max="100"></div>
-    <div id="retire_fixed" class="field hidden"><label>每年固定再投入（NT$）</label><input id="retire_fixed_value" type="number" value="0"></div>
-    <div id="retire_expense" class="field hidden"><div class="note">「支出餘額」同樣使用動態固定支出表：退休再投入 = max(0, 退休提領收入 − 當年固定支出)。</div></div><div id="retire_emergency" class="field hidden"><div class="note">退休提領先進入現金，扣除固定支出與房貸後，只保留當年緊急備用金目標，其餘再投入投資。</div></div>
-   </div>
-  </div>
- </div>
-</section>
 </aside>
 
 <main>
