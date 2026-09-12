@@ -55,12 +55,12 @@ input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var
 .toolbar .table-group-btn.compound.on{color:#d9c2ff;border-color:rgba(var(--compound-rgb),.65);background:rgba(var(--compound-rgb),.10)}
 .toolbar .table-group-btn.income.on{color:#a8ddb0;border-color:rgba(var(--income-rgb),.65);background:rgba(var(--income-rgb),.10)}
 .toolbar .table-group-btn.mortgage.on{color:#f0cf7a;border-color:rgba(var(--mortgage-rgb),.65);background:rgba(var(--mortgage-rgb),.10)}
-.tw{overflow:auto;max-height:500px;border:1px solid var(--b);border-radius:12px}table{width:max-content;min-width:100%;border-collapse:collapse;background:var(--p)}
+ .tw{overflow-x:auto;overflow-y:visible;max-height:none;border:1px solid var(--b);border-radius:12px}table{width:max-content;min-width:100%;border-collapse:collapse;background:var(--p)}
 .table-detail.table-detail-hidden{display:none!important}
 @media(max-width:700px){
  .table-toolbar{align-items:flex-start}.table-view-controls{width:100%}.table-page-controls{width:100%;justify-content:flex-end}
  .toolbar .table-group-btn{padding:0 7px;font-size:11px}
- .tw{max-height:560px}th,td{padding:8px 8px;font-size:11px}
+ .tw{max-height:none}th,td{padding:8px 8px;font-size:11px}
 }th,td{padding:8px 10px;border-bottom:1px solid var(--b);font-size:12px;text-align:right;white-space:nowrap}th{position:sticky;top:0;background:var(--p2);color:var(--m);z-index:1}th:first-child,td:first-child{text-align:center}
 th.col-initial{background:linear-gradient(rgba(var(--initial-rgb),.18),rgba(var(--initial-rgb),.18)),var(--p2);color:#b9d7ff}
 td.col-initial{background:rgba(var(--initial-rgb),.055)}
@@ -1037,52 +1037,8 @@ const tourSteps=[
     after(){tourPulse("#reserve_stages input")}
   },
   {
-    target:".group-compound", body:"compound_body",
-    title:"2. 決定哪些年份要複利再投入",
-    path:"複利計算試算組",
-    text:"年化報酬率已在初始設定中，所以投資收益每年都會計算。這個試算組只控制『收益是否回到投資本金』。在複利階段內，收益再投入；階段外，收益流入現金。",
-    demo:"示範：2026～2045 共 20 年採複利再投入。之後的投資收益改進入現金。",
-    prepare(){
-      e.compound_enabled.checked=true;
-      compoundStages=[{year:2026,years:20}];
-      render_compound_stages();
-      update_table_column_visibility();
-      return [];
-    },
-    after(){tourPulse("#compound_stages input")}
-  },
-  {
-    target:".group-mortgage", subtarget:"#purchase_type", body:"mortgage_body",
-    title:"3. 購屋類型會改變資金發生時間",
-    path:"房貸試算組 › 購屋類型",
-    text:"直接購入與預售屋的現金流時間不同。直接購入會在購屋年份支付頭期並開始房貸；預售屋則會先支付頭期與工程期分款，完工後才建立房貸本金。",
-    demo:"導覽會先示範「直接購入」，再切成「預售屋」讓工程款與工程期欄位出現，最後切回直接購入。",
-    prepare(){
-      e.mortgage_enabled.checked=true;e.mortgage_start_year.value=2028;e.house_price.value=20000000;e.down_rate.value=20;e.loan_years.value=40;e.grace_years.value=0;
-      e.purchase_type.value="direct";purchase_ui();calc();return [];
-    },
-    after(){tourCyclePurchaseTypes()}
-  },
-  {
-    target:".group-mortgage", subtarget:"#mortgage_rate_guide_box", body:"mortgage_body",
-    title:"3-1. 優惠或補貼房貸可以用分段利率",
-    path:"房貸試算組 › 房貸利率階段",
-    text:"房貸不一定整段都是同一利率。你可以把政府補貼、銀行優惠期與後續一般利率拆成多個階段；利率切換時，試算器會依剩餘本金與剩餘年限重新計算月付。",
-    demo:"示範：前 5 年 1.77%，之後剩餘年限 2.60%。最後一階段的持續年數設為 0，代表一路套用到房貸結束。",
-    prepare(){mortgageRateStages=[{rate:1.77,years:5},{rate:2.6,years:0}];render_mortgage_rate_stages();calc();return []},
-    after(){tourPulse("#mortgage_rate_stages input")}
-  },
-  {
-    target:".group-mortgage", body:"mortgage_body",
-    title:"3-2. 房貸年限與寬限期",
-    path:"房貸試算組 › 房貸條件",
-    text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
-    demo:"例如 40 年房貸、前 5 年 1.77%、其後 2.60%，也可以再搭配寬限期比較退休前現金流。",
-    prepare(){return [["loan_years",40],["grace_years",0]]}
-  },
-  {
     target:".group-income", body:"income_body",
-    title:"4. 加入工作收入與每年投資",
+    title:"2. 加入工作收入與每年投資",
     path:"經常收入試算組",
     text:"這裡設定工作收入何時開始、薪資成長與工作年數，再決定每年有多少收入轉進投資。可選百分比、固定金額、扣除支出後全投資，或只保留緊急備用金。",
     demo:"示範：2026 年起年薪 250 萬、每年成長 3%、工作 10 年，先將收入的 50% 投入投資。",
@@ -1099,7 +1055,7 @@ const tourSteps=[
   },
   {
     target:".group-income", subtarget:"#work_allocation_guide_box", body:"income_body",
-    title:"4-1. 四種投入投資方式",
+    title:"2-1. 四種投入投資方式",
     path:"經常收入試算組 › 每年投入投資方式",
     text:"工作收入不一定要用固定比例投入。這裡有四種資金配置方法，適合不同的人生階段；退休收入的再投入也使用同一套概念。",
     demo:"① 百分比：收入 × 指定比例投入投資。\n② 固定金額：每年最多投入指定金額。\n③ 支出餘額：先保留當年固定支出，其餘投入投資。\n④ 僅保留緊急備用金：年度所有現金流結算後，只留下備用金目標，超額現金全部投入。",
@@ -1113,7 +1069,7 @@ const tourSteps=[
   },
   {
     target:".group-income", subtarget:"#retirement_guide_box", body:"income_body",
-    title:"4-2. 工作結束後立即銜接退休提領",
+    title:"2-2. 工作結束後立即銜接退休提領",
     path:"經常收入試算組 › 工作結束後立即銜接百分比提領",
     text:"勾選後，最後一個工作收入年度結束，下一年會直接進入退休階段。退休提領本身視為退休收入，仍可決定其中多少再投入、多少留作現金支出。",
     demo:"示範：工作 10 年後，下一年立即開始每年提領投資資產的 4%，持續 30 年；退休收入先不再投入。",
@@ -1126,6 +1082,50 @@ const tourSteps=[
       return [["retire_rate",4],["retire_years",30],["retire_percent_value",0]];
     },
     after(){tourPulse("#retirement_guide_box input,#retirement_guide_box select")}
+  },
+  {
+    target:".group-compound", body:"compound_body",
+    title:"3. 決定哪些年份要複利再投入",
+    path:"複利計算試算組",
+    text:"年化報酬率已在初始設定中，所以投資收益每年都會計算。這個試算組只控制『收益是否回到投資本金』。在複利階段內，收益再投入；階段外，收益流入現金。",
+    demo:"示範：2026～2045 共 20 年採複利再投入。之後的投資收益改進入現金。",
+    prepare(){
+      e.compound_enabled.checked=true;
+      compoundStages=[{year:2026,years:20}];
+      render_compound_stages();
+      update_table_column_visibility();
+      return [];
+    },
+    after(){tourPulse("#compound_stages input")}
+  },
+  {
+    target:".group-mortgage", subtarget:"#purchase_type", body:"mortgage_body",
+    title:"4. 購屋類型會改變資金發生時間",
+    path:"房貸試算組 › 購屋類型",
+    text:"直接購入與預售屋的現金流時間不同。直接購入會在購屋年份支付頭期並開始房貸；預售屋則會先支付頭期與工程期分款，完工後才建立房貸本金。",
+    demo:"導覽會先示範「直接購入」，再切成「預售屋」讓工程款與工程期欄位出現，最後切回直接購入。",
+    prepare(){
+      e.mortgage_enabled.checked=true;e.mortgage_start_year.value=2028;e.house_price.value=20000000;e.down_rate.value=20;e.loan_years.value=40;e.grace_years.value=0;
+      e.purchase_type.value="direct";purchase_ui();calc();return [];
+    },
+    after(){tourCyclePurchaseTypes()}
+  },
+  {
+    target:".group-mortgage", subtarget:"#mortgage_rate_guide_box", body:"mortgage_body",
+    title:"4-1. 優惠或補貼房貸可以用分段利率",
+    path:"房貸試算組 › 房貸利率階段",
+    text:"房貸不一定整段都是同一利率。你可以把政府補貼、銀行優惠期與後續一般利率拆成多個階段；利率切換時，試算器會依剩餘本金與剩餘年限重新計算月付。",
+    demo:"示範：前 5 年 1.77%，之後剩餘年限 2.60%。最後一階段的持續年數設為 0，代表一路套用到房貸結束。",
+    prepare(){mortgageRateStages=[{rate:1.77,years:5},{rate:2.6,years:0}];render_mortgage_rate_stages();calc();return []},
+    after(){tourPulse("#mortgage_rate_stages input")}
+  },
+  {
+    target:".group-mortgage", body:"mortgage_body",
+    title:"4-2. 房貸年限與寬限期",
+    path:"房貸試算組 › 房貸條件",
+    text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
+    demo:"例如 40 年房貸、前 5 年 1.77%、其後 2.60%，也可以再搭配寬限期比較退休前現金流。",
+    prepare(){return [["loan_years",40],["grace_years",0]]}
   },
   {
     target:"#chart_guide_box", panel:"top",
