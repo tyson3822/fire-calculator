@@ -214,6 +214,8 @@ body.tour-active .configbar{position:relative;z-index:905}
   <div class="field"><label>購屋試算插入年份</label><input id="mortgage_start_year" type="number" value="2030" min="1900" max="2200"></div>
   <div class="field"><label>購屋類型</label><select id="purchase_type"><option value="direct">直接購入</option><option value="presale">預售屋</option></select></div>
   <div class="field"><label>房屋總價（NT$）</label><input id="house_price" type="number" value="15000000" step="100000"></div>
+  <div class="field"><label>額外支出（裝潢、設計、家具等，NT$）</label><input id="additional_cost" type="number" value="0" min="0" step="10000"></div>
+  <div class="note">直接購入會在購入年列入；預售屋會在工程期結束、交屋年列入。</div>
   <div class="field"><label>頭期款（%）</label><input id="down_rate" type="number" value="20" min="0" max="100"></div>
   <div id="mortgage_rate_guide_box" class="expense_box">
    <div class="expense_head"><b>房貸利率階段</b><button id="add_mortgage_rate_stage" class="addstage" type="button">＋ 多一個利率階段</button></div>
@@ -328,7 +330,7 @@ body.tour-active .configbar{position:relative;z-index:905}
 const $=id=>document.getElementById(id);
 const ids=["timeline_start_year","timeline_years","birth_year","initial_cash_assets","initial_investment_assets",
 "compound_enabled","return_rate",
-"mortgage_enabled","mortgage_start_year","purchase_type","house_price","down_rate","construction_rate","construction_years","loan_years","grace_years",
+"mortgage_enabled","mortgage_start_year","purchase_type","house_price","additional_cost","down_rate","construction_rate","construction_years","loan_years","grace_years",
 "income_enabled","income_start_year","salary","salary_growth","income_years","work_mode","work_percent_value","work_fixed_value",
 "retirement_enabled","retire_rate","retire_years","retire_mode","retire_percent_value","retire_fixed_value"];
 const e=Object.fromEntries(ids.map(id=>[id,$(id)]));
@@ -585,7 +587,7 @@ function mortgage_rate_stage_index(elapsed){
 }
 
 const SETTINGS_SCHEMA="asset-timeline-calculator";
-const SETTINGS_VERSION=6;
+const SETTINGS_VERSION=7;
 
 function collect_settings(){
   const values={};
@@ -734,7 +736,7 @@ function calc(){
  const wr=Math.max(0,num(e.retire_rate))/100,ry=Math.max(1,Math.round(num(e.retire_years,30))),retirement_start=income_end+1,retirement_end=retirement_start+ry-1;
 
  const mortgage_start=Math.round(num(e.mortgage_start_year,start_year));
- const price=Math.max(0,num(e.house_price)),dr=Math.max(0,Math.min(1,num(e.down_rate)/100));
+  const price=Math.max(0,num(e.house_price)),additional_cost=Math.max(0,num(e.additional_cost)),dr=Math.max(0,Math.min(1,num(e.down_rate)/100));
  const ly=Math.max(1,Math.round(num(e.loan_years,40))),gy=Math.max(0,Math.min(ly-1,Math.round(num(e.grace_years))));
  const pre=e.purchase_type.value==="presale",cr=pre?Math.max(0,Math.min(1,num(e.construction_rate)/100)):0,con_y=pre?Math.max(1,Math.round(num(e.construction_years,3))):0;
 
@@ -772,12 +774,13 @@ function calc(){
      ret_reinv=(e.retire_mode.value==="emergency_reserve")?0:alloc(ret_income,e.retire_mode.value,num(e.retire_percent_value),num(e.retire_fixed_value),fixed_expense);
    }
 
-   let housing=0,interest=0,mortgage_rate=0,mortgage_stage=0,mortgage_monthly_payment=0;
+   let housing=0,additional_cost_applied=0,interest=0,mortgage_rate=0,mortgage_stage=0,mortgage_monthly_payment=0;
    if(me&&year>=mortgage_start){
      const mi=year-mortgage_start;
      if(mi===0){housing+=down;phase_parts.push(pre?"預售":"購屋")}
      if(pre&&mi>=0&&mi<con_y){housing+=con_total/con_y;if(!phase_parts.includes("預售"))phase_parts.push("預售")}
      const loan_start=pre?mortgage_start+con_y:mortgage_start,elapsed=year-loan_start;
+     if(year===loan_start){housing+=additional_cost;additional_cost_applied=additional_cost}
 
      // The mortgage debt is created only when the loan actually starts.
      // Before loan_start, "房貸餘額" must remain 0.
@@ -809,7 +812,7 @@ function calc(){
    if(emergency_active&&cash_after>reserve_target){emergency_transfer=cash_after-reserve_target;cash_after-=emergency_transfer;investment_after+=emergency_transfer;net_cash_flow-=emergency_transfer;if(ie&&year>=income_start&&year<=income_end)work_inv+=emergency_transfer;else ret_reinv+=emergency_transfer;}
    investment_assets=investment_after;cash_assets=cash_after;
    const phase=phase_parts.length?phase_parts.join(" + "):"—";
-   rows.push({idx,year,age,phase,cash_start,investment_start,gross_investment_return,investment_return_reinvest,investment_return_cash,work_income,work_inv,ret_income,ret_reinv,fixed_expense,housing,interest,mortgage_rate,mortgage_stage,mortgage_monthly_payment,reserve_target,emergency_transfer,net_cash_flow,monthly:net_cash_flow/12,cash_assets,balance,investment_assets});
+   rows.push({idx,year,age,phase,cash_start,investment_start,gross_investment_return,investment_return_reinvest,investment_return_cash,work_income,work_inv,ret_income,ret_reinv,fixed_expense,additional_cost:additional_cost_applied,housing,interest,mortgage_rate,mortgage_stage,mortgage_monthly_payment,reserve_target,emergency_transfer,net_cash_flow,monthly:net_cash_flow/12,cash_assets,balance,investment_assets});
  }
 
  const series=[];
@@ -922,7 +925,7 @@ function show_tip(i){
  ["年初現金",money(r.cash_start),"initial"],["年初投資",money(r.investment_start),"initial"],["投資收益",money(r.gross_investment_return),"initial"],
  ["投資收益再投入",money(r.investment_return_reinvest),"compound"],["投資收益進現金",money(r.investment_return_cash),"initial"],
  ["工作收入",money(r.work_income),"income"],["投入投資",money(r.work_inv),"income"],["退休提領",money(r.ret_income),"income"],["退休再投入",money(r.ret_reinv),"income"],
- ["固定支出",money(r.fixed_expense),"initial"],["房貸/購屋",money(r.housing),"mortgage"],["房貸利率",r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%（第 ${r.mortgage_stage} 階段）`:"—","mortgage"],["當年月付",r.mortgage_monthly_payment?money(r.mortgage_monthly_payment):"—","mortgage"],["備用金目標",money(r.reserve_target||0),"initial"],["超額現金轉投資",money(r.emergency_transfer||0),"income"],
+  ["固定支出",money(r.fixed_expense),"initial"],["額外購屋支出",money(r.additional_cost||0),"mortgage"],["房貸/購屋",money(r.housing),"mortgage"],["房貸利率",r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%（第 ${r.mortgage_stage} 階段）`:"—","mortgage"],["當年月付",r.mortgage_monthly_payment?money(r.mortgage_monthly_payment):"—","mortgage"],["備用金目標",money(r.reserve_target||0),"initial"],["超額現金轉投資",money(r.emergency_transfer||0),"income"],
  ["年度淨現金流",money(r.net_cash_flow),"neutral"],["年末現金資產",money(r.cash_assets),"neutral"],["年末投資資產",money(r.investment_assets),"neutral"]];
  tip.innerHTML=`<b>${r.year} 年｜${r.age} 歲</b>`+lines.map(x=>`<div class="tr ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
  tip.classList.add("on");
@@ -958,7 +961,8 @@ function render_formula(i){
 
 5) 支出（全部只扣現金）
 固定年支出 = ${money(r.fixed_expense)}
-購屋 / 房貸 = ${money(r.housing)}
+ 額外購屋支出 = ${money(r.additional_cost||0)}
+ 購屋 / 房貸 = ${money(r.housing)}
 其中房貸利息 = ${money(r.interest)}
 年末房貸餘額 = ${money(r.balance)}
 
