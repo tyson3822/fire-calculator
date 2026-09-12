@@ -39,7 +39,7 @@ input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var
 .mortgage-rate-stage{display:grid;grid-template-columns:1fr 1fr 30px;gap:7px;align-items:end;margin-bottom:7px}.mortgage-rate-stage .field{margin:0}.mortgage-rate-stage .remove-stage{width:30px;height:35px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--r);cursor:pointer}
 .stage_error{color:var(--r);font-size:11px;min-height:16px;margin-top:3px}
 .retbox{margin-top:9px;border:1px solid var(--b);border-radius:9px;padding:11px;background:rgba(33,38,45,.5)}.retbox .rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:650}.retbox .rhead input{width:17px;height:17px;accent-color:var(--a)}.rbody{border-top:1px solid var(--b);margin-top:10px;padding-top:11px}
-.summary{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:9px;margin-bottom:13px}.metric{background:var(--p);border:1px solid var(--b);border-radius:10px;padding:12px}.metric .k{color:var(--m);font-size:11px}.metric .v{font-size:17px;font-weight:700;margin-top:6px}.metric .d{color:var(--m);font-size:10px;margin-top:4px}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:13px}.metric{min-width:0;background:var(--p);border:1px solid var(--b);border-radius:11px;padding:14px}.metric .k{color:var(--m);font-size:11px}.metric .v{font-size:21px;font-weight:750;margin-top:5px}.metric .d{color:var(--m);font-size:10px;margin-top:5px}.metric-label{color:var(--m);font-size:10px;margin-top:10px}.metric-pairs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.metric-pair{min-width:0;border-top:1px solid var(--b);padding-top:8px}.metric-pair span{display:block;color:var(--m);font-size:10px}.metric-pair b{display:block;margin-top:3px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.health-card{--health:#3fb950;background:linear-gradient(135deg,color-mix(in srgb,var(--health) 13%,transparent),transparent 72%),var(--p);border-color:color-mix(in srgb,var(--health) 55%,var(--b))}.health-card .health-value{color:var(--health)}.health-status{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:7px 9px;border:1px solid color-mix(in srgb,var(--health) 50%,var(--b));border-radius:8px;background:color-mix(in srgb,var(--health) 13%,transparent);font-size:11px}.health-status b{color:var(--health)}.health-safe{--health:#3fb950}.health-slight{--health:#d29922}.health-medium{--health:#f0883e}.health-high{--health:#f85149}.health-extreme{--health:#ff7b72}.health-neutral{--health:#8b949e}
 .chart{height:440px;position:relative;background:var(--p);border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:12px}canvas{width:100%;height:100%;display:block}.legend{position:absolute;right:13px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:82%}.legend button{display:flex;align-items:center;gap:6px;background:rgba(22,27,34,.95);border:1px solid var(--b);border-radius:7px;color:var(--t);padding:5px 8px;font-size:11px;cursor:pointer}.legend button.off{opacity:.35;text-decoration:line-through}.sw{width:16px;height:3px;border-radius:2px}
 .tip{display:none;position:absolute;z-index:4;pointer-events:none;min-width:270px;background:rgba(22,27,34,.98);border:1px solid var(--b);border-radius:8px;padding:9px 11px;font-size:11px}.tip.on{display:block}.tr{display:flex;justify-content:space-between;gap:20px;color:var(--m);line-height:1.55}.tr b{color:var(--t)}
 .tr.initial span,.tr.initial b{color:rgb(var(--initial-rgb))}
@@ -123,7 +123,7 @@ tbody tr.tour-focus-target td:last-child{box-shadow:inset -2px 0 #58a6ff,inset 0
 body.tour-active{overflow-x:hidden}
 @media(max-width:700px){.tour-panel{bottom:6px;padding:10px 12px}.tour-text{line-height:1.5}.tour-demo{margin-top:6px;padding:7px 9px;line-height:1.45}.tour-actions{align-items:flex-end;margin-top:8px}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
 
-@media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.chart{height:390px}}
+@media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr}.chart{height:390px}}
 </style>
 </head>
 <body>
@@ -242,11 +242,9 @@ body.tour-active{overflow-x:hidden}
 
 <main>
 <div class="summary">
- <div class="metric"><div class="k">期末投資資產</div><div id="sum_assets" class="v">-</div><div class="d">逐年複利與投入後</div></div>
- <div class="metric"><div class="k">期末現金資產</div><div id="sum_cash_assets" class="v">-</div><div class="d">所有收入 / 支出累積後</div></div>
- <div class="metric"><div class="k">最新年度每月淨現金流</div><div id="sum_cash_m" class="v">-</div><div class="d">年度淨現金流 ÷ 12</div></div>
- <div class="metric"><div class="k">房貸本金</div><div id="sum_loan" class="v">-</div><div id="sum_loan_d" class="d">-</div></div>
- <div class="metric"><div class="k">一般期本息月付</div><div id="sum_payment" class="v">-</div><div id="sum_payment_d" class="d">-</div></div>
+ <div class="metric"><div class="k">購房資訊</div><div class="metric-label">房屋總價</div><div id="sum_house_price" class="v">-</div><div class="metric-pairs"><div class="metric-pair"><span>房貸本金</span><b id="sum_loan">-</b></div><div class="metric-pair"><span>一般期本息月付</span><b id="sum_payment">-</b></div></div><div id="sum_housing_d" class="d">-</div></div>
+ <div class="metric"><div class="k">期末資產</div><div class="metric-label">現金與投資合計</div><div id="sum_total_assets" class="v">-</div><div class="metric-pairs"><div class="metric-pair"><span>投資資產</span><b id="sum_assets">-</b></div><div class="metric-pair"><span>現金資產</span><b id="sum_cash_assets">-</b></div></div></div>
+ <div id="health_card" class="metric health-card health-neutral"><div class="k">月配額健康分析</div><div class="metric-label">月平均配額</div><div id="sum_monthly_budget" class="v health-value">-</div><div class="d">試算首年固定支出 ÷ 12</div><div class="health-status"><span>健康度</span><b id="sum_budget_health">-</b></div><div id="sum_budget_health_year" class="d"></div></div>
 </div>
 
 <div id="chart_guide_box" class="chart"><canvas id="chart"></canvas><div id="legend" class="legend"></div><div id="tip" class="tip"></div></div>
@@ -352,6 +350,23 @@ function num(x,d=0){const v=Number(x.value);return Number.isFinite(v)?v:d}
 function moneyValue(v){const n=Number.isFinite(v)?v:0;return Math.abs(n)<0.5?0:n}
 function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",maximumFractionDigits:0}).format(moneyValue(v))}
 function moneyNegative(v){return moneyValue(v)<0}
+function cashHealth(rows){
+  const checks=rows.filter(r=>r.reserve_target>0).map(r=>{
+    const ratio=r.cash_assets/r.reserve_target;
+    const rank=ratio<0?4:ratio<=0.25?3:ratio<=0.5?2:ratio<0.75?1:0;
+    return {year:r.year,rank};
+  });
+  if(!checks.length)return {key:"neutral",label:"未設定備用金目標",year:null};
+  const worst=Math.max(...checks.map(r=>r.rank));
+  const meta=[
+    {key:"safe",label:"無風險"},
+    {key:"slight",label:"稍微風險"},
+    {key:"medium",label:"中等風險"},
+    {key:"high",label:"較有風險"},
+    {key:"extreme",label:"極有風險"}
+  ][worst];
+  return {...meta,year:worst?checks.find(r=>r.rank===worst).year:null};
+}
 function alloc(src,mode,p,f,expense){if(src<=0)return 0;if(mode==="percent")return src*Math.max(0,Math.min(100,p))/100;if(mode==="fixed")return Math.min(src,Math.max(0,f));return Math.max(0,src-Math.max(0,expense))}
 function loan_pmt(P,ar,years){if(P<=0)return 0;const n=Math.max(1,Math.round(years*12)),r=ar/12;if(!r)return P/n;return P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
 function mode_ui(prefix,mode){$(prefix+"_percent").classList.toggle("hidden",mode!=="percent");$(prefix+"_fixed").classList.toggle("hidden",mode!=="fixed");$(prefix+"_expense").classList.toggle("hidden",mode!=="expense_balance");$(prefix+"_emergency").classList.toggle("hidden",mode!=="emergency_reserve")}
@@ -848,16 +863,21 @@ function calc(){
 
  state={rows,series,hover:null,selected:null,start_year,end_year,birth_year};page=1;
  const last=rows.at(-1);
+ const health=cashHealth(rows),total_assets=last.investment_assets+last.cash_assets;
 
+ $("sum_house_price").textContent=me?money(price):"-";
+ $("sum_total_assets").textContent=money(total_assets);
+ $("sum_total_assets").className="v "+(moneyNegative(total_assets)?"neg":"");
  $("sum_assets").textContent=money(last.investment_assets);
  $("sum_cash_assets").textContent=money(last.cash_assets);
- $("sum_cash_assets").className="v "+(moneyNegative(last.cash_assets)?"neg":"");
- $("sum_cash_m").textContent=money(last.monthly);
- $("sum_cash_m").className="v "+(moneyNegative(last.monthly)?"neg":"");
+ $("sum_cash_assets").className=moneyNegative(last.cash_assets)?"neg":"";
  $("sum_loan").textContent=me?money(principal):"-";
- $("sum_loan_d").textContent=pre?`交屋貸款 ${Math.max(0,(1-dr-cr)*100).toFixed(0)}%`:`貸款 ${Math.max(0,(1-dr)*100).toFixed(0)}%`;
  $("sum_payment").textContent=me?money(first_mp):"-";
- $("sum_payment_d").textContent=gy?`寬限期月息 ${money(gp)}`:"本息平均攤還";
+ $("sum_housing_d").textContent=me?`${pre?"交屋貸款":"貸款"} ${Math.max(0,(1-dr-(pre?cr:0))*100).toFixed(0)}% · ${gy?`寬限期月息 ${money(principal*first_mr/12)}`:"本息平均攤還"}`:"未加入房貸試算";
+ $("sum_monthly_budget").textContent=money(rows[0].fixed_expense/12);
+ $("sum_budget_health").textContent=health.label;
+ $("sum_budget_health_year").textContent=health.year?`首次觸及：${health.year} 年`:"";
+ $("health_card").className=`metric health-card health-${health.key}`;
 
  render_legend();render_table();fill_formula();render_formula(0);hide_tip();draw();
 }
