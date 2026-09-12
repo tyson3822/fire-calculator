@@ -265,7 +265,7 @@ body.tour-active{overflow-x:hidden}
  <button id="prev" class="cbtn">‹</button><span id="page_status">1 / 1</span><button id="next" class="cbtn">›</button></div>
 </div>
 <div id="table_guide_box" class="tw"><table><thead><tr>
-<th class="table-core">序號</th><th class="col-initial table-core">年份</th><th class="col-initial table-detail detail-initial">年齡</th><th class="table-core">階段</th><th class="col-initial table-detail detail-initial">年初現金資產</th><th class="col-initial table-detail detail-initial">年初投資資產</th><th class="col-initial table-detail detail-initial">投資收益</th><th class="col-compound table-detail detail-compound">投資收益再投入</th><th class="col-income table-detail detail-income">工作收入</th><th class="col-income table-detail detail-income">工作投入投資</th><th class="col-income table-detail detail-income">退休提領</th><th class="col-income table-detail detail-income">退休再投入</th><th class="col-initial table-detail detail-initial">固定年支出</th><th class="col-mortgage table-detail detail-mortgage">購屋/房貸支出</th><th class="col-mortgage table-detail detail-mortgage">當年房貸利率</th><th class="col-initial table-detail detail-initial">備用金目標</th><th class="col-income table-detail detail-income">超額現金轉投資</th><th class="table-core">年度淨現金流</th><th class="table-detail detail-summary">每月淨現金流</th><th class="table-core">年末現金資產</th><th class="col-mortgage table-detail detail-mortgage">房貸餘額</th><th class="table-core">年末投資資產</th>
+<th class="table-core">序號</th><th class="col-initial table-core">年份</th><th class="col-initial table-detail detail-initial">年齡</th><th class="table-core">階段</th><th class="col-initial table-detail detail-initial">年初現金資產</th><th class="col-initial table-detail detail-initial">年初投資資產</th><th class="col-initial table-detail detail-initial">投資收益</th><th class="col-compound table-detail detail-compound">投資收益再投入</th><th class="col-income table-detail detail-income">工作收入</th><th class="col-income table-detail detail-income">工作投入投資</th><th class="col-income table-detail detail-income">退休提領</th><th class="col-income table-detail detail-income">退休再投入</th><th class="col-initial table-detail detail-initial">固定年支出</th><th class="col-mortgage table-detail detail-mortgage">購屋/房貸支出</th><th class="col-mortgage table-detail detail-mortgage">當年房貸利率</th><th class="col-initial table-detail detail-initial">備用金目標</th><th class="col-income table-detail detail-income">超額現金轉投資</th><th class="table-core">年度淨現金流</th><th class="table-core">年末現金資產</th><th class="col-mortgage table-detail detail-mortgage">房貸餘額</th><th class="table-core">年末投資資產</th>
 </tr></thead><tbody id="tbody"></tbody></table></div>
 
 <section id="formula_guide_box" class="formulas">
@@ -349,7 +349,9 @@ let state={rows:[],series:[],hover:null,selected:null},page=1;
 const vis={investment:true,cash_assets:true,compound_return:true,income:true,retirement:true,housing:true,net_cash:true};
 
 function num(x,d=0){const v=Number(x.value);return Number.isFinite(v)?v:d}
-function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",maximumFractionDigits:0}).format(Number.isFinite(v)?v:0)}
+function moneyValue(v){const n=Number.isFinite(v)?v:0;return Math.abs(n)<0.5?0:n}
+function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",maximumFractionDigits:0}).format(moneyValue(v))}
+function moneyNegative(v){return moneyValue(v)<0}
 function alloc(src,mode,p,f,expense){if(src<=0)return 0;if(mode==="percent")return src*Math.max(0,Math.min(100,p))/100;if(mode==="fixed")return Math.min(src,Math.max(0,f));return Math.max(0,src-Math.max(0,expense))}
 function loan_pmt(P,ar,years){if(P<=0)return 0;const n=Math.max(1,Math.round(years*12)),r=ar/12;if(!r)return P/n;return P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
 function mode_ui(prefix,mode){$(prefix+"_percent").classList.toggle("hidden",mode!=="percent");$(prefix+"_fixed").classList.toggle("hidden",mode!=="fixed");$(prefix+"_expense").classList.toggle("hidden",mode!=="expense_balance");$(prefix+"_emergency").classList.toggle("hidden",mode!=="emergency_reserve")}
@@ -849,9 +851,9 @@ function calc(){
 
  $("sum_assets").textContent=money(last.investment_assets);
  $("sum_cash_assets").textContent=money(last.cash_assets);
- $("sum_cash_assets").className="v "+(last.cash_assets<0?"neg":"");
+ $("sum_cash_assets").className="v "+(moneyNegative(last.cash_assets)?"neg":"");
  $("sum_cash_m").textContent=money(last.monthly);
- $("sum_cash_m").className="v "+(last.monthly<0?"neg":"");
+ $("sum_cash_m").className="v "+(moneyNegative(last.monthly)?"neg":"");
  $("sum_loan").textContent=me?money(principal):"-";
  $("sum_loan_d").textContent=pre?`交屋貸款 ${Math.max(0,(1-dr-cr)*100).toFixed(0)}%`:`貸款 ${Math.max(0,(1-dr)*100).toFixed(0)}%`;
  $("sum_payment").textContent=me?money(first_mp):"-";
@@ -864,15 +866,14 @@ const tableView={
   initial:false,
   compound:false,
   income:false,
-  mortgage:false,
-  summary:false
+  mortgage:false
 };
 function set_table_group(group,on){
   tableView[group]=on;
   update_table_column_visibility();
 }
 function table_compact(){
-  tableView.initial=false;tableView.compound=false;tableView.income=false;tableView.mortgage=false;tableView.summary=false;
+  tableView.initial=false;tableView.compound=false;tableView.income=false;tableView.mortgage=false;
   update_table_column_visibility();
 }
 function table_expand_all(){
@@ -880,7 +881,6 @@ function table_expand_all(){
   tableView.compound=e.compound_enabled.checked;
   tableView.income=e.income_enabled.checked;
   tableView.mortgage=e.mortgage_enabled.checked;
-  tableView.summary=true;
   update_table_column_visibility();
 }
 function sync_table_view_buttons(){
@@ -893,9 +893,9 @@ function sync_table_view_buttons(){
     const label={initial:"基礎",compound:"複利",income:"收入 / 退休",mortgage:"房貸"}[g];
     b.textContent=`${available&&tableView[g]?"−":"＋"} ${label}`;
   }
-  const compact=!tableView.initial&&!tableView.compound&&!tableView.income&&!tableView.mortgage&&!tableView.summary;
+  const compact=!tableView.initial&&!tableView.compound&&!tableView.income&&!tableView.mortgage;
   $("table_view_compact").classList.toggle("active",compact);
-  $("table_view_all").classList.toggle("active",!compact&&tableView.initial&&tableView.summary&&
+  $("table_view_all").classList.toggle("active",!compact&&tableView.initial&&
     (!e.compound_enabled.checked||tableView.compound)&&(!e.income_enabled.checked||tableView.income)&&(!e.mortgage_enabled.checked||tableView.mortgage));
 }
 function update_table_column_visibility(){
@@ -909,7 +909,6 @@ function update_table_column_visibility(){
   document.querySelectorAll(".detail-compound").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.compound));
   document.querySelectorAll(".detail-income").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.income));
   document.querySelectorAll(".detail-mortgage").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.mortgage));
-  document.querySelectorAll(".detail-summary").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.summary));
   sync_table_view_buttons();
 }
 
@@ -923,8 +922,8 @@ function render_table(){
    <td class="col-initial table-detail detail-initial">${money(r.cash_start)}</td><td class="col-initial table-detail detail-initial">${money(r.investment_start)}</td><td class="pos col-initial table-detail detail-initial">${money(r.gross_investment_return)}</td><td class="pos col-compound table-detail detail-compound">${money(r.investment_return_reinvest)}</td>
    <td class="pos col-income table-detail detail-income">${money(r.work_income)}</td><td class="pos col-income table-detail detail-income">${money(r.work_inv)}</td><td class="warn col-income table-detail detail-income">${money(r.ret_income)}</td>
    <td class="pos col-income table-detail detail-income">${money(r.ret_reinv)}</td><td class="neg col-initial table-detail detail-initial">${money(r.fixed_expense)}</td><td class="neg col-mortgage table-detail detail-mortgage">${money(r.housing)}</td><td class="col-mortgage table-detail detail-mortgage">${r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%`:"—"}</td><td class="col-initial table-detail detail-initial">${money(r.reserve_target||0)}</td><td class="pos col-income table-detail detail-income">${money(r.emergency_transfer||0)}</td>
-   <td class="table-core ${r.net_cash_flow<0?"neg":"pos"}">${money(r.net_cash_flow)}</td><td class="table-detail detail-summary ${r.monthly<0?"neg":"pos"}">${money(r.monthly)}</td>
-   <td class="table-core ${r.cash_assets<0?"neg":""}">${money(r.cash_assets)}</td><td class="col-mortgage table-detail detail-mortgage">${money(r.balance)}</td><td class="table-core">${money(r.investment_assets)}</td>`;
+   <td class="table-core ${moneyNegative(r.net_cash_flow)?"neg":"pos"}">${money(r.net_cash_flow)}</td>
+   <td class="table-core ${moneyNegative(r.cash_assets)?"neg":""}">${money(r.cash_assets)}</td><td class="col-mortgage table-detail detail-mortgage">${money(r.balance)}</td><td class="table-core">${money(r.investment_assets)}</td>`;
    tbody.appendChild(tr)
  });
  $("page_status").textContent=`${page} / ${pages}`;$("prev").disabled=page<=1;$("next").disabled=page>=pages;update_table_column_visibility();
