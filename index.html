@@ -1,0 +1,1430 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>資產 / 收入 / 退休 / 房貸試算 V16</title>
+<style>
+:root{--bg:#0d1117;--p:#161b22;--p2:#21262d;--b:#30363d;--t:#e6edf3;--m:#8b949e;--a:#58a6ff;--g:#3fb950;--r:#f85149;--o:#d29922;--v:#bc8cff;--c:#39c5cf;
+--initial-rgb:88,166,255;--compound-rgb:188,140,255;--mortgage-rgb:210,153,34;--income-rgb:63,185,80}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:Inter,"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
+.app{max-width:1500px;margin:auto;padding:26px}h1{margin:0 0 8px;font-size:27px}.sub{color:var(--m);font-size:13px;line-height:1.55;margin-bottom:20px}
+.configbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-6px 0 18px}
+.configbtn{width:auto;border:1px solid var(--b);border-radius:8px;background:var(--p2);color:var(--t);padding:8px 12px;font-size:12px;cursor:pointer}
+.configbtn:hover{border-color:var(--a)}
+.configstatus{color:var(--m);font-size:11px;margin-left:3px}
+.layout{display:grid;grid-template-columns:410px 1fr;gap:18px;align-items:start}.side{display:grid;gap:14px}.card{background:var(--p);border:1px solid var(--b);border-radius:12px;padding:16px}
+.card.group-initial{background:linear-gradient(rgba(var(--initial-rgb),.075),rgba(var(--initial-rgb),.025)),var(--p);border-color:rgba(var(--initial-rgb),.42)}
+.card.group-compound{background:linear-gradient(rgba(var(--compound-rgb),.075),rgba(var(--compound-rgb),.025)),var(--p);border-color:rgba(var(--compound-rgb),.42)}
+.card.group-mortgage{background:linear-gradient(rgba(var(--mortgage-rgb),.075),rgba(var(--mortgage-rgb),.025)),var(--p);border-color:rgba(var(--mortgage-rgb),.42)}
+.card.group-income{background:linear-gradient(rgba(var(--income-rgb),.075),rgba(var(--income-rgb),.025)),var(--p);border-color:rgba(var(--income-rgb),.42)}
+.card.group-initial .title{color:rgb(var(--initial-rgb))}
+.card.group-compound .title{color:rgb(var(--compound-rgb))}
+.card.group-mortgage .title{color:rgb(var(--mortgage-rgb))}
+.card.group-income .title{color:rgb(var(--income-rgb))}
+.card.group-initial .cbtn,.card.group-initial .addstage{border-color:rgba(var(--initial-rgb),.36)}
+.card.group-compound .cbtn,.card.group-compound .addstage{border-color:rgba(var(--compound-rgb),.36)}
+.card.group-mortgage .cbtn,.card.group-mortgage .addstage{border-color:rgba(var(--mortgage-rgb),.36)}
+.card.group-income .cbtn,.card.group-income .addstage{border-color:rgba(var(--income-rgb),.36)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.head.collapsed{margin-bottom:0}.titlewrap{display:flex;align-items:center;gap:8px}.title{font-weight:700}.tog{display:flex;align-items:center;gap:6px;color:var(--m);font-size:12px}.tog input{width:17px;height:17px;accent-color:var(--a)}
+.cbtn{width:28px;height:28px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--m);cursor:pointer}.field{margin-bottom:12px}.field label{display:block;font-size:12px;color:var(--m);margin-bottom:5px}
+input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var(--b);border-radius:8px;padding:8px 10px;outline:none}input:focus,select:focus{border-color:var(--a)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.note{font-size:11px;color:var(--m);line-height:1.5}.hidden{display:none!important}
+.expense_box{margin-top:14px;border-top:1px solid var(--b);padding-top:13px}
+.expense_head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.expense_head b{font-size:13px}
+.addstage{width:auto;padding:7px 10px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--t);cursor:pointer;font-size:11px}
+.expense_stage{display:grid;grid-template-columns:1fr 1.35fr 30px;gap:7px;align-items:end;margin-bottom:7px}
+.expense_stage .field{margin:0}
+.expense_stage .remove_stage{width:30px;height:35px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--r);cursor:pointer}
+.stage_error{color:var(--r);font-size:11px;min-height:16px;margin-top:3px}
+.retbox{margin-top:9px;border:1px solid var(--b);border-radius:9px;padding:11px;background:rgba(33,38,45,.5)}.retbox .rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:650}.retbox .rhead input{width:17px;height:17px;accent-color:var(--a)}.rbody{border-top:1px solid var(--b);margin-top:10px;padding-top:11px}
+.summary{display:grid;grid-template-columns:repeat(5,minmax(120px,1fr));gap:9px;margin-bottom:13px}.metric{background:var(--p);border:1px solid var(--b);border-radius:10px;padding:12px}.metric .k{color:var(--m);font-size:11px}.metric .v{font-size:17px;font-weight:700;margin-top:6px}.metric .d{color:var(--m);font-size:10px;margin-top:4px}
+.chart{height:440px;position:relative;background:var(--p);border:1px solid var(--b);border-radius:12px;overflow:hidden;margin-bottom:12px}canvas{width:100%;height:100%;display:block}.legend{position:absolute;right:13px;top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;max-width:82%}.legend button{display:flex;align-items:center;gap:6px;background:rgba(22,27,34,.95);border:1px solid var(--b);border-radius:7px;color:var(--t);padding:5px 8px;font-size:11px;cursor:pointer}.legend button.off{opacity:.35;text-decoration:line-through}.sw{width:16px;height:3px;border-radius:2px}
+.tip{display:none;position:absolute;z-index:4;pointer-events:none;min-width:270px;background:rgba(22,27,34,.98);border:1px solid var(--b);border-radius:8px;padding:9px 11px;font-size:11px}.tip.on{display:block}.tr{display:flex;justify-content:space-between;gap:20px;color:var(--m);line-height:1.55}.tr b{color:var(--t)}
+.tr.initial span,.tr.initial b{color:rgb(var(--initial-rgb))}
+.tr.compound span,.tr.compound b{color:rgb(var(--compound-rgb))}
+.tr.mortgage span,.tr.mortgage b{color:rgb(var(--mortgage-rgb))}
+.tr.income span,.tr.income b{color:rgb(var(--income-rgb))}
+.tr.neutral span{color:var(--m)}.tr.neutral b{color:var(--t)}
+.toolbar{display:flex;justify-content:flex-end;align-items:center;gap:7px;color:var(--m);font-size:12px;margin:0 0 8px}.toolbar select{width:auto}.toolbar button{width:30px;height:30px}
+.table-toolbar{justify-content:space-between;flex-wrap:wrap}.table-view-controls,.table-page-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.toolbar .table-view-btn,.toolbar .table-group-btn{width:auto;height:30px;padding:0 9px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--m);cursor:pointer}
+.toolbar .table-view-btn.active{color:var(--t);border-color:#6e7681;background:#30363d}
+.toolbar .table-group-btn.initial.on{color:#b9d7ff;border-color:rgba(var(--initial-rgb),.65);background:rgba(var(--initial-rgb),.10)}
+.toolbar .table-group-btn.compound.on{color:#d9c2ff;border-color:rgba(var(--compound-rgb),.65);background:rgba(var(--compound-rgb),.10)}
+.toolbar .table-group-btn.income.on{color:#a8ddb0;border-color:rgba(var(--income-rgb),.65);background:rgba(var(--income-rgb),.10)}
+.toolbar .table-group-btn.mortgage.on{color:#f0cf7a;border-color:rgba(var(--mortgage-rgb),.65);background:rgba(var(--mortgage-rgb),.10)}
+.tw{overflow:auto;max-height:500px;border:1px solid var(--b);border-radius:12px}table{width:max-content;min-width:100%;border-collapse:collapse;background:var(--p)}
+.table-detail.table-detail-hidden{display:none!important}
+@media(max-width:700px){
+ .table-toolbar{align-items:flex-start}.table-view-controls{width:100%}.table-page-controls{width:100%;justify-content:flex-end}
+ .toolbar .table-group-btn{padding:0 7px;font-size:11px}
+ .tw{max-height:560px}th,td{padding:8px 8px;font-size:11px}
+}th,td{padding:8px 10px;border-bottom:1px solid var(--b);font-size:12px;text-align:right;white-space:nowrap}th{position:sticky;top:0;background:var(--p2);color:var(--m);z-index:1}th:first-child,td:first-child{text-align:center}
+th.col-initial{background:linear-gradient(rgba(var(--initial-rgb),.18),rgba(var(--initial-rgb),.18)),var(--p2);color:#b9d7ff}
+td.col-initial{background:rgba(var(--initial-rgb),.055)}
+th.col-compound{background:linear-gradient(rgba(var(--compound-rgb),.18),rgba(var(--compound-rgb),.18)),var(--p2);color:#d9c2ff}
+td.col-compound{background:rgba(var(--compound-rgb),.06)}
+th.col-mortgage{background:linear-gradient(rgba(var(--mortgage-rgb),.18),rgba(var(--mortgage-rgb),.18)),var(--p2);color:#f0cf7a}
+td.col-mortgage{background:rgba(var(--mortgage-rgb),.06)}
+th.col-income{background:linear-gradient(rgba(var(--income-rgb),.18),rgba(var(--income-rgb),.18)),var(--p2);color:#a8ddb0}
+td.col-income{background:rgba(var(--income-rgb),.055)}
+tbody tr:hover td.col-initial{background:rgba(var(--initial-rgb),.105)}
+tbody tr:hover td.col-compound{background:rgba(var(--compound-rgb),.11)}
+tbody tr:hover td.col-mortgage{background:rgba(var(--mortgage-rgb),.11)}
+tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
+.pos{color:var(--g)}.neg{color:var(--r)}.warn{color:var(--o)}
+.formulas{margin-top:15px;background:var(--p);border:1px solid var(--b);border-radius:12px;padding:17px}.formulas h2{font-size:17px;margin:0 0 6px}.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.fi{background:var(--p2);border:1px solid var(--b);border-radius:8px;padding:11px}.fi b{font-size:12px}.fi code{display:block;white-space:pre-wrap;margin-top:6px;color:#c9d1d9;font-size:11px;line-height:1.55}
+.verify{border-top:1px solid var(--b);margin-top:13px;padding-top:13px}.verify select{width:auto;margin-left:5px}#detail{margin-top:9px;background:#0d1117;border:1px solid var(--b);border-radius:8px;padding:12px;white-space:pre-wrap;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9d1d9}
+
+/* Guided tour */
+.tour-start-btn{border-color:rgba(var(--a),.55);background:rgba(var(--initial-rgb),.09)}
+.tour-backdrop{position:fixed;inset:0;background:rgba(3,7,12,.80);z-index:900;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.tour-backdrop.on{opacity:1;pointer-events:auto}
+.card.tour-focus{position:relative;z-index:902;box-shadow:0 0 0 2px rgba(255,255,255,.08),0 0 0 5px var(--tour-color,var(--a)),0 22px 70px rgba(0,0,0,.58);transform:translateZ(0)}
+.card.tour-focus::after{content:"";position:absolute;inset:-6px;border:1px solid var(--tour-color,var(--a));border-radius:16px;pointer-events:none;animation:tourHalo 1.7s ease-in-out infinite}
+.card.group-initial.tour-focus{--tour-color:rgb(var(--initial-rgb))}
+.card.group-compound.tour-focus{--tour-color:rgb(var(--compound-rgb))}
+.card.group-mortgage.tour-focus{--tour-color:rgb(var(--mortgage-rgb))}
+.card.group-income.tour-focus{--tour-color:rgb(var(--income-rgb))}
+@keyframes tourHalo{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.006)}}
+.tour-panel{position:fixed;z-index:904;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);width:min(720px,calc(100vw - 28px));background:rgba(22,27,34,.985);border:1px solid #484f58;border-radius:14px;padding:15px 16px;box-shadow:0 20px 70px rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
+.tour-panel.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.tour-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.tour-kicker{color:var(--m);font-size:11px;margin-bottom:3px}
+.tour-title{font-size:16px;font-weight:750}
+.tour-text{margin-top:6px;color:#c9d1d9;font-size:12px;line-height:1.65}
+.tour-demo{margin-top:9px;border:1px solid var(--b);background:#0d1117;border-radius:8px;padding:8px 10px;color:var(--m);font-size:11px;line-height:1.55;white-space:pre-line}.allocation-guide-box{border-radius:10px}
+.tour-actions{display:flex;justify-content:space-between;align-items:center;gap:9px;margin-top:12px}
+.tour-actions-left,.tour-actions-right{display:flex;align-items:center;gap:8px}
+.tour-btn{width:auto;border:1px solid var(--b);border-radius:8px;background:var(--p2);color:var(--t);padding:7px 11px;font-size:12px;cursor:pointer}
+.tour-btn:hover{border-color:var(--a)}
+.tour-btn.primary{background:#1f6feb;border-color:#388bfd;color:#fff}
+.tour-btn.skip{color:var(--m)}
+.tour-step{font-size:11px;color:var(--m);white-space:nowrap}
+.tour-field-pulse{animation:tourFieldPulse .9s ease}
+@keyframes tourFieldPulse{0%{box-shadow:0 0 0 0 rgba(88,166,255,0)}35%{box-shadow:0 0 0 3px rgba(88,166,255,.42)}100%{box-shadow:0 0 0 0 rgba(88,166,255,0)}}
+
+.tour-focus-target{position:relative;z-index:903!important;box-shadow:0 0 0 3px var(--tour-color,var(--a)),0 18px 55px rgba(0,0,0,.55)!important;border-radius:12px;animation:tourTargetHalo 1.6s ease-in-out infinite}
+.group-initial .tour-focus-target{--tour-color:rgb(var(--initial-rgb))}
+.group-compound .tour-focus-target{--tour-color:rgb(var(--compound-rgb))}
+.group-mortgage .tour-focus-target{--tour-color:rgb(var(--mortgage-rgb))}
+.group-income .tour-focus-target{--tour-color:rgb(var(--income-rgb))}
+@keyframes tourTargetHalo{0%,100%{filter:brightness(1)}50%{filter:brightness(1.12)}}
+.tour-panel.top{top:20px;bottom:auto}
+.tour-panel .tour-path{margin-top:5px;color:#8b949e;font-size:10px;letter-spacing:.02em}
+.tour-panel .tour-hint{color:#79c0ff}
+.tour-field-pulse{position:relative;z-index:906!important}
+
+body.tour-active{overflow-x:hidden}
+body.tour-active .configbar{position:relative;z-index:905}
+@media(max-width:700px){.tour-panel{bottom:10px}.tour-actions{align-items:flex-end}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
+
+@media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr 1fr}.chart{height:390px}}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>資產 / 收入 / 退休 / 房貸試算</h1>
+<div class="sub">加入全域時間軸：指定開始年份、試算年數與出生年。每個試算組再指定「插入年份」，只有進入該年份後才開始作用；表格與圖表同步顯示年份與試算人年齡。</div>
+<div class="configbar">
+ <button id="export_settings" class="configbtn" type="button">匯出試算設定</button>
+ <button id="import_settings" class="configbtn" type="button">匯入試算設定</button>
+ <button id="start_tour" class="configbtn tour-start-btn" type="button">使用說明導覽</button>
+ <input id="import_settings_file" type="file" accept=".json,application/json" class="hidden">
+ <span id="config_status" class="configstatus">設定檔格式：JSON</span>
+</div>
+<div class="layout">
+<aside class="side">
+
+<section class="card group-initial">
+ <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="timeline_body">−</button><div class="title">時間軸 / 初始設定</div></div></div>
+ <div id="timeline_body">
+  <div class="row2">
+   <div class="field"><label>開始試算年份</label><input id="timeline_start_year" type="number" value="2026" min="1900" max="2200"></div>
+   <div class="field"><label>試算年數</label><input id="timeline_years" type="number" value="40" min="1" max="100"></div>
+  </div>
+  <div class="field"><label>出生年</label><input id="birth_year" type="number" value="1994" min="1900" max="2200"></div>
+  <div class="row2">
+   <div class="field"><label>初始現金資產（NT$）</label><input id="initial_cash_assets" type="number" value="1000000" min="0" step="100000"></div>
+   <div class="field"><label>初始投資資產（NT$）</label><input id="initial_investment_assets" type="number" value="23000000" min="0" step="100000"></div>
+   <div class="field"><label>投資年化報酬率（%）</label><input id="return_rate" type="number" value="6" step="0.1"></div>
+  </div>
+  <div class="note">現金資產與投資資產都從試算第一年開始存在，並逐年累積。所有支出只從現金資產扣除，不會自動賣出投資資產補足。</div>
+
+  <div id="expense_guide_box" class="expense_box">
+   <div class="expense_head"><b>動態固定支出表</b><button id="add_expense_stage" class="addstage" type="button">＋ 多一個固定支出階段</button></div>
+   <div id="expense_stages"></div>
+   <div id="stage_error" class="stage_error"></div>
+   <div class="note">每一列代表「從該年份開始」使用新的固定年支出；年份必須嚴格遞增。最後一個階段會一直沿用到試算結束。</div>
+  </div>
+  <div id="reserve_guide_box" class="expense_box">
+   <div class="expense_head"><b>緊急備用金目標表</b><button id="add_reserve_stage" class="addstage" type="button">＋ 多一個備用金階段</button></div>
+   <div id="reserve_stages"></div>
+   <div id="reserve_stage_error" class="stage_error"></div>
+   <div class="note">每一列代表「從該年份開始」希望保留的現金資產目標。若投入方式選「僅保留緊急備用金」，當年度所有收入、固定支出、購屋與房貸都結算後，超過此目標的現金才轉入投資。最後一階段永久沿用。</div>
+  </div>
+ </div>
+</section>
+
+<section class="card group-compound">
+ <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="compound_body">−</button><div class="title">複利計算試算組</div></div><label class="tog"><input id="compound_enabled" type="checkbox" checked>加入試算</label></div>
+ <div id="compound_body">
+  <div class="expense_box">
+   <div class="expense_head"><b>複利再投入階段</b><button id="add_compound_stage" class="addstage" type="button">＋ 多一個複利階段</button></div>
+   <div id="compound_stages"></div>
+   <div id="compound_stage_error" class="stage_error"></div>
+   <div class="note">每個階段代表「從開始年份起，連續若干年將投資收益再投入」。不在任何複利階段內的年份，投資收益會納入現金資產。階段不可重疊。</div>
+  </div>
+  <div class="note">投資資產與年化報酬率由「時間軸 / 初始設定」提供；這裡只決定哪些年份要把投資收益再投入投資資產。</div>
+ </div>
+</section>
+
+<section class="card group-mortgage">
+ <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="mortgage_body">−</button><div class="title">房貸試算組</div></div><label class="tog"><input id="mortgage_enabled" type="checkbox" checked>加入試算</label></div>
+ <div id="mortgage_body">
+  <div class="field"><label>購屋試算插入年份</label><input id="mortgage_start_year" type="number" value="2028" min="1900" max="2200"></div>
+  <div class="field"><label>購屋類型</label><select id="purchase_type"><option value="direct">直接購入</option><option value="presale">預售屋</option></select></div>
+  <div class="field"><label>房屋總價（NT$）</label><input id="house_price" type="number" value="20000000" step="100000"></div>
+  <div class="field"><label>頭期款（%）</label><input id="down_rate" type="number" value="20" min="0" max="100"></div>
+  <div id="mortgage_rate_guide_box" class="expense_box">
+   <div class="expense_head"><b>房貸利率階段</b><button id="add_mortgage_rate_stage" class="addstage" type="button">＋ 多一個利率階段</button></div>
+   <div id="mortgage_rate_stages"></div>
+   <div id="mortgage_rate_stage_error" class="stage_error"></div>
+   <div class="note">可模擬購屋補助、銀行優惠期或分段式房貸。每個階段依序接續；最後一階段的持續年數設為 0 代表一路套用到房貸結束。利率切換時會依當下剩餘本金與剩餘期限重新計算月付。</div>
+  </div>
+  <div id="presale" class="hidden"><div class="row2"><div class="field"><label>工程期分款（總價 %）</label><input id="construction_rate" type="number" value="10"></div><div class="field"><label>工程期（年）</label><input id="construction_years" type="number" value="3"></div></div></div>
+  <div class="row2"><div class="field"><label>房貸年限（年）</label><input id="loan_years" type="number" value="40"></div><div class="field"><label>寬限期（年）</label><input id="grace_years" type="number" value="0"></div></div>
+  <div class="note">房貸、頭期款與工程款均為現金支出；不足時現金餘額會呈負值，不會自動賣投資資產補洞。</div>
+ </div>
+</section>
+
+<section class="card group-income">
+ <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="income_body">−</button><div class="title">經常收入試算組</div></div><label class="tog"><input id="income_enabled" type="checkbox" checked>加入試算</label></div>
+ <div id="income_body">
+  <div class="field"><label>工作收入插入年份</label><input id="income_start_year" type="number" value="2026" min="1900" max="2200"></div>
+  <div class="field"><label>目前年薪（NT$）</label><input id="salary" type="number" value="2500000" step="100000"></div>
+  <div class="row2"><div class="field"><label>每年調薪率（%）</label><input id="salary_growth" type="number" value="3" step="0.1"></div><div class="field"><label>工作收入年數</label><input id="income_years" type="number" value="10"></div></div>
+  <div id="work_allocation_guide_box" class="allocation-guide-box">
+   <div class="field"><label>工作期間：每年投入投資方式</label><select id="work_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve">僅保留緊急備用金</option></select></div>
+   <div id="work_percent" class="field"><label>投入收入比例（%）</label><input id="work_percent_value" type="number" value="50" min="0" max="100"></div>
+   <div id="work_fixed" class="field hidden"><label>每年固定投入投資（NT$）</label><input id="work_fixed_value" type="number" value="1000000"></div>
+   <div id="work_expense" class="field hidden"><div class="note">「支出餘額」會使用上方動態固定支出表中該年度的支出額：投入投資 = max(0, 工作收入 − 當年固定支出)。</div></div>
+   <div id="work_emergency" class="field hidden"><div class="note">先結算當年所有現金流，再把超過當年「緊急備用金目標」的現金全部轉入投資。</div></div>
+  </div>
+
+  <div id="retirement_guide_box" class="retbox">
+   <div class="rhead"><label for="retirement_enabled">工作結束後立即銜接百分比提領</label><input id="retirement_enabled" type="checkbox"></div>
+   <div id="retirement_body" class="rbody hidden">
+    <div class="row2"><div class="field"><label>每年提領投資資產（%）</label><input id="retire_rate" type="number" value="4" step="0.1"></div><div class="field"><label>退休提領年數</label><input id="retire_years" type="number" value="30"></div></div>
+    <div class="field"><label>退休收入：每年投入投資方式</label><select id="retire_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve">僅保留緊急備用金</option></select></div>
+    <div id="retire_percent" class="field"><label>退休收入再投入比例（%）</label><input id="retire_percent_value" type="number" value="0" min="0" max="100"></div>
+    <div id="retire_fixed" class="field hidden"><label>每年固定再投入（NT$）</label><input id="retire_fixed_value" type="number" value="0"></div>
+    <div id="retire_expense" class="field hidden"><div class="note">「支出餘額」同樣使用動態固定支出表：退休再投入 = max(0, 退休提領收入 − 當年固定支出)。</div></div><div id="retire_emergency" class="field hidden"><div class="note">退休提領先進入現金，扣除固定支出與房貸後，只保留當年緊急備用金目標，其餘再投入投資。</div></div>
+   </div>
+  </div>
+ </div>
+</section>
+</aside>
+
+<main>
+<div class="summary">
+ <div class="metric"><div class="k">期末投資資產</div><div id="sum_assets" class="v">-</div><div class="d">逐年複利與投入後</div></div>
+ <div class="metric"><div class="k">期末現金資產</div><div id="sum_cash_assets" class="v">-</div><div class="d">所有收入 / 支出累積後</div></div>
+ <div class="metric"><div class="k">最新年度每月淨現金流</div><div id="sum_cash_m" class="v">-</div><div class="d">年度淨現金流 ÷ 12</div></div>
+ <div class="metric"><div class="k">房貸本金</div><div id="sum_loan" class="v">-</div><div id="sum_loan_d" class="d">-</div></div>
+ <div class="metric"><div class="k">一般期本息月付</div><div id="sum_payment" class="v">-</div><div id="sum_payment_d" class="d">-</div></div>
+</div>
+
+<div id="chart_guide_box" class="chart"><canvas id="chart"></canvas><div id="legend" class="legend"></div><div id="tip" class="tip"></div></div>
+
+<div class="toolbar table-toolbar">
+ <div class="table-view-controls">
+  <span>欄位</span>
+  <button id="table_view_compact" class="table-view-btn active" type="button">精簡</button>
+  <button id="table_view_all" class="table-view-btn" type="button">全部展開</button>
+  <button id="table_toggle_initial" class="table-group-btn initial" type="button">＋ 基礎</button>
+  <button id="table_toggle_compound" class="table-group-btn compound" type="button">＋ 複利</button>
+  <button id="table_toggle_income" class="table-group-btn income" type="button">＋ 收入 / 退休</button>
+  <button id="table_toggle_mortgage" class="table-group-btn mortgage" type="button">＋ 房貸</button>
+ </div>
+ <div class="table-page-controls"><span>每頁顯示</span><select id="rows_per_page"><option>10</option><option selected>20</option><option>30</option><option>50</option><option value="all">全部</option></select>
+ <button id="prev" class="cbtn">‹</button><span id="page_status">1 / 1</span><button id="next" class="cbtn">›</button></div>
+</div>
+<div id="table_guide_box" class="tw"><table><thead><tr>
+<th class="table-core">序號</th><th class="col-initial table-core">年份</th><th class="col-initial table-detail detail-initial">年齡</th><th class="table-core">階段</th><th class="col-initial table-detail detail-initial">年初現金資產</th><th class="col-initial table-detail detail-initial">年初投資資產</th><th class="col-initial table-detail detail-initial">投資收益</th><th class="col-compound table-detail detail-compound">投資收益再投入</th><th class="col-income table-detail detail-income">工作收入</th><th class="col-income table-detail detail-income">工作投入投資</th><th class="col-income table-detail detail-income">退休提領</th><th class="col-income table-detail detail-income">退休再投入</th><th class="col-initial table-detail detail-initial">固定年支出</th><th class="col-mortgage table-detail detail-mortgage">購屋/房貸支出</th><th class="col-mortgage table-detail detail-mortgage">當年房貸利率</th><th class="col-initial table-detail detail-initial">備用金目標</th><th class="col-income table-detail detail-income">超額現金轉投資</th><th class="table-core">年度淨現金流</th><th class="table-detail detail-summary">每月淨現金流</th><th class="table-core">年末現金資產</th><th class="col-mortgage table-detail detail-mortgage">房貸餘額</th><th class="table-core">年末投資資產</th>
+</tr></thead><tbody id="tbody"></tbody></table></div>
+
+<section id="formula_guide_box" class="formulas">
+ <h2>年度計算公式 / 驗收區</h2><div class="sub" style="margin:0">以下就是頁面實際採用的計算順序；最下方可指定年度查看數值代入。</div>
+ <div class="fg">
+  <div class="fi"><b>① 投資複利</b><code>投資收益[t] = 年初投資資產[t] × 年化報酬率
+位於複利再投入階段：投資收益總額 → 投資資產再投入
+不在複利再投入階段：投資收益總額 → 現金資產</code></div>
+  <div class="fi"><b>② 工作收入投入</b><code>百分比：投入 = 工作收入 × %
+固定：投入 = min(工作收入, 固定金額)
+支出餘額：投入 = max(0, 工作收入 − 當年固定支出)
+
+工作收入未投入部分會留在現金資產。</code></div>
+  <div class="fi"><b>③ 退休提領</b><code>提領前資產 = 年初投資資產 + 投資收益再投入
+退休提領收入 = 提領前資產 × 提領率
+退休再投入 = allocation(退休提領收入)
+退休現金 = 退休提領 − 再投入</code></div>
+  <div class="fi"><b>④ 所有支出只扣現金</b><code>年度淨現金流 =
+  工作收入 − 工作投入
++ 退休提領 − 退休再投入
+− 固定年支出
+− 頭期 / 工程 / 房貸支出
+
+年末現金資產 =
+  年初現金資產 + 年度淨現金流</code></div>
+  <div class="fi"><b>⑤ 投資資產逐年累積</b><code>一般模式：
+年末投資 = 年初投資 + 收益 + 工作投入 − 退休提領 + 退休再投入
+
+僅保留緊急備用金：
+先完成所有年度現金流，
+超額現金 = max(0, 結算後現金 − 當年備用金目標)
+再把超額現金轉入投資。
+
+任何支出都不直接扣投資資產。</code></div>
+  <div class="fi"><b>⑥ 全域時間軸</b><code>年份[t] = 開始試算年份 + t
+年齡[t] = 年份[t] − 出生年
+
+總列數 = 全域試算年數
+各試算組只有在「插入年份」後才生效。</code></div>
+ </div>
+ <div id="verify_guide_box" class="verify"><label>查看實際代入：</label><select id="formula_year"></select><div id="detail"></div></div>
+</section>
+</main>
+</div></div>
+
+<div id="tour_backdrop" class="tour-backdrop" aria-hidden="true"></div>
+<div id="tour_panel" class="tour-panel" role="dialog" aria-modal="true" aria-labelledby="tour_title">
+ <div class="tour-top">
+  <div>
+   <div id="tour_kicker" class="tour-kicker">使用說明導覽</div>
+   <div id="tour_title" class="tour-title">開始</div>
+   <div id="tour_text" class="tour-text"></div>
+   <div id="tour_path" class="tour-path"></div>
+  </div>
+  <div id="tour_step" class="tour-step">1 / 4</div>
+ </div>
+ <div id="tour_demo" class="tour-demo"></div>
+ <div class="tour-actions">
+  <div class="tour-actions-left">
+   <button id="tour_skip" class="tour-btn skip" type="button">跳過導覽</button>
+  </div>
+  <div class="tour-actions-right">
+   <button id="tour_prev" class="tour-btn" type="button">上一步</button>
+   <button id="tour_next" class="tour-btn primary" type="button">下一步</button>
+  </div>
+ </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const ids=["timeline_start_year","timeline_years","birth_year","initial_cash_assets","initial_investment_assets",
+"compound_enabled","return_rate",
+"mortgage_enabled","mortgage_start_year","purchase_type","house_price","down_rate","mortgage_rate","construction_rate","construction_years","loan_years","grace_years",
+"income_enabled","income_start_year","salary","salary_growth","income_years","work_mode","work_percent_value","work_fixed_value",
+"retirement_enabled","retire_rate","retire_years","retire_mode","retire_percent_value","retire_fixed_value"];
+const e=Object.fromEntries(ids.map(id=>[id,$(id)]));
+const canvas=$("chart"),ctx=canvas.getContext("2d"),legend=$("legend"),tip=$("tip"),tbody=$("tbody");
+let state={rows:[],series:[],hover:null,selected:null},page=1;
+const vis={investment:true,cash_assets:true,compound_return:true,income:true,retirement:true,housing:true,net_cash:true};
+
+function num(x,d=0){const v=Number(x.value);return Number.isFinite(v)?v:d}
+function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",maximumFractionDigits:0}).format(Number.isFinite(v)?v:0)}
+function alloc(src,mode,p,f,expense){if(src<=0)return 0;if(mode==="percent")return src*Math.max(0,Math.min(100,p))/100;if(mode==="fixed")return Math.min(src,Math.max(0,f));return Math.max(0,src-Math.max(0,expense))}
+function loan_pmt(P,ar,years){if(P<=0)return 0;const n=Math.max(1,Math.round(years*12)),r=ar/12;if(!r)return P/n;return P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
+function mode_ui(prefix,mode){$(prefix+"_percent").classList.toggle("hidden",mode!=="percent");$(prefix+"_fixed").classList.toggle("hidden",mode!=="fixed");$(prefix+"_expense").classList.toggle("hidden",mode!=="expense_balance");$(prefix+"_emergency").classList.toggle("hidden",mode!=="emergency_reserve")}
+
+let expenseStages=[
+  {year:2026, amount:600000}
+];
+let reserveStages=[
+  {year:2026, amount:1000000}
+];
+let compoundStages=[
+  {year:2026, years:40}
+];
+let mortgageRateStages=[{rate:2.6,years:0}];
+
+function render_expense_stages(){
+  const box=$("expense_stages");
+  box.innerHTML="";
+  expenseStages.forEach((stage,index)=>{
+    const row=document.createElement("div");
+    row.className="expense_stage";
+    const minYear=index===0?1900:expenseStages[index-1].year+1;
+    row.innerHTML=`
+      <div class="field"><label>開始年份</label><input class="stage_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div>
+      <div class="field"><label>固定年支出（NT$）</label><input class="stage_amount" data-index="${index}" type="number" min="0" step="10000" value="${stage.amount}"></div>
+      <button class="remove_stage" data-index="${index}" type="button" title="移除此階段">×</button>`;
+    box.appendChild(row);
+  });
+
+  box.querySelectorAll(".stage_year").forEach(input=>{
+    input.addEventListener("change",()=>{
+      const i=Number(input.dataset.index);
+      let v=Math.round(Number(input.value)||0);
+      const lower=i===0?1900:expenseStages[i-1].year+1;
+      if(v<lower)v=lower;
+      expenseStages[i].year=v;
+      // Push later stages forward when needed, preserving strict increase.
+      for(let j=i+1;j<expenseStages.length;j++){
+        if(expenseStages[j].year<=expenseStages[j-1].year)expenseStages[j].year=expenseStages[j-1].year+1;
+      }
+      render_expense_stages();calc();
+    });
+  });
+
+  box.querySelectorAll(".stage_amount").forEach(input=>{
+    input.addEventListener("input",()=>{
+      const i=Number(input.dataset.index);
+      expenseStages[i].amount=Math.max(0,Number(input.value)||0);
+      calc();
+    });
+  });
+
+  box.querySelectorAll(".remove_stage").forEach(button=>{
+    button.addEventListener("click",()=>{
+      const i=Number(button.dataset.index);
+      expenseStages.splice(i,1);
+      render_expense_stages();calc();
+    });
+  });
+  validate_expense_stages();
+}
+
+function add_expense_stage(){
+  const start=Math.round(num(e.timeline_start_year,2026));
+  const next=expenseStages.length?expenseStages.at(-1).year+1:start;
+  const lastAmount=expenseStages.length?expenseStages.at(-1).amount:0;
+  expenseStages.push({year:next,amount:lastAmount});
+  render_expense_stages();calc();
+}
+
+function validate_expense_stages(){
+  let ok=true;
+  for(let i=1;i<expenseStages.length;i++){
+    if(expenseStages[i].year<=expenseStages[i-1].year){ok=false;break}
+  }
+  $("stage_error").textContent=ok?"":"固定支出階段年份必須嚴格遞增。";
+  return ok;
+}
+
+function fixed_expense_for_year(year){
+  let amount=0;
+  for(const stage of expenseStages){
+    if(year>=stage.year)amount=stage.amount;
+    else break;
+  }
+  return amount;
+}
+
+
+function normalize_compound_stages(){
+  compoundStages=compoundStages
+    .map(s=>({year:Math.round(Number(s.year)||0),years:Math.max(1,Math.round(Number(s.years)||1))}))
+    .filter(s=>s.year>0)
+    .sort((a,b)=>a.year-b.year);
+
+  for(let i=1;i<compoundStages.length;i++){
+    const prevEnd=compoundStages[i-1].year+compoundStages[i-1].years-1;
+    if(compoundStages[i].year<=prevEnd)compoundStages[i].year=prevEnd+1;
+  }
+}
+
+function render_compound_stages(){
+  normalize_compound_stages();
+  const box=$("compound_stages");
+  box.innerHTML="";
+  compoundStages.forEach((stage,index)=>{
+    const row=document.createElement("div");
+    row.className="expense_stage";
+    const minYear=index===0?1900:compoundStages[index-1].year+compoundStages[index-1].years;
+    row.innerHTML=`
+      <div class="field"><label>開始年份</label><input class="compound_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div>
+      <div class="field"><label>持續年數</label><input class="compound_duration" data-index="${index}" type="number" min="1" max="200" value="${stage.years}"></div>
+      <button class="remove_stage compound_remove" data-index="${index}" type="button" title="移除此階段">×</button>`;
+    box.appendChild(row);
+  });
+
+  box.querySelectorAll(".compound_year").forEach(input=>input.addEventListener("change",()=>{
+    const i=Number(input.dataset.index);
+    compoundStages[i].year=Math.round(Number(input.value)||0);
+    normalize_compound_stages();
+    render_compound_stages();
+    calc();
+  }));
+
+  box.querySelectorAll(".compound_duration").forEach(input=>input.addEventListener("change",()=>{
+    const i=Number(input.dataset.index);
+    compoundStages[i].years=Math.max(1,Math.round(Number(input.value)||1));
+    normalize_compound_stages();
+    render_compound_stages();
+    calc();
+  }));
+
+  box.querySelectorAll(".compound_remove").forEach(button=>button.addEventListener("click",()=>{
+    compoundStages.splice(Number(button.dataset.index),1);
+    render_compound_stages();
+    calc();
+  }));
+
+  validate_compound_stages();
+}
+
+function add_compound_stage(){
+  const start=Math.round(num(e.timeline_start_year,2026));
+  const year=compoundStages.length
+    ? compoundStages.at(-1).year+compoundStages.at(-1).years
+    : start;
+  compoundStages.push({year,years:10});
+  render_compound_stages();
+  calc();
+}
+
+function validate_compound_stages(){
+  let ok=true;
+  for(let i=1;i<compoundStages.length;i++){
+    const prevEnd=compoundStages[i-1].year+compoundStages[i-1].years-1;
+    if(compoundStages[i].year<=prevEnd){ok=false;break}
+  }
+  $("compound_stage_error").textContent=ok?"":"複利階段不可重疊。";
+  return ok;
+}
+
+function compound_reinvest_for_year(year){
+  if(!e.compound_enabled.checked)return false;
+  return compoundStages.some(s=>year>=s.year && year<s.year+s.years);
+}
+
+function render_reserve_stages(){
+  const box=$("reserve_stages"); box.innerHTML="";
+  reserveStages.forEach((stage,index)=>{
+    const row=document.createElement("div"); row.className="expense_stage";
+    const minYear=index===0?1900:reserveStages[index-1].year+1;
+    row.innerHTML=`<div class="field"><label>開始年份</label><input class="reserve_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div><div class="field"><label>緊急備用金目標（NT$）</label><input class="reserve_amount" data-index="${index}" type="number" min="0" step="10000" value="${stage.amount}"></div><button class="remove_stage reserve_remove" data-index="${index}" type="button" title="移除此階段">×</button>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll(".reserve_year").forEach(input=>input.addEventListener("change",()=>{
+    const i=Number(input.dataset.index); let v=Math.round(Number(input.value)||0); const lower=i===0?1900:reserveStages[i-1].year+1; if(v<lower)v=lower; reserveStages[i].year=v;
+    for(let j=i+1;j<reserveStages.length;j++)if(reserveStages[j].year<=reserveStages[j-1].year)reserveStages[j].year=reserveStages[j-1].year+1;
+    render_reserve_stages();calc();
+  }));
+  box.querySelectorAll(".reserve_amount").forEach(input=>input.addEventListener("input",()=>{const i=Number(input.dataset.index);reserveStages[i].amount=Math.max(0,Number(input.value)||0);calc();}));
+  box.querySelectorAll(".reserve_remove").forEach(button=>button.addEventListener("click",()=>{reserveStages.splice(Number(button.dataset.index),1);render_reserve_stages();calc();}));
+  validate_reserve_stages();
+}
+function add_reserve_stage(){const start=Math.round(num(e.timeline_start_year,2026));const next=reserveStages.length?reserveStages.at(-1).year+1:start;const last=reserveStages.length?reserveStages.at(-1).amount:Math.max(0,num(e.initial_cash_assets));reserveStages.push({year:next,amount:last});render_reserve_stages();calc();}
+function validate_reserve_stages(){let ok=true;for(let i=1;i<reserveStages.length;i++)if(reserveStages[i].year<=reserveStages[i-1].year){ok=false;break}$("reserve_stage_error").textContent=ok?"":"備用金階段年份必須嚴格遞增。";return ok;}
+function reserve_for_year(year){let amount=0;for(const stage of reserveStages){if(year>=stage.year)amount=stage.amount;else break}return amount;}
+
+
+function render_mortgage_rate_stages(){
+  const box=$("mortgage_rate_stages"); if(!box)return;
+  box.innerHTML="";
+  mortgageRateStages.forEach((s,i)=>{
+    const row=document.createElement("div"); row.className="mortgage-rate-stage";
+    const isLast=i===mortgageRateStages.length-1;
+    row.innerHTML=`<div class="field"><label>第 ${i+1} 階段利率（%）</label><input class="mortgage-rate-value" data-i="${i}" type="number" min="0" step="0.01" value="${s.rate}"></div>
+      <div class="field"><label>持續年數${isLast?"（0 = 剩餘年限）":""}</label><input class="mortgage-rate-years" data-i="${i}" type="number" min="${isLast?0:1}" step="1" value="${s.years}"></div>
+      <button class="cbtn remove-stage" data-i="${i}" type="button" title="刪除">×</button>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll(".mortgage-rate-value").forEach(n=>n.oninput=ev=>{mortgageRateStages[Number(ev.target.dataset.i)].rate=Math.max(0,Number(ev.target.value)||0);calc()});
+  box.querySelectorAll(".mortgage-rate-years").forEach(n=>n.oninput=ev=>{mortgageRateStages[Number(ev.target.dataset.i)].years=Math.max(0,Math.round(Number(ev.target.value)||0));validate_mortgage_rate_stages();calc()});
+  box.querySelectorAll(".remove-stage").forEach(n=>n.onclick=ev=>{
+    mortgageRateStages.splice(Number(ev.currentTarget.dataset.i),1);
+    if(!mortgageRateStages.length)mortgageRateStages=[{rate:2.6,years:0}];
+    mortgageRateStages.forEach((s,j)=>{if(j<mortgageRateStages.length-1&&s.years<1)s.years=1});
+    render_mortgage_rate_stages();calc();
+  });
+  validate_mortgage_rate_stages();
+}
+function add_mortgage_rate_stage(){
+  if(mortgageRateStages.length&&mortgageRateStages.at(-1).years===0)mortgageRateStages.at(-1).years=1;
+  mortgageRateStages.push({rate:mortgageRateStages.length?mortgageRateStages.at(-1).rate:2.6,years:0});
+  render_mortgage_rate_stages();calc();
+}
+function validate_mortgage_rate_stages(){
+  let ok=true,msg="";
+  mortgageRateStages.forEach((s,i)=>{
+    if(!Number.isFinite(s.rate)||s.rate<0){ok=false;msg="房貸利率不可為負數。"}
+    if(i<mortgageRateStages.length-1&&s.years<1){ok=false;msg="非最後一個利率階段至少要持續 1 年。"}
+  });
+  const n=$("mortgage_rate_stage_error"); if(n)n.textContent=ok?"":msg; return ok;
+}
+function mortgage_rate_for_elapsed_year(elapsed){
+  let cursor=0;
+  for(let i=0;i<mortgageRateStages.length;i++){
+    const s=mortgageRateStages[i],last=i===mortgageRateStages.length-1;
+    if(last||s.years===0||elapsed<cursor+s.years)return Math.max(0,Number(s.rate)||0)/100;
+    cursor+=s.years;
+  }
+  return Math.max(0,Number(mortgageRateStages.at(-1)?.rate)||0)/100;
+}
+function mortgage_rate_stage_index(elapsed){
+  let cursor=0;
+  for(let i=0;i<mortgageRateStages.length;i++){
+    const s=mortgageRateStages[i],last=i===mortgageRateStages.length-1;
+    if(last||s.years===0||elapsed<cursor+s.years)return i;
+    cursor+=s.years;
+  }
+  return Math.max(0,mortgageRateStages.length-1);
+}
+
+const SETTINGS_SCHEMA="asset-timeline-calculator";
+const SETTINGS_VERSION=6;
+
+function collect_settings(){
+  const values={};
+  for(const id of ids){
+    const node=e[id];
+    if(!node)continue;
+    values[id]=(node.type==="checkbox")?node.checked:node.value;
+  }
+  return {
+    schema:SETTINGS_SCHEMA,
+    version:SETTINGS_VERSION,
+    exported_at:new Date().toISOString(),
+    settings:values,
+    expense_stages:expenseStages.map(s=>({year:s.year,amount:s.amount})),
+    reserve_stages:reserveStages.map(s=>({year:s.year,amount:s.amount})),
+    compound_stages:compoundStages.map(s=>({year:s.year,years:s.years})),
+    mortgage_rate_stages:mortgageRateStages.map(s=>({rate:s.rate,years:s.years})),
+    compatibility:{min_reader_version:1,policy:"ignore_unknown_fields",notes:"Unknown fields are ignored; known legacy aliases are migrated."}
+  };
+}
+
+function export_filename(){
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,"0");
+  const ymd=`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+  const hm=`${pad(d.getHours())}${pad(d.getMinutes())}`;
+  return `asset-simulation-${ymd}-${hm}.json`;
+}
+
+function export_settings(){
+  const payload=collect_settings();
+  const json=JSON.stringify(payload,null,2);
+  const filename=export_filename();
+  try{
+    const blob=new Blob([json],{type:"application/json;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a"); a.href=url; a.download=filename; a.style.display="none"; document.body.appendChild(a);
+    a.dispatchEvent(new MouseEvent("click",{bubbles:true,cancelable:true,view:window})); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    $("config_status").textContent=`已匯出：${filename}`;
+  }catch(err){
+    try{const a=document.createElement("a");a.href="data:application/json;charset=utf-8,"+encodeURIComponent(json);a.download=filename;a.style.display="none";document.body.appendChild(a);a.click();a.remove();$("config_status").textContent=`已匯出：${filename}`;}
+    catch(err2){$("config_status").textContent=`匯出失敗：${err2.message}`;alert(`匯出試算設定失敗：\n${err2.message}`);}
+  }
+}
+
+function apply_settings(payload){
+  if(!payload||typeof payload!=="object")throw new Error("設定檔內容無效");
+  if(payload.schema&&payload.schema!==SETTINGS_SCHEMA)throw new Error("不是相容的試算設定檔");
+
+  const settings=(payload.settings&&typeof payload.settings==="object")?payload.settings:payload;
+  const migrated={...settings};
+
+  if(migrated.initial_assets!==undefined&&migrated.initial_investment_assets===undefined)
+    migrated.initial_investment_assets=migrated.initial_assets;
+
+  if(migrated.work_expense_value!==undefined&&!Array.isArray(payload.expense_stages))
+    payload.expense_stages=[{year:Number(migrated.timeline_start_year)||2026,amount:Number(migrated.work_expense_value)||0}];
+
+  for(const [id,value] of Object.entries(migrated)){
+    if(!ids.includes(id)||!e[id])continue;
+    const node=e[id];
+    if(node.type==="checkbox")node.checked=(value===true||value==="true"||value===1||value==="1");
+    else node.value=String(value);
+  }
+
+  if(Array.isArray(payload.expense_stages)){
+    expenseStages=payload.expense_stages
+      .map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,Number(s.amount)||0)}))
+      .filter(s=>s.year>0).sort((a,b)=>a.year-b.year);
+    for(let i=1;i<expenseStages.length;i++)
+      if(expenseStages[i].year<=expenseStages[i-1].year)expenseStages[i].year=expenseStages[i-1].year+1;
+  }
+  if(!expenseStages.length)
+    expenseStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:0}];
+
+  if(Array.isArray(payload.reserve_stages)){
+    reserveStages=payload.reserve_stages
+      .map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,Number(s.amount)||0)}))
+      .filter(s=>s.year>0).sort((a,b)=>a.year-b.year);
+    for(let i=1;i<reserveStages.length;i++)
+      if(reserveStages[i].year<=reserveStages[i-1].year)reserveStages[i].year=reserveStages[i-1].year+1;
+  }else{
+    reserveStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:Math.max(0,num(e.initial_cash_assets))}];
+  }
+  if(!reserveStages.length)
+    reserveStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:0}];
+
+  if(Array.isArray(payload.compound_stages)){
+    compoundStages=payload.compound_stages
+      .map(s=>({year:Math.round(Number(s.year)||0),years:Math.max(1,Math.round(Number(s.years)||1))}))
+      .filter(s=>s.year>0)
+      .sort((a,b)=>a.year-b.year);
+  }else{
+    // Legacy V11 and earlier: old start year + duration become one reinvestment stage.
+    const legacyStart=Math.round(Number(settings.compound_start_year)||Number(migrated.timeline_start_year)||2026);
+    const legacyYears=Math.max(1,Math.round(Number(settings.compound_years)||Number(migrated.timeline_years)||40));
+    compoundStages=[{year:legacyStart,years:legacyYears}];
+  }
+  normalize_compound_stages();
+
+  $("presale").classList.toggle("hidden",e.purchase_type.value!=="presale");
+  $("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);
+  mode_ui("work",e.work_mode.value);
+  mode_ui("retire",e.retire_mode.value);
+  
+  if(Array.isArray(payload.mortgage_rate_stages)&&payload.mortgage_rate_stages.length){
+    mortgageRateStages=payload.mortgage_rate_stages.map(s=>({rate:Math.max(0,Number(s.rate)||0),years:Math.max(0,Math.round(Number(s.years)||0))}));
+  }else if(migrated.mortgage_rate!==undefined){
+    mortgageRateStages=[{rate:Math.max(0,Number(migrated.mortgage_rate)||0),years:0}];
+  }else mortgageRateStages=[{rate:2.6,years:0}];
+  mortgageRateStages.forEach((s,i)=>{if(i<mortgageRateStages.length-1&&s.years<1)s.years=1});
+  render_mortgage_rate_stages();
+render_expense_stages();
+  render_reserve_stages();
+  render_compound_stages();
+  calc();
+}
+
+function import_settings_file(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const payload=JSON.parse(reader.result);
+      apply_settings(payload);
+      $("config_status").textContent=`已匯入：${file.name}`;
+    }catch(err){
+      $("config_status").textContent=`匯入失敗：${err.message}`;
+      alert(`匯入試算設定失敗：\n${err.message}`);
+    }finally{$("import_settings_file").value=""}
+  };
+  reader.onerror=()=>{$("config_status").textContent="匯入失敗：無法讀取檔案";alert("無法讀取設定檔。");$("import_settings_file").value=""};
+  reader.readAsText(file,"utf-8");
+}
+
+function calc(){
+ const start_year=Math.round(num(e.timeline_start_year,2026));
+ const timeline_years=Math.max(1,Math.min(100,Math.round(num(e.timeline_years,40))));
+ const birth_year=Math.round(num(e.birth_year,1994));
+ const end_year=start_year+timeline_years-1;
+
+ const ce=e.compound_enabled.checked,me=e.mortgage_enabled.checked,ie=e.income_enabled.checked,re=ie&&e.retirement_enabled.checked;
+ const rr=num(e.return_rate)/100;
+ const income_start=Math.round(num(e.income_start_year,start_year)),salary=Math.max(0,num(e.salary)),sg=num(e.salary_growth)/100,iy=Math.max(1,Math.round(num(e.income_years,10))),income_end=income_start+iy-1;
+ const wr=Math.max(0,num(e.retire_rate))/100,ry=Math.max(1,Math.round(num(e.retire_years,30))),retirement_start=income_end+1,retirement_end=retirement_start+ry-1;
+
+ const mortgage_start=Math.round(num(e.mortgage_start_year,start_year));
+ const price=Math.max(0,num(e.house_price)),dr=Math.max(0,Math.min(1,num(e.down_rate)/100));
+ const ly=Math.max(1,Math.round(num(e.loan_years,40))),gy=Math.max(0,Math.min(ly-1,Math.round(num(e.grace_years))));
+ const pre=e.purchase_type.value==="presale",cr=pre?Math.max(0,Math.min(1,num(e.construction_rate)/100)):0,con_y=pre?Math.max(1,Math.round(num(e.construction_years,3))):0;
+
+ const down=price*dr,con_total=price*cr,principal=Math.max(0,price-down-con_total),amort=Math.max(1,ly-gy);
+ const first_mr=mortgage_rate_for_elapsed_year(0),first_mp=loan_pmt(principal,first_mr,amort);
+
+ let investment_assets=Math.max(0,num(e.initial_investment_assets));
+ let cash_assets=Math.max(0,num(e.initial_cash_assets));
+ let balance=0;
+ const rows=[];
+
+ for(let idx=0;idx<timeline_years;idx++){
+   const year=start_year+idx,age=year-birth_year;
+   const investment_start=investment_assets,cash_start=cash_assets;
+   const fixed_expense=fixed_expense_for_year(year);
+
+   // Investment assets always earn the configured annual return.
+   // Compound stages only decide whether that year's return is reinvested or paid into cash.
+   const gross_investment_return=investment_start*rr;
+   const reinvest_this_year=compound_reinvest_for_year(year);
+   const investment_return_reinvest=reinvest_this_year?gross_investment_return:0;
+   const investment_return_cash=reinvest_this_year?0:gross_investment_return;
+
+   let phase_parts=[],work_income=0,work_inv=0,ret_income=0,ret_reinv=0;
+
+   if(ie&&year>=income_start&&year<=income_end){
+     phase_parts.push("工作");
+     const wi=year-income_start;
+     work_income=salary*Math.pow(1+sg,wi);
+     work_inv=(e.work_mode.value==="emergency_reserve")?0:alloc(work_income,e.work_mode.value,num(e.work_percent_value),num(e.work_fixed_value),fixed_expense);
+   }else if(re&&year>=retirement_start&&year<=retirement_end){
+     phase_parts.push("退休");
+     const prewithdraw=investment_start+investment_return_reinvest;
+     ret_income=Math.max(0,prewithdraw)*wr;
+     ret_reinv=(e.retire_mode.value==="emergency_reserve")?0:alloc(ret_income,e.retire_mode.value,num(e.retire_percent_value),num(e.retire_fixed_value),fixed_expense);
+   }
+
+   let housing=0,interest=0,mortgage_rate=0,mortgage_stage=0,mortgage_monthly_payment=0;
+   if(me&&year>=mortgage_start){
+     const mi=year-mortgage_start;
+     if(mi===0){housing+=down;phase_parts.push(pre?"預售":"購屋")}
+     if(pre&&mi>=0&&mi<con_y){housing+=con_total/con_y;if(!phase_parts.includes("預售"))phase_parts.push("預售")}
+     const loan_start=pre?mortgage_start+con_y:mortgage_start,elapsed=year-loan_start;
+
+     // The mortgage debt is created only when the loan actually starts.
+     // Before loan_start, "房貸餘額" must remain 0.
+     if(year===loan_start)balance=principal;
+
+     if(year>=loan_start&&elapsed<ly&&balance>0){
+       phase_parts.push("房貸");
+       mortgage_rate=mortgage_rate_for_elapsed_year(elapsed);
+       mortgage_stage=mortgage_rate_stage_index(elapsed)+1;
+       if(elapsed<gy){
+         interest=balance*mortgage_rate;housing+=interest;
+         mortgage_monthly_payment=balance*mortgage_rate/12;
+       }else{
+         const remaining_amort_years=Math.max(1,ly-elapsed);
+         mortgage_monthly_payment=loan_pmt(balance,mortgage_rate,remaining_amort_years);
+         for(let m=0;m<12&&balance>0;m++){
+           const m_interest=balance*mortgage_rate/12,pay=Math.min(mortgage_monthly_payment,balance+m_interest),pp=Math.max(0,pay-m_interest);
+           interest+=m_interest;housing+=pay;balance=Math.max(0,balance-pp);
+         }
+       }
+     }
+   }
+
+   let investment_after=Math.max(0,investment_start+investment_return_reinvest+work_inv-ret_income+ret_reinv);
+   let net_cash_flow=investment_return_cash+work_income-work_inv+ret_income-ret_reinv-fixed_expense-housing;
+   let cash_after=cash_start+net_cash_flow;
+   const emergency_active=(ie&&year>=income_start&&year<=income_end&&e.work_mode.value==="emergency_reserve")||(re&&year>=retirement_start&&year<=retirement_end&&e.retire_mode.value==="emergency_reserve");
+   let emergency_transfer=0; const reserve_target=reserve_for_year(year);
+   if(emergency_active&&cash_after>reserve_target){emergency_transfer=cash_after-reserve_target;cash_after-=emergency_transfer;investment_after+=emergency_transfer;net_cash_flow-=emergency_transfer;if(ie&&year>=income_start&&year<=income_end)work_inv+=emergency_transfer;else ret_reinv+=emergency_transfer;}
+   investment_assets=investment_after;cash_assets=cash_after;
+   const phase=phase_parts.length?phase_parts.join(" + "):"—";
+   rows.push({idx,year,age,phase,cash_start,investment_start,gross_investment_return,investment_return_reinvest,investment_return_cash,work_income,work_inv,ret_income,ret_reinv,fixed_expense,housing,interest,mortgage_rate,mortgage_stage,mortgage_monthly_payment,reserve_target,emergency_transfer,net_cash_flow,monthly:net_cash_flow/12,cash_assets,balance,investment_assets});
+ }
+
+ const series=[];
+ // Chart colors follow the same semantic palette as the input groups/table columns.
+ series.push({id:"investment",label:"投資資產",color:"rgb(88,166,255)",values:rows.map(r=>r.investment_assets)});
+ series.push({id:"cash_assets",label:"現金資產",color:"rgb(57,197,207)",values:rows.map(r=>r.cash_assets)});
+ if(ce)series.push({id:"compound_return",label:"投資收益再投入",color:"rgb(188,140,255)",values:rows.map(r=>r.investment_return_reinvest)});
+ if(ie)series.push({id:"income",label:"工作收入",color:"rgb(63,185,80)",values:rows.map(r=>r.work_income)});
+ if(re)series.push({id:"retirement",label:"退休提領收入",color:"rgb(63,185,80)",values:rows.map(r=>r.ret_income)});
+ if(me)series.push({id:"housing",label:"購屋 / 房貸支出",color:"rgb(210,153,34)",values:rows.map(r=>-r.housing)});
+ series.push({id:"net_cash",label:"年度淨現金流",color:"#8b949e",values:rows.map(r=>r.net_cash_flow)});
+
+ state={rows,series,hover:null,selected:null,start_year,end_year,birth_year};page=1;
+ const last=rows.at(-1);
+
+ $("sum_assets").textContent=money(last.investment_assets);
+ $("sum_cash_assets").textContent=money(last.cash_assets);
+ $("sum_cash_assets").className="v "+(last.cash_assets<0?"neg":"");
+ $("sum_cash_m").textContent=money(last.monthly);
+ $("sum_cash_m").className="v "+(last.monthly<0?"neg":"");
+ $("sum_loan").textContent=me?money(principal):"-";
+ $("sum_loan_d").textContent=pre?`交屋貸款 ${Math.max(0,(1-dr-cr)*100).toFixed(0)}%`:`貸款 ${Math.max(0,(1-dr)*100).toFixed(0)}%`;
+ $("sum_payment").textContent=me?money(first_mp):"-";
+ $("sum_payment_d").textContent=gy?`寬限期月息 ${money(gp)}`:"本息平均攤還";
+
+ render_legend();render_table();fill_formula();render_formula(0);hide_tip();draw();
+}
+function render_legend(){legend.innerHTML="";state.series.forEach(s=>{const b=document.createElement("button");b.className=vis[s.id]?"":"off";b.innerHTML=`<span class="sw" style="background:${s.color}"></span>${s.label}`;b.onclick=()=>{vis[s.id]=!vis[s.id];render_legend();draw()};legend.appendChild(b)})}
+const tableView={
+  initial:false,
+  compound:false,
+  income:false,
+  mortgage:false,
+  summary:false
+};
+function set_table_group(group,on){
+  tableView[group]=on;
+  update_table_column_visibility();
+}
+function table_compact(){
+  tableView.initial=false;tableView.compound=false;tableView.income=false;tableView.mortgage=false;tableView.summary=false;
+  update_table_column_visibility();
+}
+function table_expand_all(){
+  tableView.initial=true;
+  tableView.compound=e.compound_enabled.checked;
+  tableView.income=e.income_enabled.checked;
+  tableView.mortgage=e.mortgage_enabled.checked;
+  tableView.summary=true;
+  update_table_column_visibility();
+}
+function sync_table_view_buttons(){
+  const map={initial:"table_toggle_initial",compound:"table_toggle_compound",income:"table_toggle_income",mortgage:"table_toggle_mortgage"};
+  for(const [g,id] of Object.entries(map)){
+    const b=$(id);if(!b)continue;
+    const available=g==="initial"||(g==="compound"&&e.compound_enabled.checked)||(g==="income"&&e.income_enabled.checked)||(g==="mortgage"&&e.mortgage_enabled.checked);
+    b.disabled=!available;
+    b.classList.toggle("on",available&&tableView[g]);
+    const label={initial:"基礎",compound:"複利",income:"收入 / 退休",mortgage:"房貸"}[g];
+    b.textContent=`${available&&tableView[g]?"−":"＋"} ${label}`;
+  }
+  const compact=!tableView.initial&&!tableView.compound&&!tableView.income&&!tableView.mortgage&&!tableView.summary;
+  $("table_view_compact").classList.toggle("active",compact);
+  $("table_view_all").classList.toggle("active",!compact&&tableView.initial&&tableView.summary&&
+    (!e.compound_enabled.checked||tableView.compound)&&(!e.income_enabled.checked||tableView.income)&&(!e.mortgage_enabled.checked||tableView.mortgage));
+}
+function update_table_column_visibility(){
+  // Disabled simulation groups always stay hidden.
+  document.querySelectorAll(".col-mortgage").forEach(el=>el.classList.toggle("hidden",!e.mortgage_enabled.checked));
+  document.querySelectorAll(".col-income").forEach(el=>el.classList.toggle("hidden",!e.income_enabled.checked));
+  document.querySelectorAll(".col-compound").forEach(el=>el.classList.toggle("hidden",!e.compound_enabled.checked));
+
+  // Detail columns are independently collapsible. Core columns remain visible.
+  document.querySelectorAll(".detail-initial").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.initial));
+  document.querySelectorAll(".detail-compound").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.compound));
+  document.querySelectorAll(".detail-income").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.income));
+  document.querySelectorAll(".detail-mortgage").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.mortgage));
+  document.querySelectorAll(".detail-summary").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.summary));
+  sync_table_view_buttons();
+}
+
+function render_table(){
+ const total=state.rows.length,val=$("rows_per_page").value,per=val==="all"?total:Number(val),pages=Math.max(1,Math.ceil(total/per));
+ page=Math.min(page,pages);const a=(page-1)*per,b=Math.min(total,a+per);tbody.innerHTML="";
+ state.rows.slice(a,b).forEach(r=>{
+   const tr=document.createElement("tr");
+   tr.innerHTML=`<td class="table-core">${r.idx+1}</td><td class="col-initial table-core">${r.year}</td><td class="col-initial table-detail detail-initial">${r.age}</td><td class="table-core">${r.phase}</td>
+   <td class="col-initial table-detail detail-initial">${money(r.cash_start)}</td><td class="col-initial table-detail detail-initial">${money(r.investment_start)}</td><td class="pos col-initial table-detail detail-initial">${money(r.gross_investment_return)}</td><td class="pos col-compound table-detail detail-compound">${money(r.investment_return_reinvest)}</td>
+   <td class="pos col-income table-detail detail-income">${money(r.work_income)}</td><td class="pos col-income table-detail detail-income">${money(r.work_inv)}</td><td class="warn col-income table-detail detail-income">${money(r.ret_income)}</td>
+   <td class="pos col-income table-detail detail-income">${money(r.ret_reinv)}</td><td class="neg col-initial table-detail detail-initial">${money(r.fixed_expense)}</td><td class="neg col-mortgage table-detail detail-mortgage">${money(r.housing)}</td><td class="col-mortgage table-detail detail-mortgage">${r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%`:"—"}</td><td class="col-initial table-detail detail-initial">${money(r.reserve_target||0)}</td><td class="pos col-income table-detail detail-income">${money(r.emergency_transfer||0)}</td>
+   <td class="table-core ${r.net_cash_flow<0?"neg":"pos"}">${money(r.net_cash_flow)}</td><td class="table-detail detail-summary ${r.monthly<0?"neg":"pos"}">${money(r.monthly)}</td>
+   <td class="table-core ${r.cash_assets<0?"neg":""}">${money(r.cash_assets)}</td><td class="col-mortgage table-detail detail-mortgage">${money(r.balance)}</td><td class="table-core">${money(r.investment_assets)}</td>`;
+   tbody.appendChild(tr)
+ });
+ $("page_status").textContent=`${page} / ${pages}`;$("prev").disabled=page<=1;$("next").disabled=page>=pages;update_table_column_visibility();
+}
+function draw(){
+ const r=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;canvas.width=r.width*dpr;canvas.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);
+ const pad={t:58,r:28,b:42,l:82},visible=state.series.filter(s=>vis[s.id]);if(!visible.length)return;
+ const vals=visible.flatMap(s=>s.values);let min=Math.min(0,...vals),max=Math.max(1,...vals);if(max===min)max=min+1;const pw=r.width-pad.l-pad.r,ph=r.height-pad.t-pad.b,n=state.rows.length,x=i=>pad.l+i/Math.max(1,n-1)*pw,y=v=>pad.t+(1-(v-min)/(max-min))*ph;
+ ctx.font='11px sans-serif';for(let i=0;i<=5;i++){const yy=pad.t+i/5*ph,v=max-i/5*(max-min);ctx.strokeStyle="#30363d";ctx.beginPath();ctx.moveTo(pad.l,yy);ctx.lineTo(r.width-pad.r,yy);ctx.stroke();ctx.fillStyle="#8b949e";ctx.textAlign="right";ctx.textBaseline="middle";ctx.fillText(`${(v/1e6).toFixed(1)}M`,pad.l-8,yy)}
+ visible.forEach(s=>{ctx.strokeStyle=s.color;ctx.lineWidth=(s.id==="investment"||s.id==="cash_assets")?3:2;ctx.beginPath();s.values.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.stroke()});
+ const active=state.hover??state.selected;if(active!==null&&active!==undefined){ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle="#8b949e";ctx.beginPath();ctx.moveTo(x(active),pad.t);ctx.lineTo(x(active),r.height-pad.b);ctx.stroke();ctx.restore();visible.forEach(s=>{ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(x(active),y(s.values[active]),5,0,Math.PI*2);ctx.fill()})}
+ ctx.fillStyle="#8b949e";ctx.textAlign="center";ctx.textBaseline="top";const step=Math.max(1,Math.ceil((n-1)/10));for(let i=0;i<n;i+=step)ctx.fillText(`${state.rows[i].year}`,x(i),r.height-pad.b+12);if((n-1)%step)ctx.fillText(`${state.rows[n-1].year}`,x(n-1),r.height-pad.b+12);
+}
+function near(cx){const r=canvas.getBoundingClientRect(),left=82,right=28,xx=Math.max(left,Math.min(r.width-right,cx-r.left));return Math.max(0,Math.min(state.rows.length-1,Math.round((xx-left)/(r.width-left-right)*(state.rows.length-1))))}
+function show_tip(i){
+ const r=state.rows[i],lines=[
+ ["年份",r.year,"initial"],["年齡",`${r.age} 歲`,"initial"],["階段",r.phase,"neutral"],
+ ["年初現金",money(r.cash_start),"initial"],["年初投資",money(r.investment_start),"initial"],["投資收益",money(r.gross_investment_return),"initial"],
+ ["投資收益再投入",money(r.investment_return_reinvest),"compound"],["投資收益進現金",money(r.investment_return_cash),"initial"],
+ ["工作收入",money(r.work_income),"income"],["投入投資",money(r.work_inv),"income"],["退休提領",money(r.ret_income),"income"],["退休再投入",money(r.ret_reinv),"income"],
+ ["固定支出",money(r.fixed_expense),"initial"],["房貸/購屋",money(r.housing),"mortgage"],["房貸利率",r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%（第 ${r.mortgage_stage} 階段）`:"—","mortgage"],["當年月付",r.mortgage_monthly_payment?money(r.mortgage_monthly_payment):"—","mortgage"],["備用金目標",money(r.reserve_target||0),"initial"],["超額現金轉投資",money(r.emergency_transfer||0),"income"],
+ ["年度淨現金流",money(r.net_cash_flow),"neutral"],["年末現金資產",money(r.cash_assets),"neutral"],["年末投資資產",money(r.investment_assets),"neutral"]];
+ tip.innerHTML=`<b>${r.year} 年｜${r.age} 歲</b>`+lines.map(x=>`<div class="tr ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
+ tip.classList.add("on");
+ const wr=canvas.parentElement.getBoundingClientRect(),tr=tip.getBoundingClientRect(),xx=82+i/Math.max(1,state.rows.length-1)*(wr.width-110);
+ let l=xx+12;if(l+tr.width>wr.width-8)l=xx-tr.width-12;tip.style.left=Math.max(8,l)+"px";tip.style.top="76px"
+}
+function hide_tip(){tip.classList.remove("on")}
+function fill_formula(){$("formula_year").innerHTML=state.rows.map((r,i)=>`<option value="${i}">${r.year} 年（${r.age} 歲）</option>`).join("")}
+function render_formula(i){
+ const r=state.rows[i];
+ $("detail").textContent=`${r.year} 年｜${r.age} 歲｜${r.phase}
+
+1) 年初資產
+現金資產 = ${money(r.cash_start)}
+投資資產 = ${money(r.investment_start)}
+
+2) 投資收益
+投資收益 = ${money(r.gross_investment_return)}
+投資收益再投入 = ${money(r.investment_return_reinvest)}
+投資收益納入現金 = ${money(r.investment_return_cash)}
+
+3) 工作收入與投入
+工作收入 = ${money(r.work_income)}
+工作投入投資 = ${money(r.work_inv)}
+工作留存現金 = ${money(r.work_income)} − ${money(r.work_inv)}
+= ${money(r.work_income-r.work_inv)}
+
+4) 退休提領與再投入
+退休提領 = ${money(r.ret_income)}
+退休再投入 = ${money(r.ret_reinv)}
+退休留存現金 = ${money(r.ret_income)} − ${money(r.ret_reinv)}
+= ${money(r.ret_income-r.ret_reinv)}
+
+5) 支出（全部只扣現金）
+固定年支出 = ${money(r.fixed_expense)}
+購屋 / 房貸 = ${money(r.housing)}
+其中房貸利息 = ${money(r.interest)}
+年末房貸餘額 = ${money(r.balance)}
+
+6) 緊急備用金
+當年備用金目標 = ${money(r.reserve_target||0)}
+超額現金轉入投資 = ${money(r.emergency_transfer||0)}
+
+7) 年度淨現金流
+= 投資收益納入現金 + 工作收入 − 工作投入 + 退休提領 − 退休再投入 − 固定支出 − 購屋/房貸
+= ${money(r.investment_return_cash)} + ${money(r.work_income)} − ${money(r.work_inv)} + ${money(r.ret_income)} − ${money(r.ret_reinv)}
+  − ${money(r.fixed_expense)} − ${money(r.housing)}
+= ${money(r.net_cash_flow)}
+
+每月淨現金流 = ${money(r.net_cash_flow)} ÷ 12 = ${money(r.monthly)}
+
+8) 年末現金資產
+= ${money(r.cash_start)} + ${money(r.net_cash_flow)}
+= ${money(r.cash_assets)}
+
+9) 年末投資資產
+= ${money(r.investment_start)} + ${money(r.investment_return_reinvest)} + ${money(r.work_inv)}
+  − ${money(r.ret_income)} + ${money(r.ret_reinv)}
+= ${money(r.investment_assets)}`;
+}
+
+/* Guided tour ----------------------------------------------------------- */
+const tour={
+  active:false,
+  step:0,
+  snapshot:null,
+  folded:null,
+  animToken:0
+};
+
+const tourSteps=[
+  {
+    target:".group-initial", body:"timeline_body",
+    title:"1. 建立時間軸與初始資產",
+    path:"時間軸 / 初始設定",
+    text:"先從最小可用模型開始。只設定時間範圍、出生年、初始現金、初始投資資產與投資年化報酬率；其他試算組先全部關閉。即使不開複利，投資資產仍會產生收益，只是收益進入現金。",
+    demo:"示範：2026 年開始、40 年；出生年 1994；現金 100 萬、投資資產 2,300 萬、年化報酬率 6%。",
+    prepare(){
+      e.compound_enabled.checked=false;
+      e.mortgage_enabled.checked=false;
+      e.income_enabled.checked=false;
+      e.retirement_enabled.checked=false;
+      update_table_column_visibility();
+      return [["timeline_start_year",2026],["timeline_years",40],["birth_year",1994],
+              ["initial_cash_assets",1000000],["initial_investment_assets",23000000],["return_rate",6]];
+    }
+  },
+  {
+    target:".group-initial", subtarget:"#expense_guide_box", body:"timeline_body",
+    title:"1-1. 固定支出可以分人生階段",
+    path:"時間軸 / 初始設定 › 動態固定支出表",
+    text:"固定支出不是只能填一個終身數字。每一列代表從該年份開始套用新的年支出，直到下一個階段；最後一列會一路沿用到試算結束。",
+    demo:"示範：2026 年起每年支出 60 萬；2040 年起提高為 90 萬。所有固定支出只從現金資產扣除。",
+    prepare(){
+      expenseStages=[{year:2026,amount:600000},{year:2040,amount:900000}];
+      render_expense_stages();
+      return [];
+    },
+    after(){tourPulse("#expense_stages input")}
+  },
+  {
+    target:".group-initial", subtarget:"#reserve_guide_box", body:"timeline_body",
+    title:"1-2. 緊急備用金也是階段式目標",
+    path:"時間軸 / 初始設定 › 緊急備用金目標表",
+    text:"備用金代表希望保留在現金帳戶的最低目標。當工作或退休收入的投入方式選「僅保留緊急備用金」時，年度收支結算後，超過目標的現金才會轉進投資。",
+    demo:"示範：2026 年保留 100 萬；2040 年後提高到 150 萬。若現金低於目標，不會自動賣出投資補足。",
+    prepare(){
+      reserveStages=[{year:2026,amount:1000000},{year:2040,amount:1500000}];
+      render_reserve_stages();
+      return [];
+    },
+    after(){tourPulse("#reserve_stages input")}
+  },
+  {
+    target:".group-compound", body:"compound_body",
+    title:"2. 決定哪些年份要複利再投入",
+    path:"複利計算試算組",
+    text:"年化報酬率已在初始設定中，所以投資收益每年都會計算。這個試算組只控制『收益是否回到投資本金』。在複利階段內，收益再投入；階段外，收益流入現金。",
+    demo:"示範：2026～2045 共 20 年採複利再投入。之後的投資收益改進入現金。",
+    prepare(){
+      e.compound_enabled.checked=true;
+      compoundStages=[{year:2026,years:20}];
+      render_compound_stages();
+      update_table_column_visibility();
+      return [];
+    },
+    after(){tourPulse("#compound_stages input")}
+  },
+  {
+    target:".group-mortgage", subtarget:"#purchase_type", body:"mortgage_body",
+    title:"3. 購屋類型會改變資金發生時間",
+    path:"房貸試算組 › 購屋類型",
+    text:"直接購入與預售屋的現金流時間不同。直接購入會在購屋年份支付頭期並開始房貸；預售屋則會先支付頭期與工程期分款，完工後才建立房貸本金。",
+    demo:"導覽會先示範「直接購入」，再切成「預售屋」讓工程款與工程期欄位出現，最後切回直接購入。",
+    prepare(){
+      e.mortgage_enabled.checked=true;e.mortgage_start_year.value=2028;e.house_price.value=20000000;e.down_rate.value=20;e.loan_years.value=40;e.grace_years.value=0;
+      e.purchase_type.value="direct";purchase_ui();calc();return [];
+    },
+    after(){tourCyclePurchaseTypes()}
+  },
+  {
+    target:".group-mortgage", subtarget:"#mortgage_rate_guide_box", body:"mortgage_body",
+    title:"3-1. 優惠或補貼房貸可以用分段利率",
+    path:"房貸試算組 › 房貸利率階段",
+    text:"房貸不一定整段都是同一利率。你可以把政府補貼、銀行優惠期與後續一般利率拆成多個階段；利率切換時，試算器會依剩餘本金與剩餘年限重新計算月付。",
+    demo:"示範：前 5 年 1.77%，之後剩餘年限 2.60%。最後一階段的持續年數設為 0，代表一路套用到房貸結束。",
+    prepare(){mortgageRateStages=[{rate:1.77,years:5},{rate:2.6,years:0}];render_mortgage_rate_stages();calc();return []},
+    after(){tourPulse("#mortgage_rate_stages input")}
+  },
+  {
+    target:".group-mortgage", body:"mortgage_body",
+    title:"3-2. 房貸年限與寬限期",
+    path:"房貸試算組 › 房貸條件",
+    text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
+    demo:"例如 40 年房貸、前 5 年 1.77%、其後 2.60%，也可以再搭配寬限期比較退休前現金流。",
+    prepare(){return [["loan_years",40],["grace_years",0]]}
+  },
+  {
+    target:".group-income", body:"income_body",
+    title:"4. 加入工作收入與每年投資",
+    path:"經常收入試算組",
+    text:"這裡設定工作收入何時開始、薪資成長與工作年數，再決定每年有多少收入轉進投資。可選百分比、固定金額、扣除支出後全投資，或只保留緊急備用金。",
+    demo:"示範：2026 年起年薪 250 萬、每年成長 3%、工作 10 年，先將收入的 50% 投入投資。",
+    prepare(){
+      e.income_enabled.checked=true;
+      e.retirement_enabled.checked=false;
+      $("retirement_body").classList.add("hidden");
+      e.work_mode.value="percent";
+      mode_ui("work","percent");
+      update_table_column_visibility();
+      return [["income_start_year",2026],["salary",2500000],["salary_growth",3],
+              ["income_years",10],["work_percent_value",50]];
+    }
+  },
+  {
+    target:".group-income", subtarget:"#work_allocation_guide_box", body:"income_body",
+    title:"4-1. 四種投入投資方式",
+    path:"經常收入試算組 › 每年投入投資方式",
+    text:"工作收入不一定要用固定比例投入。這裡有四種資金配置方法，適合不同的人生階段；退休收入的再投入也使用同一套概念。",
+    demo:"① 百分比：收入 × 指定比例投入投資。\n② 固定金額：每年最多投入指定金額。\n③ 支出餘額：先保留當年固定支出，其餘投入投資。\n④ 僅保留緊急備用金：年度所有現金流結算後，只留下備用金目標，超額現金全部投入。",
+    prepare(){
+      e.work_mode.value="percent";
+      mode_ui("work","percent");
+      calc();
+      return [];
+    },
+    after(){tourCycleAllocationModes()}
+  },
+  {
+    target:".group-income", subtarget:"#retirement_guide_box", body:"income_body",
+    title:"4-2. 工作結束後立即銜接退休提領",
+    path:"經常收入試算組 › 工作結束後立即銜接百分比提領",
+    text:"勾選後，最後一個工作收入年度結束，下一年會直接進入退休階段。退休提領本身視為退休收入，仍可決定其中多少再投入、多少留作現金支出。",
+    demo:"示範：工作 10 年後，下一年立即開始每年提領投資資產的 4%，持續 30 年；退休收入先不再投入。",
+    prepare(){
+      e.retirement_enabled.checked=true;
+      $("retirement_body").classList.remove("hidden");
+      e.retire_mode.value="percent";
+      mode_ui("retire","percent");
+      update_table_column_visibility();
+      return [["retire_rate",4],["retire_years",30],["retire_percent_value",0]];
+    },
+    after(){tourPulse("#retirement_guide_box input,#retirement_guide_box select")}
+  },
+  {
+    target:"#chart_guide_box", panel:"top",
+    title:"5. 圖表：快速看資產路徑與單一年份",
+    path:"結果區 › 互動圖表",
+    text:"圖表用來先看整體趨勢。把滑鼠移到任一年份會出現垂直指示線與詳細資訊；點一下年份可以固定，再移動滑鼠也不會消失。右上角圖例可個別隱藏曲線。",
+    demo:"導覽現在會替你固定一個中段年份，右側 tooltip 可直接看到該年的投資收益、工作收入、支出、房貸與年末資產。",
+    prepare(){return []},
+    after(){
+      if(!state.rows.length)return;
+      const i=Math.min(state.rows.length-1,Math.max(0,Math.floor(state.rows.length*.38)));
+      state.selected=i;state.hover=null;draw();show_tip(i);
+    }
+  },
+  {
+    target:"#table_guide_box", panel:"top",
+    title:"6. 表格：先用精簡模式掌握結果",
+    path:"結果區 › 年度明細表 › 精簡",
+    text:"圖表適合看趨勢，表格則用來逐年核對。為避免 20 多個欄位把畫面拉得太寬，表格預設先收成核心欄位，手機也比較容易閱讀。",
+    demo:"導覽現在會切成「精簡」：只留下序號、年份、階段、年度淨現金流、年末現金資產與年末投資資產。",
+    prepare(){
+      state.selected=null;state.hover=null;hide_tip();draw();
+      table_compact();
+      return [];
+    },
+    after(){tourPulse("#table_view_compact")}
+  },
+  {
+    target:"#table_guide_box", panel:"top",
+    title:"6-1. 需要驗算時再展開詳細欄位",
+    path:"結果區 › 年度明細表 › 全部展開",
+    text:"需要追查某一年為什麼變化時，再展開詳細欄位。可以一次全部展開，也可以只打開「基礎、複利、收入 / 退休、房貸」其中一組。",
+    demo:"導覽現在會切到「全部展開」，讓你直接比較精簡與完整表格的差異；下一步前會停留在完整狀態供你查看。",
+    prepare(){
+      table_expand_all();
+      return [];
+    },
+    after(){tourPulse("#table_view_all,#table_toggle_initial,#table_toggle_compound,#table_toggle_income,#table_toggle_mortgage")}
+  },
+  {
+    target:"#formula_guide_box", panel:"top",
+    title:"7. 公式區：確認模型到底怎麼算",
+    path:"年度計算公式 / 驗收區 › 計算規則",
+    text:"如果結果和直覺不同，先看這裡。公式區列出投資收益、工作收入投入、退休提領、現金支出與投資資產累積的實際計算順序，方便確認模型語意。",
+    demo:"特別注意：所有真實支出只扣現金；投資收益是否回投本金則由複利階段決定。",
+    prepare(){table_compact();return []}
+  },
+  {
+    target:"#verify_guide_box", panel:"top",
+    title:"8. 年份驗收：把公式代入實際數字",
+    path:"年度計算公式 / 驗收區 › 查看實際代入",
+    text:"除了看抽象公式，也可以指定某一年，把該年的實際數值完整代入。這適合驗證房貸開始年、退休第一年、支出切換年等邊界條件。",
+    demo:"示範：切到試算中段年份，下面會列出年初資產、收益、收入、支出、淨現金流與年末資產的完整算式。",
+    prepare(){return []},
+    after(){
+      if(!state.rows.length)return;
+      const i=Math.min(state.rows.length-1,Math.max(0,Math.floor(state.rows.length*.38)));
+      $("formula_year").value=String(i);
+      render_formula(i);
+      tourPulse("#formula_year");
+    }
+  },
+  {
+    targets:["#export_settings","#import_settings"],
+    title:"9. 匯出與匯入試算設定",
+    path:"頁面工具列 › 設定檔",
+    text:"調好情境後可匯出 JSON 保存。之後再用匯入功能還原；設定檔採向後相容設計，新版會忽略未知欄位並遷移已知舊欄位。",
+    demo:"匯出檔名包含日期與分鐘，例如 asset-simulation-20260911-2344.json。匯出的是設定，不是試算結果表。",
+    prepare(){return []},
+    after(){tourPulse("#export_settings,#import_settings")}
+  },
+  {
+    target:"#start_tour",
+    title:"10. 之後隨時可以重新開啟導覽",
+    path:"頁面工具列 › 使用說明導覽",
+    text:"到這裡已經走完整個操作流程。之後忘記某個區塊的用途，可以再次點這個「使用說明導覽」按鈕重播。",
+    demo:"按「完成導覽」後，導覽期間使用的示範數值會被丟棄，並還原你進入導覽前的原始試算設定。",
+    prepare(){return []}
+  }
+];
+
+function tourCaptureFolded(){
+  const ids=["timeline_body","compound_body","mortgage_body","income_body"];
+  return Object.fromEntries(ids.map(id=>[id,$(id).classList.contains("hidden")]));
+}
+function tourRestoreFolded(){
+  if(!tour.folded)return;
+  for(const [id,hidden] of Object.entries(tour.folded)){
+    const body=$(id);
+    body.classList.toggle("hidden",hidden);
+    const btn=document.querySelector(`.fold[data-target="${id}"]`);
+    if(btn){
+      btn.textContent=hidden?"+":"−";
+      btn.closest(".head").classList.toggle("collapsed",hidden);
+    }
+  }
+}
+function tourOpenBody(id){
+  if(!id)return;
+  const body=$(id);
+  if(!body)return;
+  body.classList.remove("hidden");
+  const btn=document.querySelector(`.fold[data-target="${id}"]`);
+  if(btn){
+    btn.textContent="−";
+    btn.closest(".head").classList.remove("collapsed");
+  }
+}
+function tourClearFocus(){
+  document.querySelectorAll(".tour-focus").forEach(el=>el.classList.remove("tour-focus"));
+  document.querySelectorAll(".tour-focus-target").forEach(el=>el.classList.remove("tour-focus-target"));
+}
+function tourPulse(selector){
+  document.querySelectorAll(selector).forEach((el,i)=>{
+    setTimeout(()=>{
+      el.classList.remove("tour-field-pulse");
+      void el.offsetWidth;
+      el.classList.add("tour-field-pulse");
+    },i*90);
+  });
+}
+function tourAnimateNumber(id,to,duration=560){
+  const input=$(id);
+  if(!input)return Promise.resolve();
+  const token=tour.animToken;
+  const from=Number(input.value)||0;
+  const target=Number(to);
+  const start=performance.now();
+  input.classList.remove("tour-field-pulse");
+  void input.offsetWidth;
+  input.classList.add("tour-field-pulse");
+  return new Promise(resolve=>{
+    const frame=now=>{
+      if(token!==tour.animToken||!tour.active){resolve();return}
+      const p=Math.min(1,(now-start)/duration);
+      const eased=1-Math.pow(1-p,3);
+      const v=from+(target-from)*eased;
+      const decimals=Number.isInteger(target)?0:1;
+      input.value=decimals?v.toFixed(decimals):Math.round(v);
+      calc();
+      if(p<1)requestAnimationFrame(frame);
+      else{
+        input.value=String(to);
+        calc();
+        resolve();
+      }
+    };
+    requestAnimationFrame(frame);
+  });
+}
+async function tourRunAnimations(items,step){
+  for(const [id,value] of items){
+    if(!tour.active)return;
+    await tourAnimateNumber(id,value,520);
+    await new Promise(r=>setTimeout(r,65));
+  }
+  if(tour.active&&step.after)setTimeout(()=>step.after(),120);
+}
+function tourCyclePurchaseTypes(){
+  const token=tour.animToken,modes=["direct","presale","direct"];let i=0;
+  const run=()=>{if(!tour.active||token!==tour.animToken)return;e.purchase_type.value=modes[i];purchase_ui();calc();tourPulse("#purchase_type,#presale input");i++;if(i<modes.length)setTimeout(run,950)};
+  run();
+}
+function tourCycleAllocationModes(){
+  const token=tour.animToken;
+  const modes=["percent","fixed","expense_balance","emergency_reserve"];
+  let i=0;
+  const run=()=>{
+    if(!tour.active||token!==tour.animToken)return;
+    const mode=modes[i%modes.length];
+    e.work_mode.value=mode;
+    mode_ui("work",mode);
+    calc();
+    tourPulse("#work_mode,#work_allocation_guide_box .field:not(.hidden) input");
+    i++;
+    if(i<modes.length)setTimeout(run,900);
+  };
+  run();
+}
+function tourFocusStep(step){
+  tourClearFocus();
+  tourOpenBody(step.body);
+
+  let mainTarget=step.target?document.querySelector(step.target):null;
+  if(mainTarget){
+    if(mainTarget.classList.contains("card"))mainTarget.classList.add("tour-focus");
+    else mainTarget.classList.add("tour-focus-target");
+  }
+  if(step.targets){
+    step.targets.forEach(sel=>{
+      const el=document.querySelector(sel);
+      if(el)el.classList.add("tour-focus-target");
+    });
+  }
+  if(step.subtarget){
+    const sub=document.querySelector(step.subtarget);
+    if(sub)sub.classList.add("tour-focus-target");
+  }
+
+  const scrollTarget=step.subtarget?document.querySelector(step.subtarget):
+    (mainTarget||(step.targets&&step.targets.length?document.querySelector(step.targets[0]):null));
+  if(scrollTarget)setTimeout(()=>scrollTarget.scrollIntoView({behavior:"smooth",block:"center"}),50);
+}
+function tourShowStep(index){
+  if(!tour.active)return;
+  tour.animToken++;
+  tour.step=Math.max(0,Math.min(tourSteps.length-1,index));
+  const step=tourSteps[tour.step];
+
+  state.selected=null;state.hover=null;hide_tip();
+  tourFocusStep(step);
+
+  $("tour_title").textContent=step.title;
+  $("tour_text").textContent=step.text;
+  $("tour_path").textContent=step.path||"";
+  $("tour_demo").textContent=step.demo;
+  $("tour_step").textContent=`${tour.step+1} / ${tourSteps.length}`;
+  $("tour_prev").disabled=tour.step===0;
+  $("tour_next").textContent=tour.step===tourSteps.length-1?"完成導覽":"下一步";
+  $("tour_panel").classList.toggle("top",step.panel==="top");
+
+  const animations=step.prepare?step.prepare():[];
+  calc();
+
+  if(animations.length)setTimeout(()=>tourRunAnimations(animations,step),230);
+  else if(step.after)setTimeout(()=>step.after(),300);
+}
+function start_tour(){
+  if(tour.active)return;
+  tour.active=true;
+  tour.snapshot=collect_settings();
+  tour.folded=tourCaptureFolded();
+  tour.step=0;
+  document.body.classList.add("tour-active");
+  $("tour_backdrop").classList.add("on");
+  $("tour_panel").classList.add("on");
+  $("tour_backdrop").setAttribute("aria-hidden","false");
+  tourShowStep(0);
+}
+function end_tour(restore=true){
+  if(!tour.active)return;
+  tour.active=false;
+  tour.animToken++;
+  state.selected=null;state.hover=null;hide_tip();
+  tourClearFocus();
+  $("tour_backdrop").classList.remove("on");
+  $("tour_panel").classList.remove("on","top");
+  $("tour_backdrop").setAttribute("aria-hidden","true");
+  document.body.classList.remove("tour-active");
+
+  if(restore&&tour.snapshot){
+    apply_settings(JSON.parse(JSON.stringify(tour.snapshot)));
+  }
+  tourRestoreFolded();
+  tour.snapshot=null;
+  tour.folded=null;
+}
+$("start_tour").onclick=start_tour;
+$("tour_skip").onclick=()=>end_tour(true);
+$("tour_prev").onclick=()=>tourShowStep(tour.step-1);
+$("tour_next").onclick=()=>{
+  if(tour.step>=tourSteps.length-1)end_tour(true);
+  else tourShowStep(tour.step+1);
+};
+$("tour_backdrop").onclick=()=>end_tour(true);
+document.addEventListener("keydown",ev=>{
+  if(!tour.active)return;
+  if(ev.key==="Escape")end_tour(true);
+  else if(ev.key==="ArrowRight")$("tour_next").click();
+  else if(ev.key==="ArrowLeft"&&!$("tour_prev").disabled)$("tour_prev").click();
+});
+
+canvas.onmousemove=ev=>{state.hover=near(ev.clientX);draw();show_tip(state.hover)};canvas.onmouseleave=()=>{state.hover=null;draw();state.selected!==null?show_tip(state.selected):hide_tip()};canvas.onclick=ev=>{const i=near(ev.clientX);state.selected=state.selected===i?null:i;state.hover=null;draw();state.selected!==null?show_tip(state.selected):hide_tip()};
+document.querySelectorAll(".fold").forEach(b=>b.onclick=()=>{const body=$(b.dataset.target),c=!body.classList.contains("hidden");body.classList.toggle("hidden",c);b.textContent=c?"+":"−";b.closest(".head").classList.toggle("collapsed",c)});
+e.purchase_type.onchange=()=>{$("presale").classList.toggle("hidden",e.purchase_type.value!=="presale");calc()};
+e.work_mode.onchange=()=>{mode_ui("work",e.work_mode.value);calc()};e.retire_mode.onchange=()=>{mode_ui("retire",e.retire_mode.value);calc()};
+e.retirement_enabled.onchange=()=>{$("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);calc()};
+ids.forEach(id=>{if(["purchase_type","work_mode","retire_mode","retirement_enabled"].includes(id))return;e[id].addEventListener("input",calc);e[id].addEventListener("change",calc)});
+e.timeline_start_year.addEventListener("change",()=>{
+  const sy=Math.round(num(e.timeline_start_year,2026));
+  if(expenseStages.length===1 && expenseStages[0].year<sy){expenseStages[0].year=sy;render_expense_stages();}
+  if(reserveStages.length===1 && reserveStages[0].year<sy){reserveStages[0].year=sy;render_reserve_stages();}
+  if(compoundStages.length===1 && compoundStages[0].year<sy){compoundStages[0].year=sy;render_compound_stages();}
+  calc();
+});
+$("table_view_compact").onclick=table_compact;
+$("table_view_all").onclick=table_expand_all;
+$("table_toggle_initial").onclick=()=>set_table_group("initial",!tableView.initial);
+$("table_toggle_compound").onclick=()=>set_table_group("compound",!tableView.compound);
+$("table_toggle_income").onclick=()=>set_table_group("income",!tableView.income);
+$("table_toggle_mortgage").onclick=()=>set_table_group("mortgage",!tableView.mortgage);
+$("rows_per_page").onchange=()=>{page=1;render_table()};$("prev").onclick=()=>{page=Math.max(1,page-1);render_table()};$("next").onclick=()=>{page++;render_table()};$("formula_year").onchange=()=>render_formula(Number($("formula_year").value));window.onresize=draw;
+$("add_expense_stage").onclick=add_expense_stage;
+$("add_reserve_stage").onclick=add_reserve_stage;
+$("add_compound_stage").onclick=add_compound_stage;
+$("add_mortgage_rate_stage").onclick=add_mortgage_rate_stage;
+$("export_settings").onclick=export_settings;
+$("import_settings").onclick=()=>$("import_settings_file").click();
+$("import_settings_file").onchange=ev=>import_settings_file(ev.target.files&&ev.target.files[0]);
+
+expenseStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:600000}];
+reserveStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:Math.max(0,num(e.initial_cash_assets))}];
+compoundStages=[{year:Math.round(num(e.timeline_start_year,2026)),years:Math.max(1,Math.round(num(e.timeline_years,40)))}];
+mortgageRateStages=[{rate:2.6,years:0}];
+render_expense_stages();render_reserve_stages();render_compound_stages();render_mortgage_rate_stages();
+$("presale").classList.toggle("hidden",e.purchase_type.value!=="presale");
+$("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);
+mode_ui("work",e.work_mode.value);mode_ui("retire",e.retire_mode.value);calc();
+</script>
+</body></html>
