@@ -137,8 +137,9 @@ body.tour-active{overflow-x:hidden}
  <button id="import_settings" class="configbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 14v5h14v-5"/></svg><span>匯入試算設定</span></button>
  <button id="start_tour" class="configbtn tour-start-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg><span>使用說明導覽</span></button>
  <button id="start_scenario_tour" class="configbtn tour-start-btn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3Z"/><path d="M9 3v15M15 6v15"/></svg><span>情境導覽</span></button>
+ <button id="export_csv" class="configbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h9l5 5v15H6Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg><span>輸出 CSV 表</span></button>
  <input id="import_settings_file" type="file" accept=".json,application/json" class="hidden">
- <span id="config_status" class="configstatus">設定檔格式：JSON</span>
+ <span id="config_status" class="configstatus">設定檔：JSON · 結果表：CSV</span>
 </div>
 <div class="layout">
 <aside class="side">
@@ -153,8 +154,8 @@ body.tour-active{overflow-x:hidden}
   </div>
   <div class="field"><label>出生年</label><input id="birth_year" type="number" value="1994" min="1900" max="2200"></div>
   <div class="row2">
-   <div class="field"><label>初始現金資產（NT$）</label><input id="initial_cash_assets" type="number" value="1500000" min="0" step="100000"></div>
-   <div class="field"><label>初始投資資產（NT$）</label><input id="initial_investment_assets" type="number" value="10000000" min="0" step="100000"></div>
+   <div class="field"><label>初始現金資產（NT$）</label><input id="initial_cash_assets" type="text" inputmode="numeric" data-money-input value="1500000"></div>
+   <div class="field"><label>初始投資資產（NT$）</label><input id="initial_investment_assets" type="text" inputmode="numeric" data-money-input value="10000000"></div>
    <div class="field"><label>投資年化報酬率（%）</label><input id="return_rate" type="number" value="5" step="0.1"></div>
   </div>
   <div class="note">現金資產與投資資產都從試算第一年開始存在，並逐年累積。所有支出只從現金資產扣除，不會自動賣出投資資產補足。</div>
@@ -180,13 +181,13 @@ body.tour-active{overflow-x:hidden}
  <div id="income_body">
   <div id="income_basics_guide_box">
   <div class="field"><label>工作收入插入年份</label><input id="income_start_year" type="number" value="2026" min="1900" max="2200"></div>
-  <div class="field"><label>目前年薪（NT$）</label><input id="salary" type="number" value="1500000" step="100000"></div>
+  <div class="field"><label>目前年薪（NT$）</label><input id="salary" type="text" inputmode="numeric" data-money-input value="1500000"></div>
   <div class="row2"><div class="field"><label>每年調薪率（%）</label><input id="salary_growth" type="number" value="3" step="0.1"></div><div class="field"><label>工作收入年數</label><input id="income_years" type="number" value="10"></div></div>
   </div>
   <div id="work_allocation_guide_box" class="allocation-guide-box">
    <div class="field"><label>工作期間：每年投入投資方式</label><select id="work_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
    <div id="work_percent" class="field"><label>投入收入比例（%）</label><input id="work_percent_value" type="number" value="50" min="0" max="100"></div>
-   <div id="work_fixed" class="field hidden"><label>每年固定投入投資（NT$）</label><input id="work_fixed_value" type="number" value="1000000"></div>
+   <div id="work_fixed" class="field hidden"><label>每年固定投入投資（NT$）</label><input id="work_fixed_value" type="text" inputmode="numeric" data-money-input value="1000000"></div>
    <div id="work_expense" class="field hidden"><div class="note">「支出餘額」會使用上方動態固定支出表中該年度的支出額：投入投資 = max(0, 工作收入 − 當年固定支出)。</div></div>
    <div id="work_emergency" class="field hidden"><div class="note">先結算當年所有現金流，再把超過當年「緊急備用金目標」的現金全部轉入投資。</div></div>
   </div>
@@ -197,7 +198,7 @@ body.tour-active{overflow-x:hidden}
     <div class="row2"><div class="field"><label>每年提領投資資產（%）</label><input id="retire_rate" type="number" value="4" step="0.1"></div><div class="field"><label>退休提領年數</label><input id="retire_years" type="number" value="60"></div></div>
     <div class="field"><label>退休收入：每年投入投資方式</label><select id="retire_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option></select></div>
     <div id="retire_percent" class="field"><label>退休收入再投入比例（%）</label><input id="retire_percent_value" type="number" value="0" min="0" max="100"></div>
-    <div id="retire_fixed" class="field hidden"><label>每年固定再投入（NT$）</label><input id="retire_fixed_value" type="number" value="0"></div>
+    <div id="retire_fixed" class="field hidden"><label>每年固定再投入（NT$）</label><input id="retire_fixed_value" type="text" inputmode="numeric" data-money-input value="0"></div>
     <div id="retire_expense" class="field hidden"><div class="note">「支出餘額」同樣使用動態固定支出表：退休再投入 = max(0, 退休提領收入 − 當年固定支出)。</div></div><div id="retire_emergency" class="field hidden"><div class="note">退休提領先進入現金，扣除固定支出與房貸後，只保留當年緊急備用金目標，其餘再投入投資。</div></div>
    </div>
   </div>
@@ -223,8 +224,8 @@ body.tour-active{overflow-x:hidden}
   <div id="mortgage_purchase_guide_box">
   <div class="field"><label>購屋試算插入年份</label><input id="mortgage_start_year" type="number" value="2030" min="1900" max="2200"></div>
   <div class="field"><label>購屋類型</label><select id="purchase_type"><option value="direct">直接購入</option><option value="presale">預售屋</option></select></div>
-  <div class="field"><label>房屋總價（NT$）</label><input id="house_price" type="number" value="15000000" step="100000"></div>
-  <div class="field"><label>額外支出（裝潢、設計、家具等，NT$）</label><input id="additional_cost" type="number" value="0" min="0" step="10000"></div>
+  <div class="field"><label>房屋總價（NT$）</label><input id="house_price" type="text" inputmode="numeric" data-money-input value="15000000"></div>
+  <div class="field"><label>額外支出（裝潢、設計、家具等，NT$）</label><input id="additional_cost" type="text" inputmode="numeric" data-money-input value="0"></div>
   <div class="note">直接購入會在購入年列入；預售屋會在工程期結束、交屋年列入。</div>
   <div class="field"><label>頭期款（%）</label><input id="down_rate" type="number" value="20" min="0" max="100"></div>
   </div>
@@ -355,7 +356,23 @@ const canvas=$("chart"),ctx=canvas.getContext("2d"),legend=$("legend"),tip=$("ti
 let state={rows:[],series:[],hover:null,selected:null},page=1;
 const vis={investment:true,cash_assets:true,compound_return:true,income:true,retirement:true,housing:true,net_cash:true};
 
-function num(x,d=0){const v=Number(x.value);return Number.isFinite(v)?v:d}
+function inputNumber(value,d=0){const v=Number(String(value??"").replace(/,/g,"").trim());return Number.isFinite(v)?v:d}
+function num(x,d=0){return inputNumber(x.value,d)}
+function moneyInputDisplay(value){
+  const digits=String(value??"").replace(/[^\d]/g,"");
+  return digits?new Intl.NumberFormat("en-US",{maximumFractionDigits:0}).format(Number(digits)):"";
+}
+function formatMoneyInput(input){
+  const current=input.value,cursor=input.selectionStart??current.length;
+  const digitsBefore=current.slice(0,cursor).replace(/\D/g,"").length;
+  input.value=moneyInputDisplay(current);
+  if(document.activeElement===input&&input.setSelectionRange){
+    let position=0,count=0;
+    while(position<input.value.length&&count<digitsBefore){if(/\d/.test(input.value[position]))count++;position++;}
+    input.setSelectionRange(position,position);
+  }
+}
+function formatAllMoneyInputs(){document.querySelectorAll("[data-money-input]").forEach(formatMoneyInput)}
 function moneyValue(v){const n=Number.isFinite(v)?v:0;return Math.abs(n)<0.5?0:n}
 function money(v){return new Intl.NumberFormat("zh-TW",{style:"currency",currency:"TWD",maximumFractionDigits:0}).format(moneyValue(v))}
 function moneyNegative(v){return moneyValue(v)<0}
@@ -395,7 +412,7 @@ function render_expense_stages(){
     const minYear=index===0?1900:expenseStages[index-1].year+1;
     row.innerHTML=`
       <div class="field"><label>開始年份</label><input class="stage_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div>
-      <div class="field"><label>固定年支出（NT$）</label><input class="stage_amount" data-index="${index}" type="number" min="0" step="10000" value="${stage.amount}"></div>
+      <div class="field"><label>固定年支出（NT$）</label><input class="stage_amount" data-index="${index}" type="text" inputmode="numeric" data-money-input value="${moneyInputDisplay(stage.amount)}"></div>
       <button class="remove_stage" data-index="${index}" type="button" title="移除此階段">×</button>`;
     box.appendChild(row);
   });
@@ -418,7 +435,7 @@ function render_expense_stages(){
   box.querySelectorAll(".stage_amount").forEach(input=>{
     input.addEventListener("input",()=>{
       const i=Number(input.dataset.index);
-      expenseStages[i].amount=Math.max(0,Number(input.value)||0);
+      expenseStages[i].amount=Math.max(0,inputNumber(input.value));
       calc();
     });
   });
@@ -542,7 +559,7 @@ function render_reserve_stages(){
   reserveStages.forEach((stage,index)=>{
     const row=document.createElement("div"); row.className="expense_stage";
     const minYear=index===0?1900:reserveStages[index-1].year+1;
-    row.innerHTML=`<div class="field"><label>開始年份</label><input class="reserve_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div><div class="field"><label>緊急備用金目標（NT$）</label><input class="reserve_amount" data-index="${index}" type="number" min="0" step="10000" value="${stage.amount}"></div><button class="remove_stage reserve_remove" data-index="${index}" type="button" title="移除此階段">×</button>`;
+    row.innerHTML=`<div class="field"><label>開始年份</label><input class="reserve_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div><div class="field"><label>緊急備用金目標（NT$）</label><input class="reserve_amount" data-index="${index}" type="text" inputmode="numeric" data-money-input value="${moneyInputDisplay(stage.amount)}"></div><button class="remove_stage reserve_remove" data-index="${index}" type="button" title="移除此階段">×</button>`;
     box.appendChild(row);
   });
   box.querySelectorAll(".reserve_year").forEach(input=>input.addEventListener("change",()=>{
@@ -550,7 +567,7 @@ function render_reserve_stages(){
     for(let j=i+1;j<reserveStages.length;j++)if(reserveStages[j].year<=reserveStages[j-1].year)reserveStages[j].year=reserveStages[j-1].year+1;
     render_reserve_stages();calc();
   }));
-  box.querySelectorAll(".reserve_amount").forEach(input=>input.addEventListener("input",()=>{const i=Number(input.dataset.index);reserveStages[i].amount=Math.max(0,Number(input.value)||0);calc();}));
+  box.querySelectorAll(".reserve_amount").forEach(input=>input.addEventListener("input",()=>{const i=Number(input.dataset.index);reserveStages[i].amount=Math.max(0,inputNumber(input.value));calc();}));
   box.querySelectorAll(".reserve_remove").forEach(button=>button.addEventListener("click",()=>{reserveStages.splice(Number(button.dataset.index),1);render_reserve_stages();calc();}));
   validate_reserve_stages();
 }
@@ -638,7 +655,7 @@ function collect_settings(){
   for(const id of ids){
     const node=e[id];
     if(!node)continue;
-    values[id]=(node.type==="checkbox")?node.checked:node.value;
+    values[id]=(node.type==="checkbox")?node.checked:(node.matches("[data-money-input]")?node.value.replace(/,/g,""):node.value);
   }
   return {
     schema:SETTINGS_SCHEMA,
@@ -678,6 +695,43 @@ function export_settings(){
   }
 }
 
+function csv_filename(){
+  const d=new Date(),pad=n=>String(n).padStart(2,"0");
+  return `fire-calculator-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}.csv`;
+}
+
+function csvCell(value){
+  const text=String(value??"");
+  return /[",\r\n]/.test(text)?`"${text.replace(/"/g,'""')}"`:text;
+}
+
+function export_csv(){
+  const columns=[
+    ["序號",r=>r.idx+1],["年份",r=>r.year],["年齡",r=>r.age],["階段",r=>r.phase],
+    ["年初現金資產",r=>Math.round(moneyValue(r.cash_start))],["年初投資資產",r=>Math.round(moneyValue(r.investment_start))],
+    ["投資收益",r=>Math.round(moneyValue(r.gross_investment_return))],["投資收益再投入",r=>Math.round(moneyValue(r.investment_return_reinvest))],
+    ["工作收入",r=>Math.round(moneyValue(r.work_income))],["工作投入投資",r=>Math.round(moneyValue(r.work_inv))],
+    ["退休提領",r=>Math.round(moneyValue(r.ret_income))],["退休再投入",r=>Math.round(moneyValue(r.ret_reinv))],
+    ["固定年支出",r=>Math.round(moneyValue(r.fixed_expense))],["購屋/房貸支出",r=>Math.round(moneyValue(r.housing))],
+    ["當年房貸利率（%）",r=>r.mortgage_rate?Number((r.mortgage_rate*100).toFixed(2)):""],
+    ["備用金目標",r=>Math.round(moneyValue(r.reserve_target||0))],["超額現金轉投資",r=>Math.round(moneyValue(r.emergency_transfer||0))],
+    ["年度淨現金流",r=>Math.round(moneyValue(r.net_cash_flow))],["年末現金資產",r=>Math.round(moneyValue(r.cash_assets))],
+    ["房貸餘額",r=>Math.round(moneyValue(r.balance))],["年末投資資產",r=>Math.round(moneyValue(r.investment_assets))]
+  ];
+  const lines=[columns.map(c=>c[0]),...state.rows.map(r=>columns.map(c=>c[1](r)))];
+  const csv="\uFEFF"+lines.map(row=>row.map(csvCell).join(",")).join("\r\n"),filename=csv_filename();
+  try{
+    const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob);
+    const a=document.createElement("a");a.href=url;a.download=filename;a.style.display="none";document.body.appendChild(a);
+    a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    $("config_status").textContent=`已輸出：${filename}（${state.rows.length} 列）`;
+  }catch(err){
+    $("config_status").textContent=`CSV 輸出失敗：${err.message}`;
+    alert(`輸出 CSV 表失敗：\n${err.message}`);
+  }
+}
+
 function restore_default_settings(){
   apply_settings(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)));
   $("config_status").textContent="已恢復預設值";
@@ -705,7 +759,7 @@ function apply_settings(payload){
 
   if(Array.isArray(payload.expense_stages)){
     expenseStages=payload.expense_stages
-      .map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,Number(s.amount)||0)}))
+      .map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,inputNumber(s.amount))}))
       .filter(s=>s.year>0).sort((a,b)=>a.year-b.year);
     for(let i=1;i<expenseStages.length;i++)
       if(expenseStages[i].year<=expenseStages[i-1].year)expenseStages[i].year=expenseStages[i-1].year+1;
@@ -715,7 +769,7 @@ function apply_settings(payload){
 
   if(Array.isArray(payload.reserve_stages)){
     reserveStages=payload.reserve_stages
-      .map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,Number(s.amount)||0)}))
+      .map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,inputNumber(s.amount))}))
       .filter(s=>s.year>0).sort((a,b)=>a.year-b.year);
     for(let i=1;i<reserveStages.length;i++)
       if(reserveStages[i].year<=reserveStages[i-1].year)reserveStages[i].year=reserveStages[i-1].year+1;
@@ -750,9 +804,10 @@ function apply_settings(payload){
   }else mortgageRateStages=[{rate:2.6,years:0}];
   mortgageRateStages.forEach((s,i)=>{if(i<mortgageRateStages.length-1&&s.years<1)s.years=1});
   render_mortgage_rate_stages();
-render_expense_stages();
+  render_expense_stages();
   render_reserve_stages();
   render_compound_stages();
+  formatAllMoneyInputs();
   calc();
 }
 
@@ -1256,13 +1311,13 @@ const tourSteps=[
     }
   },
   {
-    targets:["#restore_defaults","#export_settings","#import_settings"],
-    title:"9. 恢復、匯出與匯入試算設定",
-    path:"頁面工具列 › 設定檔",
-    text:"「恢復預設值」可回到網站內建的參考情境；調好自己的情境後則可匯出 JSON 保存，之後再用匯入功能還原。設定檔採向後相容設計，新版會忽略未知欄位並遷移已知舊欄位。",
-    demo:"恢復預設值會直接套用內建參考情境；若要保留目前調整，請先匯出。匯出的是設定，不是試算結果表；檔名會包含日期與分鐘。",
+    targets:["#restore_defaults","#export_settings","#import_settings","#export_csv"],
+    title:"9. 恢復、匯入匯出設定與輸出結果表",
+    path:"頁面工具列 › 設定檔與 CSV 結果表",
+    text:"「恢復預設值」可回到網站內建的參考情境；調好自己的情境後可匯出 JSON 保存，之後再用匯入功能還原。右側的「輸出 CSV 表」則會下載完整年度試算結果。",
+    demo:"JSON 用來保存可再次匯入的試算設定；CSV 會輸出所有年份與全部表格欄位，不受目前分頁或精簡／展開狀態影響，可直接交由試算表軟體分析。",
     prepare(){return []},
-    after(){tourPulse("#restore_defaults,#export_settings,#import_settings")}
+    after(){tourPulse("#restore_defaults,#export_settings,#import_settings,#export_csv")}
   },
   {
     target:"#start_tour",
@@ -1393,7 +1448,7 @@ function tourAnimateNumber(id,to,duration=560){
   const input=$(id);
   if(!input)return Promise.resolve();
   const token=tour.animToken;
-  const from=Number(input.value)||0;
+  const from=inputNumber(input.value);
   const target=Number(to);
   const start=performance.now();
   input.classList.remove("tour-field-pulse");
@@ -1406,11 +1461,11 @@ function tourAnimateNumber(id,to,duration=560){
       const eased=1-Math.pow(1-p,3);
       const v=from+(target-from)*eased;
       const decimals=Number.isInteger(target)?0:1;
-      input.value=decimals?v.toFixed(decimals):Math.round(v);
+      input.value=input.matches("[data-money-input]")?moneyInputDisplay(Math.round(v)):(decimals?v.toFixed(decimals):Math.round(v));
       calc();
       if(p<1)requestAnimationFrame(frame);
       else{
-        input.value=String(to);
+        input.value=input.matches("[data-money-input]")?moneyInputDisplay(to):String(to);
         calc();
         resolve();
       }
@@ -1499,6 +1554,7 @@ function tourShowStep(index){
   $("tour_scenario").classList.toggle("hidden",steps!==tourSteps||tour.step!==steps.length-1);
   $("tour_panel").classList.toggle("top",step.panel==="top");
   const animations=step.prepare?step.prepare():[];
+  formatAllMoneyInputs();
   calc();
   tourFocusStep(step);
   tourDelay(()=>tourLayoutStep(step),0);
@@ -1586,6 +1642,7 @@ e.purchase_type.onchange=()=>{purchase_ui();calc()};
 e.work_mode.onchange=()=>{mode_ui("work",e.work_mode.value);calc()};e.retire_mode.onchange=()=>{mode_ui("retire",e.retire_mode.value);calc()};
 e.retirement_enabled.onchange=()=>{$("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);calc()};
 ids.forEach(id=>{if(["purchase_type","work_mode","retire_mode","retirement_enabled"].includes(id))return;e[id].addEventListener("input",calc);e[id].addEventListener("change",calc)});
+document.addEventListener("input",ev=>{if(ev.target.matches&&ev.target.matches("[data-money-input]"))formatMoneyInput(ev.target)});
 e.timeline_start_year.addEventListener("change",()=>{
   const sy=Math.round(num(e.timeline_start_year,2026));
   if(expenseStages.length===1 && expenseStages[0].year<sy){expenseStages[0].year=sy;render_expense_stages();}
@@ -1606,6 +1663,7 @@ $("add_compound_stage").onclick=add_compound_stage;
 $("add_mortgage_rate_stage").onclick=add_mortgage_rate_stage;
 $("restore_defaults").onclick=restore_default_settings;
 $("export_settings").onclick=export_settings;
+$("export_csv").onclick=export_csv;
 $("import_settings").onclick=()=>$("import_settings_file").click();
 $("import_settings_file").onchange=ev=>import_settings_file(ev.target.files&&ev.target.files[0]);
 
