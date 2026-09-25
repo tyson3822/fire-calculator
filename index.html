@@ -6,7 +6,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <style>
 :root{--bg:#0d1117;--p:#161b22;--p2:#21262d;--b:#30363d;--t:#e6edf3;--m:#8b949e;--a:#58a6ff;--g:#3fb950;--r:#f85149;--o:#d29922;--v:#bc8cff;--c:#39c5cf;
---initial-rgb:88,166,255;--mortgage-rgb:210,153,34;--income-rgb:63,185,80}
+--initial-rgb:88,166,255;--mortgage-rgb:210,153,34;--income-rgb:63,185,80;--investment-rgb:188,140,255}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font-family:Inter,"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif}
 .app{max-width:1500px;margin:auto;padding:26px}h1{margin:0 0 8px;font-size:27px}.sub{color:var(--m);font-size:13px;line-height:1.55;margin-bottom:20px}
 .configbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:-6px 0 18px}
@@ -17,12 +17,15 @@
 .card.group-initial{background:linear-gradient(rgba(var(--initial-rgb),.075),rgba(var(--initial-rgb),.025)),var(--p);border-color:rgba(var(--initial-rgb),.42)}
 .card.group-mortgage{background:linear-gradient(rgba(var(--mortgage-rgb),.075),rgba(var(--mortgage-rgb),.025)),var(--p);border-color:rgba(var(--mortgage-rgb),.42)}
 .card.group-income{background:linear-gradient(rgba(var(--income-rgb),.075),rgba(var(--income-rgb),.025)),var(--p);border-color:rgba(var(--income-rgb),.42)}
+.card.group-investment{background:linear-gradient(rgba(var(--investment-rgb),.075),rgba(var(--investment-rgb),.025)),var(--p);border-color:rgba(var(--investment-rgb),.42)}
 .card.group-initial .title{color:rgb(var(--initial-rgb))}
 .card.group-mortgage .title{color:rgb(var(--mortgage-rgb))}
 .card.group-income .title{color:rgb(var(--income-rgb))}
+.card.group-investment .title{color:rgb(var(--investment-rgb))}
 .card.group-initial .cbtn,.card.group-initial .addstage{border-color:rgba(var(--initial-rgb),.36)}
 .card.group-mortgage .cbtn,.card.group-mortgage .addstage{border-color:rgba(var(--mortgage-rgb),.36)}
 .card.group-income .cbtn,.card.group-income .addstage{border-color:rgba(var(--income-rgb),.36)}
+.card.group-investment .cbtn,.card.group-investment .addstage{border-color:rgba(var(--investment-rgb),.36)}
 .head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.head.collapsed{margin-bottom:0}.titlewrap{display:flex;align-items:center;gap:8px}.title{font-weight:700}.tog{display:flex;align-items:center;gap:6px;color:var(--m);font-size:12px}.tog input{width:17px;height:17px;accent-color:var(--a)}
 .cbtn{width:28px;height:28px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--m);cursor:pointer}.field{margin-bottom:12px}.field label{display:block;font-size:12px;color:var(--m);margin-bottom:5px}
 input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var(--b);border-radius:8px;padding:8px 10px;outline:none}input:focus,select:focus{border-color:var(--a)}
@@ -34,6 +37,7 @@ input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var
 .expense_stage{display:grid;grid-template-columns:1fr 1.35fr 30px;gap:7px;align-items:end;margin-bottom:7px}
 .expense_stage .field{margin:0}
 .expense_stage .remove_stage{width:30px;height:35px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--r);cursor:pointer}
+.investment-stage{position:relative;margin-bottom:10px;padding:10px;border:1px solid var(--b);border-radius:9px;background:rgba(33,38,45,.42)}.investment-stage-grid{display:grid;grid-template-columns:1fr .72fr 1.35fr 30px;gap:7px;align-items:end}.investment-stage .field{margin:0}.investment-stage-parameter{margin-top:8px}.investment-stage .remove-stage{width:30px;height:35px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--r);cursor:pointer}
 .mortgage-rate-stage{display:grid;grid-template-columns:1fr 1fr 30px;gap:7px;align-items:end;margin-bottom:7px}.mortgage-rate-stage .field{margin:0}.mortgage-rate-stage .remove-stage{width:30px;height:35px;border:1px solid var(--b);border-radius:7px;background:var(--p2);color:var(--r);cursor:pointer}
 .stage_error{color:var(--r);font-size:11px;min-height:16px;margin-top:3px}
 .retbox{margin-top:9px;border:1px solid var(--b);border-radius:9px;padding:11px;background:rgba(33,38,45,.5)}.retbox .rhead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:650}.retbox .rhead input{width:17px;height:17px;accent-color:var(--a)}.rbody{border-top:1px solid var(--b);margin-top:10px;padding-top:11px}
@@ -43,6 +47,7 @@ input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var
 .tr.initial span,.tr.initial b{color:rgb(var(--initial-rgb))}
 .tr.mortgage span,.tr.mortgage b{color:rgb(var(--mortgage-rgb))}
 .tr.income span,.tr.income b{color:rgb(var(--income-rgb))}
+.tr.investment span,.tr.investment b{color:rgb(var(--investment-rgb))}
 .tr.neutral span{color:var(--m)}.tr.neutral b{color:var(--t)}
 .toolbar{display:flex;justify-content:flex-end;align-items:center;gap:7px;color:var(--m);font-size:12px;margin:0 0 8px}.toolbar select{width:auto}.toolbar button{width:30px;height:30px}
 .table-toolbar{justify-content:space-between;flex-wrap:wrap}.table-view-controls,.table-page-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -50,6 +55,7 @@ input,select{width:100%;background:var(--p2);color:var(--t);border:1px solid var
 .toolbar .table-view-btn.active{color:var(--t);border-color:#6e7681;background:#30363d}
 .toolbar .table-group-btn.initial.on{color:#b9d7ff;border-color:rgba(var(--initial-rgb),.65);background:rgba(var(--initial-rgb),.10)}
 .toolbar .table-group-btn.income.on{color:#a8ddb0;border-color:rgba(var(--income-rgb),.65);background:rgba(var(--income-rgb),.10)}
+.toolbar .table-group-btn.investment.on{color:#d7b9ff;border-color:rgba(var(--investment-rgb),.65);background:rgba(var(--investment-rgb),.10)}
 .toolbar .table-group-btn.mortgage.on{color:#f0cf7a;border-color:rgba(var(--mortgage-rgb),.65);background:rgba(var(--mortgage-rgb),.10)}
  .tw{overflow-x:auto;overflow-y:visible;max-height:none;border:1px solid var(--b);border-radius:12px}table{width:max-content;min-width:100%;border-collapse:collapse;background:var(--p)}
 .table-detail.table-detail-hidden{display:none!important}
@@ -64,9 +70,12 @@ th.col-mortgage{background:linear-gradient(rgba(var(--mortgage-rgb),.18),rgba(va
 td.col-mortgage{background:rgba(var(--mortgage-rgb),.06)}
 th.col-income{background:linear-gradient(rgba(var(--income-rgb),.18),rgba(var(--income-rgb),.18)),var(--p2);color:#a8ddb0}
 td.col-income{background:rgba(var(--income-rgb),.055)}
+th.col-investment{background:linear-gradient(rgba(var(--investment-rgb),.18),rgba(var(--investment-rgb),.18)),var(--p2);color:#d7b9ff}
+td.col-investment{background:rgba(var(--investment-rgb),.055)}
 tbody tr:hover td.col-initial{background:rgba(var(--initial-rgb),.105)}
 tbody tr:hover td.col-mortgage{background:rgba(var(--mortgage-rgb),.11)}
 tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
+tbody tr:hover td.col-investment{background:rgba(var(--investment-rgb),.105)}
 .pos{color:var(--g)}.neg{color:var(--r)}.warn{color:var(--o)}
 .formulas{margin-top:15px;background:var(--p);border:1px solid var(--b);border-radius:12px;padding:17px}.formulas h2{font-size:17px;margin:0 0 6px}.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.fi{background:var(--p2);border:1px solid var(--b);border-radius:8px;padding:11px}.fi.full{grid-column:1/-1}.fi b{font-size:12px}.fi code{display:block;white-space:pre-wrap;margin-top:6px;color:#c9d1d9;font-size:11px;line-height:1.55}
 .verify{border-top:1px solid var(--b);margin-top:13px;padding-top:13px}.verify select{width:auto;margin-left:5px}#detail{margin-top:9px;background:#0d1117;border:1px solid var(--b);border-radius:8px;padding:12px;white-space:pre-wrap;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#c9d1d9}.site-footer{margin:24px 0 4px;padding:14px 0 2px;border-top:1px solid var(--b);color:var(--m);font-size:11px;text-align:center}.site-footer a{color:var(--a);text-decoration:none}.site-footer a:hover{text-decoration:underline}
@@ -80,6 +89,7 @@ tbody tr:hover td.col-income{background:rgba(var(--income-rgb),.105)}
 .card.group-initial.tour-focus{--tour-color:rgb(var(--initial-rgb))}
 .card.group-mortgage.tour-focus{--tour-color:rgb(var(--mortgage-rgb))}
 .card.group-income.tour-focus{--tour-color:rgb(var(--income-rgb))}
+.card.group-investment.tour-focus{--tour-color:rgb(var(--investment-rgb))}
 @keyframes tourHalo{0%,100%{opacity:.45;transform:scale(1)}50%{opacity:1;transform:scale(1.006)}}
 .tour-panel{position:fixed;z-index:2000;left:50%;bottom:24px;transform:translateX(-50%) translateY(18px);width:min(720px,calc(100vw - 28px));max-height:calc(100vh - 32px);overflow:auto;background:rgba(22,27,34,.985);border:1px solid #484f58;border-radius:14px;padding:15px 16px;box-shadow:0 20px 70px rgba(0,0,0,.58);opacity:0;pointer-events:none;transition:opacity .22s ease,transform .22s ease}
 .tour-panel.on{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
@@ -107,6 +117,7 @@ tbody tr.tour-focus-target td:last-child{box-shadow:inset -2px 0 #58a6ff,inset 0
 .group-initial .tour-focus-target{--tour-color:rgb(var(--initial-rgb))}
 .group-mortgage .tour-focus-target{--tour-color:rgb(var(--mortgage-rgb))}
 .group-income .tour-focus-target{--tour-color:rgb(var(--income-rgb))}
+.group-investment .tour-focus-target{--tour-color:rgb(var(--investment-rgb))}
 @keyframes tourTargetHalo{0%,100%{filter:brightness(1)}50%{filter:brightness(1.12)}}
 .tour-panel.top{top:20px;bottom:auto}
 .tour-panel .tour-path{margin-top:5px;color:#8b949e;font-size:10px;letter-spacing:.02em}
@@ -116,7 +127,7 @@ body.tour-active{overflow-x:hidden}
 .monthly-backdrop{position:fixed;inset:0;z-index:2200;background:rgba(3,7,12,.78);display:none}.monthly-backdrop.on{display:block}.monthly-modal{position:fixed;z-index:2201;inset:5vh 4vw;display:none;flex-direction:column;background:var(--p);border:1px solid #484f58;border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,.65);overflow:hidden}.monthly-modal.on{display:flex}.monthly-head{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;padding:16px 18px;border-bottom:1px solid var(--b)}.monthly-head h2{margin:0;font-size:18px}.monthly-head p{margin:5px 0 0;color:var(--m);font-size:11px}.monthly-close{width:32px;height:32px;border:1px solid var(--b);border-radius:8px;background:var(--p2);color:var(--t);font-size:20px;cursor:pointer}.monthly-scroll{overflow:auto;flex:1}.monthly-scroll table{min-width:1750px}.monthly-scroll th{top:0;z-index:2}.monthly-scroll td:first-child,.monthly-scroll th:first-child{position:sticky;left:0;z-index:1;background:var(--p2)}.monthly-scroll td:first-child{background:var(--p)}
 @media(max-width:700px){.tour-panel{bottom:6px;padding:10px 12px}.tour-text{line-height:1.5}.tour-demo{margin-top:6px;padding:7px 9px;line-height:1.45}.tour-actions{align-items:flex-end;margin-top:8px}.tour-actions-left,.tour-actions-right{gap:5px}.tour-btn{padding:7px 9px}}
 
-@media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.summary{grid-template-columns:1fr}.chart{height:390px}}
+@media(max-width:1080px){.layout{grid-template-columns:1fr}.summary{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.app{padding:13px}.row2,.fg{grid-template-columns:1fr}.investment-stage-grid{grid-template-columns:1fr 1fr}.investment-stage .remove-stage{grid-column:2;justify-self:end}.summary{grid-template-columns:1fr}.chart{height:390px}}
 </style>
 </head>
 <body>
@@ -163,7 +174,7 @@ body.tour-active{overflow-x:hidden}
    <div class="expense_head"><b>緊急備用金目標表</b><button id="add_reserve_stage" class="addstage" type="button">＋ 多一個備用金階段</button></div>
    <div id="reserve_stages"></div>
    <div id="reserve_stage_error" class="stage_error"></div>
-   <div class="note">每一列代表「從該年份開始」希望保留的現金資產目標。若投入方式選「僅保留緊急備用金」或「保留緊急備用金後定期定額」，每月底完成收入、固定支出、購屋與房貸結算後，才會將超過目標的現金轉入投資。最後一階段永久沿用。</div>
+   <div class="note">每一列代表「從該年份開始」希望保留的現金資產目標。當投入投資試算組選用備用金相關方法時，每月底完成收入、固定支出、購屋與房貸結算後，才會將超過目標的現金轉入投資。最後一階段永久沿用。</div>
   </div>
  </div>
 </section>
@@ -177,25 +188,24 @@ body.tour-active{overflow-x:hidden}
   <div class="row2"><div class="field"><label>年度獎金總額（NT$）</label><input id="annual_bonus" type="text" inputmode="numeric" data-money-input value="300000"></div><div class="field"><label>獎金發放次數</label><select id="bonus_frequency"><option value="1">1 次（一月底）</option><option value="2" selected>2 次（一、七月底）</option><option value="4">4 次（一、四、七、十月底）</option></select></div></div>
   <div class="row2"><div class="field"><label>每年調薪率（%）</label><input id="salary_growth" type="number" value="3" step="0.1"></div><div class="field"><label>工作收入年數</label><input id="income_years" type="number" value="10"></div></div>
   </div>
-  <div id="work_allocation_guide_box" class="allocation-guide-box">
-   <div class="field"><label>工作期間：每月投入投資方式</label><select id="work_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option><option value="reserve_dca">保留緊急備用金後定期定額</option></select></div>
-   <div id="work_percent" class="field"><label>投入收入比例（%）</label><input id="work_percent_value" type="number" value="50" min="0" max="100"></div>
-   <div id="work_fixed" class="field hidden"><label>每月固定投入投資（NT$）</label><input id="work_fixed_value" type="text" inputmode="numeric" data-money-input value="80000"></div>
-   <div id="work_expense" class="field hidden"><div class="note">「支出餘額」按月計算：投入投資 = max(0, 當月工作收入 − 當月固定支出)。</div></div>
-   <div id="work_emergency" class="field hidden"><div class="note">每月底完成收入、固定支出與房貸結算後，把超過當年緊急備用金目標的現金全部轉入投資。</div></div>
-   <div id="work_dca" class="expense_box hidden"><div class="expense_head"><b>工作期間每月定期定額階段</b><button id="add_work_dca_stage" class="addstage" type="button">＋ 調整定期定額</button></div><div id="work_dca_stages"></div><div id="work_dca_error" class="stage_error"></div><div class="note">每月底先保留當年緊急備用金，再投入 min（超額現金，當年每月定期定額）。最後一個階段會持續沿用。</div></div>
-  </div>
-
   <div id="retirement_guide_box" class="retbox">
    <div class="rhead"><label for="retirement_enabled">工作結束後立即銜接百分比提領</label><input id="retirement_enabled" type="checkbox" checked></div>
    <div id="retirement_body" class="rbody">
     <div class="row2"><div class="field"><label>每年提領投資資產（%）</label><input id="retire_rate" type="number" value="4" step="0.1"></div><div class="field"><label>退休提領年數</label><input id="retire_years" type="number" value="60"></div></div>
-    <div class="field"><label>退休收入：每月投入投資方式</label><select id="retire_mode"><option value="percent">百分比</option><option value="fixed">固定金額</option><option value="expense_balance">支出餘額</option><option value="emergency_reserve" selected>僅保留緊急備用金</option><option value="reserve_dca">保留緊急備用金後定期定額</option></select></div>
-    <div id="retire_percent" class="field"><label>退休收入再投入比例（%）</label><input id="retire_percent_value" type="number" value="0" min="0" max="100"></div>
-    <div id="retire_fixed" class="field hidden"><label>每月固定再投入（NT$）</label><input id="retire_fixed_value" type="text" inputmode="numeric" data-money-input value="0"></div>
-    <div id="retire_expense" class="field hidden"><div class="note">「支出餘額」按月計算：退休再投入 = max(0, 當月退休提領 − 當月固定支出)。</div></div><div id="retire_emergency" class="field hidden"><div class="note">每月退休提領進入現金並扣除支出與房貸後，只保留當年緊急備用金目標，其餘再投入投資。</div></div>
-    <div id="retire_dca" class="expense_box hidden"><div class="expense_head"><b>退休期間每月定期定額階段</b><button id="add_retire_dca_stage" class="addstage" type="button">＋ 調整定期定額</button></div><div id="retire_dca_stages"></div><div id="retire_dca_error" class="stage_error"></div><div class="note">每月底先保留緊急備用金，再依當年設定的每月金額定期投入。</div></div>
+    <div class="note">退休只改變現金來源：工作結束後，投資資產會按月提領為現金。現金如何再投入投資，統一由下方「投入投資試算組」控制。</div>
    </div>
+  </div>
+ </div>
+</section>
+
+<section class="card group-investment">
+ <div class="head"><div class="titlewrap"><button class="cbtn fold" data-target="investment_body">−</button><div class="title">投入投資試算組</div></div><label class="tog"><input id="investment_enabled" type="checkbox" checked>加入試算</label></div>
+ <div id="investment_body">
+  <div id="investment_guide_box">
+   <div class="expense_head"><b>投入投資方式階段</b><button id="add_investment_stage" class="addstage" type="button">＋ 多一個投入階段</button></div>
+   <div id="investment_stages"></div>
+   <div id="investment_stage_error" class="stage_error"></div>
+   <div class="note">每個階段會從指定年月起生效，直到下一階段開始。工作與退休只決定當月現金來源，不會自動切換投資方法；需要改變策略時，請新增一個投入階段。</div>
   </div>
  </div>
 </section>
@@ -241,13 +251,14 @@ body.tour-active{overflow-x:hidden}
   <button id="table_view_all" class="table-view-btn" type="button">全部展開</button>
   <button id="table_toggle_initial" class="table-group-btn initial" type="button">＋ 基礎</button>
   <button id="table_toggle_income" class="table-group-btn income" type="button">＋ 收入 / 退休</button>
+  <button id="table_toggle_investment" class="table-group-btn investment" type="button">＋ 投入</button>
   <button id="table_toggle_mortgage" class="table-group-btn mortgage" type="button">＋ 房貸</button>
  </div>
  <div class="table-page-controls"><span>每頁顯示</span><select id="rows_per_page"><option>10</option><option selected>20</option><option>30</option><option>50</option><option value="all">全部</option></select>
  <button id="prev" class="cbtn">‹</button><span id="page_status">1 / 1</span><button id="next" class="cbtn">›</button></div>
 </div>
 <div id="table_guide_box" class="tw"><table><thead><tr>
-<th class="table-core">月明細</th><th class="table-core">序號</th><th class="col-initial table-core">年份</th><th class="col-initial table-detail detail-initial">年齡</th><th class="table-core">階段</th><th class="col-initial table-detail detail-initial">年初現金資產</th><th class="col-initial table-detail detail-initial">年初投資資產</th><th class="col-initial table-detail detail-initial">投資收益</th><th class="col-income table-detail detail-income">工作收入</th><th class="col-income table-detail detail-income">工作投入投資</th><th class="col-income table-detail detail-income">退休提領</th><th class="col-income table-detail detail-income">退休再投入</th><th class="col-initial table-detail detail-initial">固定年支出</th><th class="col-mortgage table-detail detail-mortgage">購屋/房貸支出</th><th class="col-mortgage table-detail detail-mortgage">當年房貸利率</th><th class="col-initial table-detail detail-initial">備用金目標</th><th class="col-income table-detail detail-income">備用金後投入</th><th class="table-core">年度淨現金流</th><th class="table-core">年末現金資產</th><th class="col-mortgage table-detail detail-mortgage">房貸餘額</th><th class="table-core">年末投資資產</th>
+<th class="table-core">月明細</th><th class="table-core">序號</th><th class="col-initial table-core">年份</th><th class="col-initial table-detail detail-initial">年齡</th><th class="table-core">階段</th><th class="col-initial table-detail detail-initial">年初現金資產</th><th class="col-initial table-detail detail-initial">年初投資資產</th><th class="col-initial table-detail detail-initial">投資收益</th><th class="col-income table-detail detail-income">工作收入</th><th class="col-income table-detail detail-income">退休提領</th><th class="col-investment table-detail detail-investment">投入投資</th><th class="col-investment table-detail detail-investment">其中備用金後投入</th><th class="col-initial table-detail detail-initial">固定年支出</th><th class="col-mortgage table-detail detail-mortgage">購屋/房貸支出</th><th class="col-mortgage table-detail detail-mortgage">當年房貸利率</th><th class="col-initial table-detail detail-initial">備用金目標</th><th class="table-core">年度淨現金流</th><th class="table-core">年末現金資產</th><th class="col-mortgage table-detail detail-mortgage">房貸餘額</th><th class="table-core">年末投資資產</th>
 </tr></thead><tbody id="tbody"></tbody></table></div>
 
 <section id="formula_guide_box" class="formulas">
@@ -256,25 +267,25 @@ body.tour-active{overflow-x:hidden}
   <div class="fi"><b>① 每月投資複利</b><code>月利率 = 投資年利率 ÷ 12
 當月收益 = 月初投資資產 × 月利率
 收益直接加入投資資產；月底投入從下個月起參與複利。</code></div>
-  <div class="fi"><b>② 工作收入與投入</b><code>每月底入帳經常月薪；獎金依 1／2／4 次設定於指定月份月底入帳。
-百分比：投入 = 當月工作收入 × %
-固定：投入 = min(當月工作收入, 每月固定金額)
-支出餘額：投入 = max(0, 當月工作收入 − 當月固定支出)
-
-工作收入未投入部分會留在現金資產。</code></div>
+  <div class="fi"><b>② 工作與退休現金收入</b><code>每月底入帳經常月薪；獎金依 1／2／4 次設定於指定月份月底入帳。
+工作結束後，退休提領會改由投資資產按月轉為現金。
+兩者只決定現金來源，不會自行改變投入投資方式。</code></div>
   <div class="fi"><b>③ 退休提領</b><code>當月提領前資產 = 月初投資資產 + 當月收益
 當月退休提領 = 提領前資產 × 年提領率 ÷ 12
-退休再投入 = allocation(退休提領收入)
-退休現金 = 退休提領 − 再投入</code></div>
+退休提領先進入現金，再依當月有效的投入投資階段決定是否轉回投資。</code></div>
   <div class="fi"><b>④ 所有支出只扣現金</b><code>年度淨現金流 =
-  工作收入 − 工作投入
-+ 退休提領 − 退休再投入
+  工作收入 + 退休提領
+− 投入投資
 − 固定年支出
 − 頭期 / 工程 / 房貸支出
 
 年末現金資產 =
   年初現金資產 + 年度淨現金流</code></div>
-  <div class="fi"><b>⑤ 投資資產逐月累積</b><code>月底投資 = 月初投資 + 當月收益 + 工作投入 − 退休提領 + 退休再投入
+  <div class="fi"><b>⑤ 獨立投入投資階段</b><code>月底投資 = 月初投資 + 當月收益 − 退休提領 + 當月投入投資
+
+百分比：投入 = 當月工作或退休現金收入 × %
+固定：投入 = min(當月現金收入, 每月固定金額)
+支出餘額：投入 = max(0, 當月現金收入 − 當月固定支出)
 
 僅保留緊急備用金：
 先完成所有當月現金流，
@@ -282,7 +293,9 @@ body.tour-active{overflow-x:hidden}
 再把超額現金轉入投資。
 
 保留備用金後定期定額：
-投入 = min(超額現金, 當年每月定期定額)。
+投入 = min(超額現金, 當階段每月定期定額)。
+
+每個投入階段由指定年月開始，直到下一個階段生效。
 
 任何支出都不直接扣投資資產。</code></div>
   <div class="fi"><b>⑥ 全域時間軸</b><code>年份[t] = 開始試算年份 + t
@@ -307,7 +320,7 @@ body.tour-active{overflow-x:hidden}
 <div id="monthly_backdrop" class="monthly-backdrop" aria-hidden="true"></div>
 <section id="monthly_modal" class="monthly-modal" role="dialog" aria-modal="true" aria-labelledby="monthly_title">
  <div class="monthly-head"><div><h2 id="monthly_title">每月資產變化</h2><p id="monthly_summary"></p></div><button id="monthly_close" class="monthly-close" type="button" aria-label="關閉每月明細">×</button></div>
- <div class="monthly-scroll"><table><thead><tr><th>月份</th><th>階段</th><th>月初現金</th><th>月初投資</th><th>投資收益</th><th>經常月薪</th><th>獎金</th><th>工作投入</th><th>退休提領</th><th>退休再投入</th><th>固定支出</th><th>購屋／房貸</th><th>備用金後投入</th><th>當月淨現金流</th><th>月底現金</th><th>房貸餘額</th><th>月底投資</th></tr></thead><tbody id="monthly_tbody"></tbody></table></div>
+ <div class="monthly-scroll"><table><thead><tr><th>月份</th><th>階段</th><th>月初現金</th><th>月初投資</th><th>投資收益</th><th>經常月薪</th><th>獎金</th><th>退休提領</th><th>投資方式</th><th>投入投資</th><th>固定支出</th><th>購屋／房貸</th><th>當月淨現金流</th><th>月底現金</th><th>房貸餘額</th><th>月底投資</th></tr></thead><tbody id="monthly_tbody"></tbody></table></div>
 </section>
 
 <div id="tour_backdrop" class="tour-backdrop" aria-hidden="true"></div>
@@ -339,8 +352,8 @@ const $=id=>document.getElementById(id);
 const ids=["timeline_start_year","timeline_years","birth_year","initial_cash_assets","initial_investment_assets",
 "return_rate",
 "mortgage_enabled","mortgage_start_year","purchase_type","house_price","additional_cost","down_rate","construction_rate","construction_years","loan_years","grace_years",
-"income_enabled","income_start_year","monthly_salary","annual_bonus","bonus_frequency","salary_growth","income_years","work_mode","work_percent_value","work_fixed_value",
-"retirement_enabled","retire_rate","retire_years","retire_mode","retire_percent_value","retire_fixed_value"];
+"income_enabled","income_start_year","monthly_salary","annual_bonus","bonus_frequency","salary_growth","income_years",
+"retirement_enabled","retire_rate","retire_years","investment_enabled"];
 const e=Object.fromEntries(ids.map(id=>[id,$(id)]));
 const canvas=$("chart"),ctx=canvas.getContext("2d"),legend=$("legend"),tip=$("tip"),tbody=$("tbody");
 let state={rows:[],series:[],hover:null,selected:null},page=1;
@@ -375,7 +388,6 @@ function cashHealth(rows){
 function alloc(src,mode,p,f,expense){if(src<=0)return 0;if(mode==="percent")return src*Math.max(0,Math.min(100,p))/100;if(mode==="fixed")return Math.min(src,Math.max(0,f));return Math.max(0,src-Math.max(0,expense))}
 function loan_pmt_months(P,ar,months){if(P<=0)return 0;const n=Math.max(1,Math.round(months)),r=ar/12;if(!r)return P/n;return P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}
 function loan_pmt(P,ar,years){return loan_pmt_months(P,ar,Math.max(1,years*12))}
-function mode_ui(prefix,mode){$(prefix+"_percent").classList.toggle("hidden",mode!=="percent");$(prefix+"_fixed").classList.toggle("hidden",mode!=="fixed");$(prefix+"_expense").classList.toggle("hidden",mode!=="expense_balance");$(prefix+"_emergency").classList.toggle("hidden",mode!=="emergency_reserve");$(prefix+"_dca").classList.toggle("hidden",mode!=="reserve_dca")}
 function purchase_ui(){$("presale").classList.toggle("hidden",e.purchase_type.value!=="presale")}
 
 let expenseStages=[
@@ -389,8 +401,7 @@ let reserveStages=[
   {year:2030, amount:3500000},
   {year:2031, amount:500000}
 ];
-let workDcaStages=[{year:2026,amount:50000}];
-let retireDcaStages=[{year:2037,amount:20000}];
+let investmentStages=[{year:2026,month:1,mode:"emergency_reserve",percent:50,amount:50000}];
 let mortgageRateStages=[{rate:2.6,years:0}];
 
 function render_expense_stages(){
@@ -467,31 +478,45 @@ function fixed_expense_for_year(year){
 }
 
 
-function normalize_dca_stages(stages){
-  const normalized=stages.map(s=>({year:Math.round(Number(s.year)||0),amount:Math.max(0,inputNumber(s.amount))})).filter(s=>s.year>0).sort((a,b)=>a.year-b.year);
-  for(let i=1;i<normalized.length;i++)if(normalized[i].year<=normalized[i-1].year)normalized[i].year=normalized[i-1].year+1;
+const INVESTMENT_MODES=[
+  ["percent","現金收入百分比"],["fixed","每月固定金額"],["expense_balance","收入扣除固定支出餘額"],
+  ["emergency_reserve","僅保留緊急備用金"],["reserve_dca","保留緊急備用金後定期定額"]
+];
+function investment_stage_key(stage){return stage.year*12+(stage.month-1)}
+function normalize_investment_stages(stages){
+  const modes=new Set(INVESTMENT_MODES.map(x=>x[0]));
+  const normalized=stages.map(s=>({year:Math.round(Number(s.year)||0),month:Math.max(1,Math.min(12,Math.round(Number(s.month)||1))),mode:modes.has(s.mode)?s.mode:"emergency_reserve",percent:Math.max(0,Math.min(100,Number(s.percent)||0)),amount:Math.max(0,inputNumber(s.amount))})).filter(s=>s.year>0).sort((a,b)=>investment_stage_key(a)-investment_stage_key(b));
+  for(let i=1;i<normalized.length;i++)if(investment_stage_key(normalized[i])<=investment_stage_key(normalized[i-1])){const next=investment_stage_key(normalized[i-1])+1;normalized[i].year=Math.floor(next/12);normalized[i].month=next%12+1}
   return normalized;
 }
-function render_dca_stages(prefix){
-  const isWork=prefix==="work",stages=isWork?workDcaStages:retireDcaStages,box=$(prefix+"_dca_stages");
-  box.innerHTML="";
-  stages.forEach((stage,index)=>{
-    const row=document.createElement("div");row.className="expense_stage";
-    const minYear=index===0?1900:stages[index-1].year+1;
-    row.innerHTML=`<div class="field"><label>開始年份</label><input class="dca_year" data-index="${index}" type="number" min="${minYear}" max="2300" value="${stage.year}"></div><div class="field"><label>每月定期定額（NT$）</label><input class="dca_amount" data-index="${index}" type="text" inputmode="numeric" data-money-input value="${moneyInputDisplay(stage.amount)}"></div><button class="remove_stage dca_remove" data-index="${index}" type="button" title="移除此階段">×</button>`;
+function investment_parameter_html(stage,index){
+  if(stage.mode==="percent")return `<div class="field"><label>投入當月現金收入比例（%）</label><input class="investment_percent" data-index="${index}" type="number" min="0" max="100" step="0.1" value="${stage.percent}"></div>`;
+  if(stage.mode==="fixed")return `<div class="field"><label>每月固定投入（NT$）</label><input class="investment_amount" data-index="${index}" type="text" inputmode="numeric" data-money-input value="${moneyInputDisplay(stage.amount)}"></div>`;
+  if(stage.mode==="reserve_dca")return `<div class="field"><label>每月定期定額（NT$）</label><input class="investment_amount" data-index="${index}" type="text" inputmode="numeric" data-money-input value="${moneyInputDisplay(stage.amount)}"></div>`;
+  const note=stage.mode==="expense_balance"?"每月投入 = max（0，當月工作或退休現金收入 − 當月固定支出）。":"每月底完成所有現金收支後，把超過當年緊急備用金目標的現金投入投資。";
+  return `<div class="note">${note}</div>`;
+}
+function render_investment_stages(){
+  const box=$("investment_stages");box.innerHTML="";
+  investmentStages.forEach((stage,index)=>{
+    const row=document.createElement("div");row.className="investment-stage";
+    const options=INVESTMENT_MODES.map(([value,label])=>`<option value="${value}"${stage.mode===value?" selected":""}>${label}</option>`).join("");
+    row.innerHTML=`<div class="investment-stage-grid"><div class="field"><label>投入開始年</label><input class="investment_year" data-index="${index}" type="number" min="1900" max="2300" value="${stage.year}"></div><div class="field"><label>月</label><select class="investment_month" data-index="${index}">${Array.from({length:12},(_,i)=>`<option value="${i+1}"${stage.month===i+1?" selected":""}>${i+1} 月</option>`).join("")}</select></div><div class="field"><label>投資方法</label><select class="investment_mode" data-index="${index}">${options}</select></div><button class="remove-stage investment_remove" data-index="${index}" type="button" title="移除此階段">×</button></div><div class="investment-stage-parameter">${investment_parameter_html(stage,index)}</div>`;
     box.appendChild(row);
   });
-  box.querySelectorAll(".dca_year").forEach(input=>input.onchange=()=>{const i=Number(input.dataset.index);stages[i].year=Math.round(Number(input.value)||0);const fixed=normalize_dca_stages(stages);if(isWork)workDcaStages=fixed;else retireDcaStages=fixed;render_dca_stages(prefix);calc()});
-  box.querySelectorAll(".dca_amount").forEach(input=>input.oninput=()=>{stages[Number(input.dataset.index)].amount=Math.max(0,inputNumber(input.value));calc()});
-  box.querySelectorAll(".dca_remove").forEach(button=>button.onclick=()=>{stages.splice(Number(button.dataset.index),1);if(!stages.length)stages.push({year:Math.round(num(e.timeline_start_year,2026)),amount:0});render_dca_stages(prefix);calc()});
-  validate_dca_stages(prefix);
+  box.querySelectorAll(".investment_year,.investment_month").forEach(input=>input.onchange=()=>{const i=Number(input.dataset.index);investmentStages[i][input.classList.contains("investment_year")?"year":"month"]=Math.round(Number(input.value)||1);investmentStages=normalize_investment_stages(investmentStages);render_investment_stages();calc()});
+  box.querySelectorAll(".investment_mode").forEach(input=>input.onchange=()=>{investmentStages[Number(input.dataset.index)].mode=input.value;render_investment_stages();calc()});
+  box.querySelectorAll(".investment_percent").forEach(input=>input.oninput=()=>{investmentStages[Number(input.dataset.index)].percent=Math.max(0,Math.min(100,Number(input.value)||0));calc()});
+  box.querySelectorAll(".investment_amount").forEach(input=>input.oninput=()=>{investmentStages[Number(input.dataset.index)].amount=Math.max(0,inputNumber(input.value));calc()});
+  box.querySelectorAll(".investment_remove").forEach(button=>button.onclick=()=>{investmentStages.splice(Number(button.dataset.index),1);if(!investmentStages.length)investmentStages=[{year:Math.round(num(e.timeline_start_year,2026)),month:1,mode:"emergency_reserve",percent:50,amount:0}];render_investment_stages();calc()});
+  validate_investment_stages();formatAllMoneyInputs();
 }
-function add_dca_stage(prefix){
-  const stages=prefix==="work"?workDcaStages:retireDcaStages,start=Math.round(num(e.timeline_start_year,2026));
-  stages.push({year:stages.length?stages.at(-1).year+1:start,amount:stages.length?stages.at(-1).amount:0});render_dca_stages(prefix);calc();
+function add_investment_stage(){
+  const last=investmentStages.at(-1),start=Math.round(num(e.timeline_start_year,2026));let key=last?investment_stage_key(last)+1:start*12;
+  investmentStages.push({year:Math.floor(key/12),month:key%12+1,mode:last?last.mode:"emergency_reserve",percent:last?last.percent:50,amount:last?last.amount:0});render_investment_stages();calc();
 }
-function validate_dca_stages(prefix){const stages=prefix==="work"?workDcaStages:retireDcaStages;let ok=true;for(let i=1;i<stages.length;i++)if(stages[i].year<=stages[i-1].year)ok=false;$(prefix+"_dca_error").textContent=ok?"":"定期定額階段年份必須嚴格遞增。";return ok}
-function dca_for_year(stages,year){let amount=0;for(const stage of stages){if(year>=stage.year)amount=stage.amount;else break}return amount}
+function validate_investment_stages(){let ok=true;for(let i=1;i<investmentStages.length;i++)if(investment_stage_key(investmentStages[i])<=investment_stage_key(investmentStages[i-1]))ok=false;$("investment_stage_error").textContent=ok?"":"投入階段的年月必須嚴格遞增。";return ok}
+function investment_stage_for_month(year,month){let active=null,key=year*12+(month-1);for(const stage of investmentStages){if(key>=investment_stage_key(stage))active=stage;else break}return active}
 
 function render_reserve_stages(){
   const box=$("reserve_stages"); box.innerHTML="";
@@ -569,14 +594,13 @@ function mortgage_rate_stage_index(elapsed){
 }
 
 const SETTINGS_SCHEMA="asset-timeline-calculator";
-const SETTINGS_VERSION=8;
+const SETTINGS_VERSION=9;
 const DEFAULT_SETTINGS={
  schema:SETTINGS_SCHEMA,version:SETTINGS_VERSION,
- settings:{timeline_start_year:"2026",timeline_years:"60",birth_year:"1994",initial_cash_assets:"1500000",initial_investment_assets:"10000000",return_rate:"5",mortgage_enabled:true,mortgage_start_year:"2030",purchase_type:"direct",house_price:"15000000",additional_cost:"500000",down_rate:"20",construction_rate:"10",construction_years:"3",loan_years:"40",grace_years:"0",income_enabled:true,income_start_year:"2026",monthly_salary:"100000",annual_bonus:"300000",bonus_frequency:"2",salary_growth:"3",income_years:"11",work_mode:"emergency_reserve",work_percent_value:"50",work_fixed_value:"80000",retirement_enabled:true,retire_rate:"4",retire_years:"60",retire_mode:"emergency_reserve",retire_percent_value:"0",retire_fixed_value:"0"},
+ settings:{timeline_start_year:"2026",timeline_years:"60",birth_year:"1994",initial_cash_assets:"1500000",initial_investment_assets:"10000000",return_rate:"5",mortgage_enabled:true,mortgage_start_year:"2030",purchase_type:"direct",house_price:"15000000",additional_cost:"500000",down_rate:"20",construction_rate:"10",construction_years:"3",loan_years:"40",grace_years:"0",income_enabled:true,income_start_year:"2026",monthly_salary:"100000",annual_bonus:"300000",bonus_frequency:"2",salary_growth:"3",income_years:"11",retirement_enabled:true,retire_rate:"4",retire_years:"60",investment_enabled:true},
  expense_stages:[{year:2026,amount:620000}],
  reserve_stages:[{year:2026,amount:2000000},{year:2027,amount:2500000},{year:2028,amount:3000000},{year:2029,amount:3500000},{year:2030,amount:500000}],
- work_dca_stages:[{year:2026,amount:50000}],
- retire_dca_stages:[{year:2037,amount:20000}],
+ investment_stages:[{year:2026,month:1,mode:"emergency_reserve",percent:50,amount:50000}],
  mortgage_rate_stages:[{rate:2.6,years:0}]
 };
 
@@ -586,8 +610,7 @@ const SCENARIO_SETTINGS={
  settings:{...DEFAULT_SETTINGS.settings,income_years:"10"},
  expense_stages:[{year:2026,amount:600000}],
  reserve_stages:[{year:2026,amount:2000000},{year:2027,amount:2500000},{year:2028,amount:3000000},{year:2029,amount:3500000},{year:2030,amount:4000000},{year:2031,amount:500000}],
- work_dca_stages:[{year:2026,amount:50000}],
- retire_dca_stages:[{year:2036,amount:20000}],
+ investment_stages:[{year:2026,month:1,mode:"emergency_reserve",percent:50,amount:50000}],
  mortgage_rate_stages:[{rate:2.6,years:0}]
 };
 
@@ -605,8 +628,7 @@ function collect_settings(){
     settings:values,
     expense_stages:expenseStages.map(s=>({year:s.year,amount:s.amount})),
     reserve_stages:reserveStages.map(s=>({year:s.year,amount:s.amount})),
-    work_dca_stages:workDcaStages.map(s=>({year:s.year,amount:s.amount})),
-    retire_dca_stages:retireDcaStages.map(s=>({year:s.year,amount:s.amount})),
+    investment_stages:investmentStages.map(s=>({year:s.year,month:s.month,mode:s.mode,percent:s.percent,amount:s.amount})),
     mortgage_rate_stages:mortgageRateStages.map(s=>({rate:s.rate,years:s.years})),
     compatibility:{min_reader_version:1,policy:"ignore_unknown_fields",notes:"Unknown fields are ignored; known legacy aliases are migrated."}
   };
@@ -652,8 +674,8 @@ function export_csv(){
     ["序號",r=>r.idx+1],["年份",r=>r.year],["年齡",r=>r.age],["階段",r=>r.phase],
     ["年初現金資產",r=>Math.round(moneyValue(r.cash_start))],["年初投資資產",r=>Math.round(moneyValue(r.investment_start))],
     ["投資收益",r=>Math.round(moneyValue(r.gross_investment_return))],
-    ["工作收入",r=>Math.round(moneyValue(r.work_income))],["工作投入投資",r=>Math.round(moneyValue(r.work_inv))],
-    ["退休提領",r=>Math.round(moneyValue(r.ret_income))],["退休再投入",r=>Math.round(moneyValue(r.ret_reinv))],
+    ["工作收入",r=>Math.round(moneyValue(r.work_income))],["退休提領",r=>Math.round(moneyValue(r.ret_income))],
+    ["投入投資",r=>Math.round(moneyValue(r.investment_contribution))],
     ["固定年支出",r=>Math.round(moneyValue(r.fixed_expense))],["購屋/房貸支出",r=>Math.round(moneyValue(r.housing))],
     ["當年房貸利率（%）",r=>r.mortgage_rate?Number((r.mortgage_rate*100).toFixed(2)):""],
     ["備用金目標",r=>Math.round(moneyValue(r.reserve_target||0))],["超額現金轉投資",r=>Math.round(moneyValue(r.emergency_transfer||0))],
@@ -700,6 +722,8 @@ function apply_settings(payload){
   if(migrated.work_expense_value!==undefined&&!Array.isArray(payload.expense_stages))
     payload.expense_stages=[{year:Number(migrated.timeline_start_year)||2026,amount:Number(migrated.work_expense_value)||0}];
 
+  if(migrated.investment_enabled===undefined)migrated.investment_enabled=true;
+
   for(const [id,value] of Object.entries(migrated)){
     if(!ids.includes(id)||!e[id])continue;
     const node=e[id];
@@ -729,15 +753,26 @@ function apply_settings(payload){
   if(!reserveStages.length)
     reserveStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:0}];
 
-  workDcaStages=normalize_dca_stages(Array.isArray(payload.work_dca_stages)?payload.work_dca_stages:[{year:Math.round(Number(migrated.income_start_year)||Number(migrated.timeline_start_year)||2026),amount:50000}]);
-  retireDcaStages=normalize_dca_stages(Array.isArray(payload.retire_dca_stages)?payload.retire_dca_stages:[{year:(Math.round(Number(migrated.income_start_year)||2026)+Math.max(1,Math.round(Number(migrated.income_years)||10))),amount:20000}]);
-  if(!workDcaStages.length)workDcaStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:0}];
-  if(!retireDcaStages.length)retireDcaStages=[{year:Math.round(num(e.timeline_start_year,2026)),amount:0}];
+  if(Array.isArray(payload.investment_stages)){
+    investmentStages=normalize_investment_stages(payload.investment_stages);
+  }else{
+    const incomeStart=Math.round(Number(migrated.income_start_year)||Number(migrated.timeline_start_year)||2026),incomeYears=Math.max(1,Math.round(Number(migrated.income_years)||10));
+    const workMode=migrated.work_mode||"emergency_reserve",retireMode=migrated.retire_mode||workMode;
+    const workDca=Array.isArray(payload.work_dca_stages)?payload.work_dca_stages:[],retireDca=Array.isArray(payload.retire_dca_stages)?payload.retire_dca_stages:[];
+    const dcaAmount=(stages,year,fallback=0)=>{let amount=fallback;for(const s of stages.slice().sort((a,b)=>(Number(a.year)||0)-(Number(b.year)||0))){if(year>=Number(s.year))amount=Math.max(0,inputNumber(s.amount));else break}return amount};
+    investmentStages=[{year:incomeStart,month:1,mode:workMode,percent:Math.max(0,Math.min(100,Number(migrated.work_percent_value)||0)),amount:workMode==="fixed"?Math.max(0,inputNumber(migrated.work_fixed_value)):dcaAmount(workDca,incomeStart,0)}];
+    if(workMode==="reserve_dca")for(const s of workDca)if(Number(s.year)>incomeStart)investmentStages.push({year:Number(s.year),month:1,mode:workMode,percent:0,amount:Math.max(0,inputNumber(s.amount))});
+    if(migrated.retirement_enabled===true||migrated.retirement_enabled==="true"||migrated.retirement_enabled===1||migrated.retirement_enabled==="1"){
+      const retireStart=incomeStart+incomeYears;
+      investmentStages.push({year:retireStart,month:1,mode:retireMode,percent:Math.max(0,Math.min(100,Number(migrated.retire_percent_value)||0)),amount:retireMode==="fixed"?Math.max(0,inputNumber(migrated.retire_fixed_value)):dcaAmount(retireDca,retireStart,0)});
+      if(retireMode==="reserve_dca")for(const s of retireDca)if(Number(s.year)>retireStart)investmentStages.push({year:Number(s.year),month:1,mode:retireMode,percent:0,amount:Math.max(0,inputNumber(s.amount))});
+    }
+    investmentStages=normalize_investment_stages(investmentStages);
+  }
+  if(!investmentStages.length)investmentStages=[{year:Math.round(num(e.timeline_start_year,2026)),month:1,mode:"emergency_reserve",percent:50,amount:0}];
 
   $("presale").classList.toggle("hidden",e.purchase_type.value!=="presale");
   $("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);
-  mode_ui("work",e.work_mode.value);
-  mode_ui("retire",e.retire_mode.value);
   
   if(Array.isArray(payload.mortgage_rate_stages)&&payload.mortgage_rate_stages.length){
     mortgageRateStages=payload.mortgage_rate_stages.map(s=>({rate:Math.max(0,Number(s.rate)||0),years:Math.max(0,Math.round(Number(s.years)||0))}));
@@ -748,8 +783,7 @@ function apply_settings(payload){
   render_mortgage_rate_stages();
   render_expense_stages();
   render_reserve_stages();
-  render_dca_stages("work");
-  render_dca_stages("retire");
+  render_investment_stages();
   formatAllMoneyInputs();
   calc();
 }
@@ -776,7 +810,7 @@ function calc(){
  const start_year=Math.round(num(e.timeline_start_year,2026));
  const timeline_years=Math.max(1,Math.min(100,Math.round(num(e.timeline_years,40))));
  const birth_year=Math.round(num(e.birth_year,1994)),end_year=start_year+timeline_years-1;
- const me=e.mortgage_enabled.checked,ie=e.income_enabled.checked,re=ie&&e.retirement_enabled.checked;
+ const me=e.mortgage_enabled.checked,ie=e.income_enabled.checked,re=ie&&e.retirement_enabled.checked,investing=e.investment_enabled.checked;
  const annual_return=num(e.return_rate)/100,monthly_return=annual_return/12;
  const income_start=Math.round(num(e.income_start_year,start_year)),base_monthly_salary=Math.max(0,num(e.monthly_salary)),base_annual_bonus=Math.max(0,num(e.annual_bonus)),bonusMonths=bonus_months(e.bonus_frequency.value),sg=num(e.salary_growth)/100,iy=Math.max(1,Math.round(num(e.income_years,10))),income_end=income_start+iy-1;
  const wr=Math.max(0,num(e.retire_rate))/100,ry=Math.max(1,Math.round(num(e.retire_years,30))),retirement_start=income_end+1,retirement_end=retirement_start+ry-1;
@@ -793,13 +827,13 @@ function calc(){
    const working=ie&&year>=income_start&&year<=income_end,retired=re&&year>=retirement_start&&year<=retirement_end;
    const workIndex=Math.max(0,year-income_start),currentSalary=base_monthly_salary*Math.pow(1+sg,workIndex),currentBonus=base_annual_bonus*Math.pow(1+sg,workIndex),bonusInstallment=currentBonus/bonusMonths.length;
    const phaseParts=new Set(),months=[];
-   let gross_investment_return=0,work_income=0,work_salary=0,work_bonus=0,work_inv=0,ret_income=0,ret_reinv=0,fixed_expense=0,housing=0,additional_cost_applied=0,interest=0,mortgage_rate=0,mortgage_stage=0,mortgage_monthly_payment=0,emergency_transfer=0;
+   let gross_investment_return=0,work_income=0,work_salary=0,work_bonus=0,ret_income=0,investment_contribution=0,fixed_expense=0,housing=0,additional_cost_applied=0,interest=0,mortgage_rate=0,mortgage_stage=0,mortgage_monthly_payment=0,emergency_transfer=0;
 
    for(let month=1;month<=12;month++){
      const monthCashStart=cash_assets,monthInvestmentStart=investment_assets;
      const investment_return=Math.max(0,investment_assets)*monthly_return;
      investment_assets+=investment_return;gross_investment_return+=investment_return;
-     let salary_income=0,bonus_income=0,month_work_income=0,month_work_inv=0,month_ret_income=0,month_ret_reinv=0,month_housing=0,month_interest=0,month_additional=0,month_rate=0,month_stage=0,month_payment=0,reserve_investment=0;
+     let salary_income=0,bonus_income=0,month_work_income=0,month_ret_income=0,month_investment=0,month_housing=0,month_interest=0,month_additional=0,month_rate=0,month_stage=0,month_payment=0,reserve_investment=0;
 
      if(working){
        phaseParts.add("工作");salary_income=currentSalary;bonus_income=bonusMonths.includes(month)?bonusInstallment:0;month_work_income=salary_income+bonus_income;cash_assets+=month_work_income;
@@ -823,28 +857,25 @@ function calc(){
      }
 
      cash_assets-=monthly_fixed_expense+month_housing;
-     if(working&&!['emergency_reserve','reserve_dca'].includes(e.work_mode.value)){
-       month_work_inv=alloc(month_work_income,e.work_mode.value,num(e.work_percent_value),num(e.work_fixed_value),monthly_fixed_expense);cash_assets-=month_work_inv;investment_assets+=month_work_inv;
-     }else if(retired&&!['emergency_reserve','reserve_dca'].includes(e.retire_mode.value)){
-       month_ret_reinv=alloc(month_ret_income,e.retire_mode.value,num(e.retire_percent_value),num(e.retire_fixed_value),monthly_fixed_expense);cash_assets-=month_ret_reinv;investment_assets+=month_ret_reinv;
-     }
-
-     const activeMode=working?e.work_mode.value:(retired?e.retire_mode.value:"");
-     if((activeMode==="emergency_reserve"||activeMode==="reserve_dca")&&cash_assets>reserve_target){
-       const excess=cash_assets-reserve_target,limit=activeMode==="reserve_dca"?dca_for_year(working?workDcaStages:retireDcaStages,year):excess;
-       reserve_investment=Math.min(excess,Math.max(0,limit));cash_assets-=reserve_investment;investment_assets+=reserve_investment;
-       if(working)month_work_inv+=reserve_investment;else month_ret_reinv+=reserve_investment;
+     const activeInvestment=investing?investment_stage_for_month(year,month):null;
+     if(activeInvestment){
+       const cashIncome=month_work_income+month_ret_income;
+       if(activeInvestment.mode==="emergency_reserve"||activeInvestment.mode==="reserve_dca"){
+         const excess=Math.max(0,cash_assets-reserve_target),limit=activeInvestment.mode==="reserve_dca"?activeInvestment.amount:excess;
+         month_investment=Math.min(excess,Math.max(0,limit));reserve_investment=month_investment;
+       }else month_investment=alloc(cashIncome,activeInvestment.mode,activeInvestment.percent,activeInvestment.amount,monthly_fixed_expense);
+       cash_assets-=month_investment;investment_assets+=month_investment;
      }
 
      const month_phase=[working?"工作":retired?"退休":"",purchaseMonth===0?(pre?"預售":"購屋"):"",pre&&purchaseMonth>0&&purchaseMonth<con_y*12?"預售":"",month_payment>0?"房貸":""].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(" + ")||"—";
      const month_net_cash=cash_assets-monthCashStart;
-     months.push({month,phase:month_phase,cash_start:monthCashStart,investment_start:monthInvestmentStart,investment_return,salary_income,bonus_income,work_income:month_work_income,work_inv:month_work_inv,ret_income:month_ret_income,ret_reinv:month_ret_reinv,fixed_expense:monthly_fixed_expense,housing:month_housing,additional_cost:month_additional,interest:month_interest,mortgage_rate:month_rate,mortgage_stage:month_stage,mortgage_monthly_payment:month_payment,reserve_target,reserve_investment,net_cash_flow:month_net_cash,cash_assets,balance,investment_assets});
-     work_salary+=salary_income;work_bonus+=bonus_income;work_income+=month_work_income;work_inv+=month_work_inv;ret_income+=month_ret_income;ret_reinv+=month_ret_reinv;fixed_expense+=monthly_fixed_expense;housing+=month_housing;additional_cost_applied+=month_additional;interest+=month_interest;emergency_transfer+=reserve_investment;
+     months.push({month,phase:month_phase,cash_start:monthCashStart,investment_start:monthInvestmentStart,investment_return,salary_income,bonus_income,work_income:month_work_income,ret_income:month_ret_income,investment_contribution:month_investment,investment_mode:activeInvestment?activeInvestment.mode:"",investment_mode_label:activeInvestment?(INVESTMENT_MODES.find(x=>x[0]===activeInvestment.mode)?.[1]||activeInvestment.mode):"未投入",fixed_expense:monthly_fixed_expense,housing:month_housing,additional_cost:month_additional,interest:month_interest,mortgage_rate:month_rate,mortgage_stage:month_stage,mortgage_monthly_payment:month_payment,reserve_target,reserve_investment,net_cash_flow:month_net_cash,cash_assets,balance,investment_assets});
+     work_salary+=salary_income;work_bonus+=bonus_income;work_income+=month_work_income;ret_income+=month_ret_income;investment_contribution+=month_investment;fixed_expense+=monthly_fixed_expense;housing+=month_housing;additional_cost_applied+=month_additional;interest+=month_interest;emergency_transfer+=reserve_investment;
      if(month_rate){mortgage_rate=month_rate;mortgage_stage=month_stage;mortgage_monthly_payment=month_payment}
    }
 
    const phase=phaseParts.size?[...phaseParts].join(" + "):"—",net_cash_flow=cash_assets-cash_start;
-   rows.push({idx,year,age,phase,cash_start,investment_start,gross_investment_return,investment_return_reinvest:gross_investment_return,investment_return_cash:0,work_income,work_salary,work_bonus,work_inv,ret_income,ret_reinv,fixed_expense,additional_cost:additional_cost_applied,housing,interest,mortgage_rate,mortgage_stage,mortgage_monthly_payment,reserve_target,emergency_transfer,net_cash_flow,monthly:net_cash_flow/12,cash_assets,balance,investment_assets,months});
+   rows.push({idx,year,age,phase,cash_start,investment_start,gross_investment_return,investment_return_reinvest:gross_investment_return,investment_return_cash:0,work_income,work_salary,work_bonus,ret_income,investment_contribution,fixed_expense,additional_cost:additional_cost_applied,housing,interest,mortgage_rate,mortgage_stage,mortgage_monthly_payment,reserve_target,emergency_transfer,net_cash_flow,monthly:net_cash_flow/12,cash_assets,balance,investment_assets,months});
  }
 
  const series=[];
@@ -880,6 +911,7 @@ function render_legend(){legend.innerHTML="";state.series.forEach(s=>{const b=do
 const tableView={
   initial:false,
   income:false,
+  investment:false,
   mortgage:false
 };
 function set_table_group(group,on){
@@ -887,37 +919,40 @@ function set_table_group(group,on){
   update_table_column_visibility();
 }
 function table_compact(){
-  tableView.initial=false;tableView.income=false;tableView.mortgage=false;
+  tableView.initial=false;tableView.income=false;tableView.investment=false;tableView.mortgage=false;
   update_table_column_visibility();
 }
 function table_expand_all(){
   tableView.initial=true;
   tableView.income=e.income_enabled.checked;
+  tableView.investment=e.investment_enabled.checked;
   tableView.mortgage=e.mortgage_enabled.checked;
   update_table_column_visibility();
 }
 function sync_table_view_buttons(){
-  const map={initial:"table_toggle_initial",income:"table_toggle_income",mortgage:"table_toggle_mortgage"};
+  const map={initial:"table_toggle_initial",income:"table_toggle_income",investment:"table_toggle_investment",mortgage:"table_toggle_mortgage"};
   for(const [g,id] of Object.entries(map)){
     const b=$(id);if(!b)continue;
-    const available=g==="initial"||(g==="income"&&e.income_enabled.checked)||(g==="mortgage"&&e.mortgage_enabled.checked);
+    const available=g==="initial"||(g==="income"&&e.income_enabled.checked)||(g==="investment"&&e.investment_enabled.checked)||(g==="mortgage"&&e.mortgage_enabled.checked);
     b.disabled=!available;
     b.classList.toggle("on",available&&tableView[g]);
-    const label={initial:"基礎",income:"收入 / 退休",mortgage:"房貸"}[g];
+    const label={initial:"基礎",income:"收入 / 退休",investment:"投入",mortgage:"房貸"}[g];
     b.textContent=`${available&&tableView[g]?"−":"＋"} ${label}`;
   }
-  const compact=!tableView.initial&&!tableView.income&&!tableView.mortgage;
+  const compact=!tableView.initial&&!tableView.income&&!tableView.investment&&!tableView.mortgage;
   $("table_view_compact").classList.toggle("active",compact);
-  $("table_view_all").classList.toggle("active",!compact&&tableView.initial&&(!e.income_enabled.checked||tableView.income)&&(!e.mortgage_enabled.checked||tableView.mortgage));
+  $("table_view_all").classList.toggle("active",!compact&&tableView.initial&&(!e.income_enabled.checked||tableView.income)&&(!e.investment_enabled.checked||tableView.investment)&&(!e.mortgage_enabled.checked||tableView.mortgage));
 }
 function update_table_column_visibility(){
   // Disabled simulation groups always stay hidden.
   document.querySelectorAll(".col-mortgage").forEach(el=>el.classList.toggle("hidden",!e.mortgage_enabled.checked));
   document.querySelectorAll(".col-income").forEach(el=>el.classList.toggle("hidden",!e.income_enabled.checked));
+  document.querySelectorAll(".col-investment").forEach(el=>el.classList.toggle("hidden",!e.investment_enabled.checked));
 
   // Detail columns are independently collapsible. Core columns remain visible.
   document.querySelectorAll(".detail-initial").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.initial));
   document.querySelectorAll(".detail-income").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.income));
+  document.querySelectorAll(".detail-investment").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.investment));
   document.querySelectorAll(".detail-mortgage").forEach(el=>el.classList.toggle("table-detail-hidden",!tableView.mortgage));
   sync_table_view_buttons();
 }
@@ -930,8 +965,7 @@ function render_table(){
    tr.dataset.year=String(r.year);
    tr.innerHTML=`<td class="table-core"><button class="month-detail-btn" type="button" data-year="${r.year}" aria-label="查看 ${r.year} 年每月明細" title="查看每月明細"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2h9l5 5v15H6Z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg></button></td><td class="table-core">${r.idx+1}</td><td class="col-initial table-core">${r.year}</td><td class="col-initial table-detail detail-initial">${r.age}</td><td class="table-core">${r.phase}</td>
    <td class="col-initial table-detail detail-initial">${money(r.cash_start)}</td><td class="col-initial table-detail detail-initial">${money(r.investment_start)}</td><td class="pos col-initial table-detail detail-initial">${money(r.gross_investment_return)}</td>
-   <td class="pos col-income table-detail detail-income">${money(r.work_income)}</td><td class="pos col-income table-detail detail-income">${money(r.work_inv)}</td><td class="warn col-income table-detail detail-income">${money(r.ret_income)}</td>
-   <td class="pos col-income table-detail detail-income">${money(r.ret_reinv)}</td><td class="neg col-initial table-detail detail-initial">${money(r.fixed_expense)}</td><td class="neg col-mortgage table-detail detail-mortgage">${money(r.housing)}</td><td class="col-mortgage table-detail detail-mortgage">${r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%`:"—"}</td><td class="col-initial table-detail detail-initial">${money(r.reserve_target||0)}</td><td class="pos col-income table-detail detail-income">${money(r.emergency_transfer||0)}</td>
+   <td class="pos col-income table-detail detail-income">${money(r.work_income)}</td><td class="warn col-income table-detail detail-income">${money(r.ret_income)}</td><td class="pos col-investment table-detail detail-investment">${money(r.investment_contribution)}</td><td class="pos col-investment table-detail detail-investment">${money(r.emergency_transfer||0)}</td><td class="neg col-initial table-detail detail-initial">${money(r.fixed_expense)}</td><td class="neg col-mortgage table-detail detail-mortgage">${money(r.housing)}</td><td class="col-mortgage table-detail detail-mortgage">${r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%`:"—"}</td><td class="col-initial table-detail detail-initial">${money(r.reserve_target||0)}</td>
    <td class="table-core ${moneyNegative(r.net_cash_flow)?"neg":"pos"}">${money(r.net_cash_flow)}</td>
    <td class="table-core ${moneyNegative(r.cash_assets)?"neg":""}">${money(r.cash_assets)}</td><td class="col-mortgage table-detail detail-mortgage">${money(r.balance)}</td><td class="table-core">${money(r.investment_assets)}</td>`;
    tbody.appendChild(tr)
@@ -942,7 +976,7 @@ function open_monthly_detail(year){
  const r=state.rows.find(row=>row.year===year);if(!r)return;
  $("monthly_title").textContent=`${r.year} 年每月資產變化`;
  $("monthly_summary").textContent=`${r.age} 歲 · ${r.phase} · 年度投資收益 ${money(r.gross_investment_return)} · 年度淨現金流 ${money(r.net_cash_flow)}`;
- $("monthly_tbody").innerHTML=r.months.map(m=>`<tr><td>${m.month} 月</td><td>${m.phase}</td><td>${money(m.cash_start)}</td><td>${money(m.investment_start)}</td><td class="pos">${money(m.investment_return)}</td><td class="pos">${money(m.salary_income)}</td><td class="pos">${money(m.bonus_income)}</td><td class="pos">${money(m.work_inv)}</td><td class="warn">${money(m.ret_income)}</td><td class="pos">${money(m.ret_reinv)}</td><td class="neg">${money(m.fixed_expense)}</td><td class="neg">${money(m.housing)}</td><td class="pos">${money(m.reserve_investment)}</td><td class="${moneyNegative(m.net_cash_flow)?"neg":"pos"}">${money(m.net_cash_flow)}</td><td class="${moneyNegative(m.cash_assets)?"neg":""}">${money(m.cash_assets)}</td><td>${money(m.balance)}</td><td>${money(m.investment_assets)}</td></tr>`).join("");
+ $("monthly_tbody").innerHTML=r.months.map(m=>`<tr><td>${m.month} 月</td><td>${m.phase}</td><td>${money(m.cash_start)}</td><td>${money(m.investment_start)}</td><td class="pos">${money(m.investment_return)}</td><td class="pos">${money(m.salary_income)}</td><td class="pos">${money(m.bonus_income)}</td><td class="warn">${money(m.ret_income)}</td><td>${m.investment_mode_label}</td><td class="pos">${money(m.investment_contribution)}</td><td class="neg">${money(m.fixed_expense)}</td><td class="neg">${money(m.housing)}</td><td class="${moneyNegative(m.net_cash_flow)?"neg":"pos"}">${money(m.net_cash_flow)}</td><td class="${moneyNegative(m.cash_assets)?"neg":""}">${money(m.cash_assets)}</td><td>${money(m.balance)}</td><td>${money(m.investment_assets)}</td></tr>`).join("");
  $("monthly_backdrop").classList.add("on");$("monthly_backdrop").setAttribute("aria-hidden","false");$("monthly_modal").classList.add("on");$("monthly_close").focus();
 }
 function close_monthly_detail(){$("monthly_backdrop").classList.remove("on");$("monthly_backdrop").setAttribute("aria-hidden","true");$("monthly_modal").classList.remove("on")}
@@ -960,8 +994,8 @@ function show_tip(i){
  const r=state.rows[i],lines=[
  ["年份",r.year,"initial"],["年齡",`${r.age} 歲`,"initial"],["階段",r.phase,"neutral"],
  ["年初現金",money(r.cash_start),"initial"],["年初投資",money(r.investment_start),"initial"],["每月複利收益",money(r.gross_investment_return),"initial"],
- ["經常月薪合計",money(r.work_salary),"income"],["獎金合計",money(r.work_bonus),"income"],["工作收入",money(r.work_income),"income"],["投入投資",money(r.work_inv),"income"],["退休提領",money(r.ret_income),"income"],["退休再投入",money(r.ret_reinv),"income"],
-  ["固定支出",money(r.fixed_expense),"initial"],["額外購屋支出",money(r.additional_cost||0),"mortgage"],["房貸/購屋",money(r.housing),"mortgage"],["房貸利率",r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%（第 ${r.mortgage_stage} 階段）`:"—","mortgage"],["當年月付",r.mortgage_monthly_payment?money(r.mortgage_monthly_payment):"—","mortgage"],["備用金目標",money(r.reserve_target||0),"initial"],["超額現金轉投資",money(r.emergency_transfer||0),"income"],
+ ["經常月薪合計",money(r.work_salary),"income"],["獎金合計",money(r.work_bonus),"income"],["工作收入",money(r.work_income),"income"],["退休提領",money(r.ret_income),"income"],["投入投資",money(r.investment_contribution),"investment"],
+  ["固定支出",money(r.fixed_expense),"initial"],["額外購屋支出",money(r.additional_cost||0),"mortgage"],["房貸/購屋",money(r.housing),"mortgage"],["房貸利率",r.mortgage_rate?`${(r.mortgage_rate*100).toFixed(2)}%（第 ${r.mortgage_stage} 階段）`:"—","mortgage"],["當年月付",r.mortgage_monthly_payment?money(r.mortgage_monthly_payment):"—","mortgage"],["備用金目標",money(r.reserve_target||0),"initial"],["其中備用金後投入",money(r.emergency_transfer||0),"investment"],
  ["年度淨現金流",money(r.net_cash_flow),"neutral"],["年末現金資產",money(r.cash_assets),"neutral"],["年末投資資產",money(r.investment_assets),"neutral"]];
  tip.innerHTML=`<b>${r.year} 年｜${r.age} 歲</b>`+lines.map(x=>`<div class="tr ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
  tip.classList.add("on");
@@ -983,19 +1017,15 @@ function render_formula(i){
 12 個月投資收益合計 = ${money(r.gross_investment_return)}
 收益全數直接納入投資資產
 
-3) 工作收入與投入
+3) 工作與退休現金收入
 經常月薪合計 = ${money(r.work_salary)}
 獎金合計 = ${money(r.work_bonus)}
 工作收入合計 = ${money(r.work_income)}
-工作投入投資 = ${money(r.work_inv)}
-工作留存現金 = ${money(r.work_income)} − ${money(r.work_inv)}
-= ${money(r.work_income-r.work_inv)}
-
-4) 退休提領與再投入
 退休提領 = ${money(r.ret_income)}
-退休再投入 = ${money(r.ret_reinv)}
-退休留存現金 = ${money(r.ret_income)} − ${money(r.ret_reinv)}
-= ${money(r.ret_income-r.ret_reinv)}
+
+4) 獨立投入投資
+投入投資合計 = ${money(r.investment_contribution)}
+其中備用金後投入 = ${money(r.emergency_transfer||0)}
 
 5) 支出（全部只扣現金）
 固定年支出 = ${money(r.fixed_expense)}
@@ -1006,11 +1036,10 @@ function render_formula(i){
 
 6) 緊急備用金
 當年備用金目標 = ${money(r.reserve_target||0)}
-超額現金轉入投資 = ${money(r.emergency_transfer||0)}
 
 7) 年度淨現金流（12 個月現金變化合計）
-= 工作收入 − 工作投入 + 退休提領 − 退休再投入 − 固定支出 − 購屋/房貸
-= ${money(r.work_income)} − ${money(r.work_inv)} + ${money(r.ret_income)} − ${money(r.ret_reinv)}
+= 工作收入 + 退休提領 − 投入投資 − 固定支出 − 購屋/房貸
+= ${money(r.work_income)} + ${money(r.ret_income)} − ${money(r.investment_contribution)}
   − ${money(r.fixed_expense)} − ${money(r.housing)}
 = ${money(r.net_cash_flow)}
 
@@ -1019,8 +1048,8 @@ function render_formula(i){
 = ${money(r.cash_assets)}
 
 9) 年末投資資產
-= ${money(r.investment_start)} + ${money(r.gross_investment_return)} + ${money(r.work_inv)}
-  − ${money(r.ret_income)} + ${money(r.ret_reinv)}
+= ${money(r.investment_start)} + ${money(r.gross_investment_return)} − ${money(r.ret_income)}
+  + ${money(r.investment_contribution)}
 = ${money(r.investment_assets)}`;
 }
 
@@ -1047,6 +1076,7 @@ const tourSteps=[
       e.mortgage_enabled.checked=false;
       e.income_enabled.checked=false;
       e.retirement_enabled.checked=false;
+      e.investment_enabled.checked=false;
       update_table_column_visibility();
       return [["timeline_start_year",2026],["timeline_years",40],["birth_year",1994],
               ["initial_cash_assets",1000000],["initial_investment_assets",23000000],["return_rate",6]];
@@ -1069,7 +1099,7 @@ const tourSteps=[
     target:".group-initial", subtarget:"#reserve_guide_box", body:"timeline_body",
     title:"1-2. 緊急備用金也是階段式目標",
     path:"時間軸 / 初始設定 › 緊急備用金目標表",
-    text:"備用金代表希望保留在現金帳戶的最低目標。當工作或退休收入的投入方式選「僅保留緊急備用金」時，年度收支結算後，超過目標的現金才會轉進投資。",
+    text:"備用金代表希望保留在現金帳戶的最低目標。當投入投資試算組選用「僅保留緊急備用金」時，每月收支結算後，超過目標的現金才會轉進投資。",
     demo:"示範：2026 年保留 100 萬；2040 年後提高到 150 萬。若現金低於目標，不會自動賣出投資補足。",
     prepare(){
       reserveStages=[{year:2026,amount:1000000},{year:2040,amount:1500000}];
@@ -1080,7 +1110,7 @@ const tourSteps=[
   },
   {
     target:".group-income", subtarget:"#income_basics_guide_box", body:"income_body",
-    title:"2. 加入月薪、獎金與每月投資",
+    title:"2. 加入月薪與獎金收入",
     path:"經常收入試算組",
     text:"這裡設定工作收入何時開始、經常月薪、年度獎金總額與發放次數、每年調薪率及工作年數。獎金可選 1、2 或 4 次，分別在指定月份的月底入帳。",
     demo:"示範：2026 年起月薪 18 萬、年度獎金 34 萬並分兩次發放，合計首年 250 萬；每年調薪 3%、工作 10 年。",
@@ -1088,8 +1118,6 @@ const tourSteps=[
       e.income_enabled.checked=true;
       e.retirement_enabled.checked=false;
       $("retirement_body").classList.add("hidden");
-      e.work_mode.value="emergency_reserve";
-      mode_ui("work","emergency_reserve");
       update_table_column_visibility();
       e.bonus_frequency.value="2";
       return [["income_start_year",2026],["monthly_salary",180000],["annual_bonus",340000],["salary_growth",3],
@@ -1097,40 +1125,37 @@ const tourSteps=[
     }
   },
   {
-    target:".group-income", subtarget:"#work_allocation_guide_box", body:"income_body",
-    title:"2-1. 五種每月投入方式",
-    path:"經常收入試算組 › 每月投入投資方式",
-    text:"工作收入不一定要用固定比例投入。這裡有五種每月資金配置方法，退休收入的再投入也使用同一套概念。",
-    demo:"① 百分比：當月收入 × 指定比例。\n② 固定金額：每月最多投入指定金額。\n③ 支出餘額：當月收入扣除當月固定支出後投入。\n④ 僅保留緊急備用金：每月底把超額現金全部投入。\n⑤ 保留緊急備用金後定期定額：每月底投入超額現金與當年定期定額兩者較小值。",
-    prepare(){
-      e.work_mode.value="reserve_dca";
-      mode_ui("work","reserve_dca");
-      workDcaStages=[{year:2026,amount:50000},{year:2030,amount:80000}];
-      render_dca_stages("work");
-      calc();
-      return [];
-    },
-    after(){tourPulse("#work_mode,#work_dca_stages input")}
-  },
-  {
     target:".group-income", subtarget:"#retirement_guide_box", body:"income_body",
-    title:"2-2. 工作結束後立即銜接退休提領",
+    title:"2-1. 工作結束後立即銜接退休提領",
     path:"經常收入試算組 › 工作結束後立即銜接百分比提領",
-    text:"勾選後，最後一個工作收入年度結束，下一年會直接進入退休階段。退休提領本身視為退休收入，仍可決定其中多少再投入、多少留作現金支出。",
-    demo:"示範：工作 10 年後，下一年立即開始按月提領投資資產（年提領率 4% ÷ 12），持續 30 年；退休收入先不再投入。",
+    text:"勾選後，最後一個工作收入年度結束，下一年會直接進入退休階段。退休提領只是把投資資產按月轉成現金；如何把現金投入投資，交由獨立的投入投資試算組決定。",
+    demo:"示範：工作 10 年後，下一年立即開始按月提領投資資產（年提領率 4% ÷ 12），持續 30 年。",
     prepare(){
       e.retirement_enabled.checked=true;
       $("retirement_body").classList.remove("hidden");
-      e.retire_mode.value="percent";
-      mode_ui("retire","percent");
       update_table_column_visibility();
-      return [["retire_rate",4],["retire_years",30],["retire_percent_value",0]];
+      return [["retire_rate",4],["retire_years",30]];
     },
-    after(){tourPulse("#retirement_guide_box input,#retirement_guide_box select")}
+    after(){tourPulse("#retirement_guide_box input")}
+  },
+  {
+    target:".group-investment", subtarget:"#investment_guide_box", body:"investment_body",
+    title:"3. 用年月階段獨立控制投入投資",
+    path:"投入投資試算組 › 投入投資方式階段",
+    text:"投入投資方式與工作或退休狀態彼此獨立。每個階段從指定年月開始生效；需要改變策略時直接新增階段，不必在定期定額內再建立另一層調整表。",
+    demo:"五種方法：現金收入百分比、每月固定金額、收入扣除固定支出餘額、僅保留緊急備用金，以及保留備用金後定期定額。示範在 2030 年 1 月把每月定期定額從 5 萬調高為 8 萬。",
+    prepare(){
+      e.investment_enabled.checked=true;
+      investmentStages=[{year:2026,month:1,mode:"reserve_dca",percent:50,amount:50000},{year:2030,month:1,mode:"reserve_dca",percent:50,amount:80000}];
+      render_investment_stages();
+      update_table_column_visibility();
+      return [];
+    },
+    after(){tourPulse("#investment_stages input,#investment_stages select")}
   },
   {
     target:".group-mortgage", subtarget:"#mortgage_purchase_guide_box", body:"mortgage_body",
-    title:"3. 直接購入：購屋年立即開始房貸",
+    title:"4. 直接購入：購屋年立即開始房貸",
     path:"房貸試算組 › 直接購入",
     text:"直接購入會在購屋試算插入年份支付頭期款與裝潢、設計、家具等額外支出，並在同一年建立房貸、開始還款。房屋總價與頭期款比例決定貸款本金；額外支出只從現金扣除，不會併入貸款本金。",
     demo:"目前畫面固定為「直接購入」供你閱讀：2028 年購入、總價 2,000 萬、頭期 20%、額外支出 50 萬。按下一步後才會切換到預售屋。",
@@ -1141,7 +1166,7 @@ const tourSteps=[
   },
   {
     target:".group-mortgage", subtarget:"#presale", body:"mortgage_body",
-    title:"3-1. 預售屋：工程期與交屋年分開計算",
+    title:"4-1. 預售屋：工程期與交屋年分開計算",
     path:"房貸試算組 › 預售屋",
     text:"預售屋會在購屋插入年份先支付頭期款，並於工程期間按年平均支付工程期分款。工程期結束後的交屋年，才列入裝潢、設計與家具等額外支出、建立房貸本金並開始還款。",
     demo:"目前畫面固定為「預售屋」：工程期分款為總價 10%、工程期 3 年。請先看完這兩個欄位，再進入後續的房貸利率說明。",
@@ -1151,7 +1176,7 @@ const tourSteps=[
   },
   {
     target:".group-mortgage", subtarget:"#mortgage_rate_guide_box", body:"mortgage_body",
-    title:"3-2. 優惠或補貼房貸可以用分段利率",
+    title:"4-2. 優惠或補貼房貸可以用分段利率",
     path:"房貸試算組 › 房貸利率階段",
     text:"房貸不一定整段都是同一利率。你可以把政府補貼、銀行優惠期與後續一般利率拆成多個階段；利率切換時，試算器會依剩餘本金與剩餘年限重新計算月付。",
     demo:"示範：前 5 年 1.77%，之後剩餘年限 2.60%。最後一階段的持續年數設為 0，代表一路套用到房貸結束。",
@@ -1160,7 +1185,7 @@ const tourSteps=[
   },
   {
     target:".group-mortgage", subtarget:"#mortgage_terms_guide_box", body:"mortgage_body",
-    title:"3-3. 房貸年限與寬限期",
+    title:"4-3. 房貸年限與寬限期",
     path:"房貸試算組 › 房貸條件",
     text:"房貸年限控制總還款期間；寬限期內只付利息、不攤本金。分段利率同樣會套用在寬限期，因此優惠利率與寬限期可以同時存在。",
     demo:"例如 40 年房貸、前 5 年 1.77%、其後 2.60%，也可以再搭配寬限期比較退休前現金流。",
@@ -1168,7 +1193,7 @@ const tourSteps=[
   },
   {
     target:"#chart_guide_box", subtarget:"#legend",
-    title:"4. 圖表：快速看資產路徑與單一年份",
+    title:"5. 圖表：快速看資產路徑與單一年份",
     path:"結果區 › 互動圖表",
     text:"圖表用來先看整體趨勢。把滑鼠移到任一年份會出現垂直指示線與詳細資訊；點一下年份可以固定，再移動滑鼠也不會消失。右上角圖例可個別隱藏曲線。",
     demo:"導覽現在會替你固定一個中段年份，右側 tooltip 可直接看到該年的投資收益、工作收入、支出、房貸與年末資產。",
@@ -1181,7 +1206,7 @@ const tourSteps=[
   },
   {
     target:"#table_toolbar_guide_box",
-    title:"5. 表格：先用精簡模式掌握結果",
+    title:"6. 表格：先用精簡模式掌握結果",
     path:"結果區 › 年度明細表 › 精簡",
     text:"圖表適合看趨勢，表格則用來逐年核對。為避免 20 多個欄位把畫面拉得太寬，表格預設先收成核心欄位，手機也比較容易閱讀。",
     demo:"導覽現在會切成「精簡」：保留月明細按鈕、序號、年份、階段、年度淨現金流、年末現金資產與年末投資資產。",
@@ -1194,19 +1219,19 @@ const tourSteps=[
   },
   {
     target:"#table_toolbar_guide_box",
-    title:"5-1. 需要驗算時再展開詳細欄位",
+    title:"6-1. 需要驗算時再展開詳細欄位",
     path:"結果區 › 年度明細表 › 全部展開",
-    text:"需要追查某一年為什麼變化時，再展開詳細欄位。可以一次全部展開，也可以只打開「基礎、收入 / 退休、房貸」其中一組。",
+    text:"需要追查某一年為什麼變化時，再展開詳細欄位。可以一次全部展開，也可以只打開「基礎、收入 / 退休、投入、房貸」其中一組。",
     demo:"導覽現在會切到「全部展開」，讓你直接比較精簡與完整表格的差異；下一步前會停留在完整狀態供你查看。",
     prepare(){
       table_expand_all();
       return [];
     },
-    after(){tourPulse("#table_view_all,#table_toggle_initial,#table_toggle_income,#table_toggle_mortgage")}
+    after(){tourPulse("#table_view_all,#table_toggle_initial,#table_toggle_income,#table_toggle_investment,#table_toggle_mortgage")}
   },
   {
     target:"#table_guide_box", subtarget:"#tbody .month-detail-btn",
-    title:"5-2. 查看逐月資產變化",
+    title:"6-2. 查看逐月資產變化",
     path:"結果區 › 年度明細表 › 月明細",
     text:"年表每一列最左側都有文件圖示。點擊後會開啟該年度 12 個月的完整明細，包含月初資產、投資收益、月薪、獎金、投入、退休提領、支出、房貸及月底資產。",
     demo:"用月明細可以確認獎金落在哪幾個月份、月底投入何時開始產生收益，以及房貸本金與現金如何逐月變化。",
@@ -1215,15 +1240,15 @@ const tourSteps=[
   },
   {
     target:"#formula_guide_box",
-    title:"6. 公式區：確認模型到底怎麼算",
+    title:"7. 公式區：確認模型到底怎麼算",
     path:"每月計算公式 / 年度驗收區 › 計算規則",
-    text:"如果結果和直覺不同，先看這裡。公式區列出投資收益、工作收入投入、退休提領、現金支出與投資資產累積的實際計算順序，方便確認模型語意。",
+    text:"如果結果和直覺不同，先看這裡。公式區列出投資收益、工作與退休現金來源、獨立投入階段、現金支出與投資資產累積的實際計算順序，方便確認模型語意。",
     demo:"特別注意：所有真實支出只扣現金；投資收益每月計算並直接留在投資資產中，月底投入從下個月起參與複利。",
     prepare(){table_compact();return []}
   },
   {
     target:"#verify_guide_box",
-    title:"7. 年份驗收：把公式代入實際數字",
+    title:"8. 年份驗收：把公式代入實際數字",
     path:"每月計算公式 / 年度驗收區 › 查看實際代入",
     text:"除了看抽象公式，也可以指定某一年，把該年的實際數值完整代入。這適合驗證房貸開始年、退休第一年、支出切換年等邊界條件。",
     demo:"示範：切到試算中段年份，下面會列出年初資產、收益、收入、支出、淨現金流與年末資產的完整算式。",
@@ -1238,7 +1263,7 @@ const tourSteps=[
   },
   {
     targets:["#restore_defaults","#export_settings","#import_settings","#export_csv"],
-    title:"8. 恢復、匯入匯出設定與輸出結果表",
+    title:"9. 恢復、匯入匯出設定與輸出結果表",
     path:"頁面工具列 › 設定檔與 CSV 結果表",
     text:"「恢復預設值」可回到網站內建的參考情境；調好自己的情境後可匯出 JSON 保存，之後再用匯入功能還原。右側的「輸出 CSV 表」則會下載完整年度試算結果。",
     demo:"JSON 用來保存可再次匯入的試算設定；CSV 會輸出所有年份與全部表格欄位，不受目前分頁或精簡／展開狀態影響，可直接交由試算表軟體分析。",
@@ -1247,7 +1272,7 @@ const tourSteps=[
   },
   {
     target:"#start_tour",
-    title:"9. 之後隨時可以重新開啟導覽",
+    title:"10. 之後隨時可以重新開啟導覽",
     path:"頁面工具列 › 使用說明導覽",
     text:"到這裡已經走完整個操作流程。之後忘記某個區塊的用途，可以再次點這個「使用說明導覽」按鈕重播。",
      demo:"按「完成導覽」後，導覽期間使用的示範數值會被丟棄，並還原你進入導覽前的原始試算設定；也可以按旁邊的「情境導覽」查看預設 FIRE 情境。",
@@ -1325,7 +1350,7 @@ function scenarioSelectYear(year){
   tourPulse("#formula_year,#detail");
 }
 function tourCaptureFolded(){
-  const ids=["timeline_body","mortgage_body","income_body"];
+  const ids=["timeline_body","mortgage_body","income_body","investment_body"];
   return Object.fromEntries(ids.map(id=>[id,$(id).classList.contains("hidden")]));
 }
 function tourRestoreFolded(){
@@ -1575,28 +1600,27 @@ document.addEventListener("keydown",ev=>{
 canvas.onmousemove=ev=>{state.hover=near(ev.clientX);draw();show_tip(state.hover)};canvas.onmouseleave=()=>{state.hover=null;draw();state.selected!==null?show_tip(state.selected):hide_tip()};canvas.onclick=ev=>{const i=near(ev.clientX);state.selected=state.selected===i?null:i;state.hover=null;draw();state.selected!==null?show_tip(state.selected):hide_tip()};
 document.querySelectorAll(".fold").forEach(b=>b.onclick=()=>{const body=$(b.dataset.target),c=!body.classList.contains("hidden");body.classList.toggle("hidden",c);b.textContent=c?"+":"−";b.closest(".head").classList.toggle("collapsed",c)});
 e.purchase_type.onchange=()=>{purchase_ui();calc()};
-e.work_mode.onchange=()=>{mode_ui("work",e.work_mode.value);calc()};e.retire_mode.onchange=()=>{mode_ui("retire",e.retire_mode.value);calc()};
 e.retirement_enabled.onchange=()=>{$("retirement_body").classList.toggle("hidden",!e.retirement_enabled.checked);calc()};
-ids.forEach(id=>{if(["purchase_type","work_mode","retire_mode","retirement_enabled"].includes(id))return;e[id].addEventListener("input",calc);e[id].addEventListener("change",calc)});
+e.investment_enabled.onchange=()=>{update_table_column_visibility();calc()};
+ids.forEach(id=>{if(["purchase_type","retirement_enabled","investment_enabled"].includes(id))return;e[id].addEventListener("input",calc);e[id].addEventListener("change",calc)});
 document.addEventListener("input",ev=>{if(ev.target.matches&&ev.target.matches("[data-money-input]"))formatMoneyInput(ev.target)});
 e.timeline_start_year.addEventListener("change",()=>{
   const sy=Math.round(num(e.timeline_start_year,2026));
   if(expenseStages.length===1 && expenseStages[0].year<sy){expenseStages[0].year=sy;render_expense_stages();}
   if(reserveStages.length===1 && reserveStages[0].year<sy){reserveStages[0].year=sy;render_reserve_stages();}
-  if(workDcaStages.length===1 && workDcaStages[0].year<sy){workDcaStages[0].year=sy;render_dca_stages("work");}
-  if(retireDcaStages.length===1 && retireDcaStages[0].year<sy){retireDcaStages[0].year=sy;render_dca_stages("retire");}
+  if(investmentStages.length===1 && investmentStages[0].year<sy){investmentStages[0].year=sy;investmentStages[0].month=1;render_investment_stages();}
   calc();
 });
 $("table_view_compact").onclick=table_compact;
 $("table_view_all").onclick=table_expand_all;
 $("table_toggle_initial").onclick=()=>set_table_group("initial",!tableView.initial);
 $("table_toggle_income").onclick=()=>set_table_group("income",!tableView.income);
+$("table_toggle_investment").onclick=()=>set_table_group("investment",!tableView.investment);
 $("table_toggle_mortgage").onclick=()=>set_table_group("mortgage",!tableView.mortgage);
 $("rows_per_page").onchange=()=>{page=1;render_table()};$("prev").onclick=()=>{page=Math.max(1,page-1);render_table()};$("next").onclick=()=>{page++;render_table()};$("formula_year").onchange=()=>render_formula(Number($("formula_year").value));window.onresize=draw;
 $("add_expense_stage").onclick=add_expense_stage;
 $("add_reserve_stage").onclick=add_reserve_stage;
-$("add_work_dca_stage").onclick=()=>add_dca_stage("work");
-$("add_retire_dca_stage").onclick=()=>add_dca_stage("retire");
+$("add_investment_stage").onclick=add_investment_stage;
 $("add_mortgage_rate_stage").onclick=add_mortgage_rate_stage;
 tbody.addEventListener("click",ev=>{const button=ev.target.closest(".month-detail-btn");if(button)open_monthly_detail(Number(button.dataset.year))});
 $("monthly_close").onclick=close_monthly_detail;
